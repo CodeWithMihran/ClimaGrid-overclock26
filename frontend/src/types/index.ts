@@ -91,3 +91,41 @@ export interface ImagePreset {
   badge: string;
 }
 
+export interface GaugeStation {
+  id: string;
+  name: string;
+  location: [number, number];
+  water_level_m: number;
+  warning_level_m: number;
+  danger_level_m: number;
+  discharge_cusecs: number;
+  status: 'NORMAL' | 'WARNING' | 'CRITICAL';
+  trend: string;
+}
+
+export interface TelemetryData {
+  timestamp: string;
+  basin: string;
+  gauges: GaugeStation[];
+  water_quality: {
+    station_id: string;
+    station_name: string;
+    turbidity_ntu: number;
+    safe_limit_ntu: number;
+    is_anomalous: boolean;
+    boil_water_advisory: boolean;
+  };
+  meteorological: {
+    station_name: string;
+    temperature_c: number;
+    heat_index_c: number;
+    rainfall_accum_mm: number;
+    wind_speed_kmh: number;
+  };
+  system_health: {
+    bedrock_nlp_latency_ms: number;
+    active_fleet_readiness: string;
+    lora_gateway_status: string;
+  };
+}
+

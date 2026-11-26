@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { HeaderHUD } from '../components/HeaderHUD';
+import { LiveTelemetryTicker } from '../components/LiveTelemetryTicker';
 import { DistressStream } from '../components/DistressStream';
 import { TacticalSideHUD } from '../components/TacticalSideHUD';
 import { QuickDistressSimulator } from '../components/QuickDistressSimulator';
@@ -260,6 +261,9 @@ export default function CommandOperationsPage() {
         isTourRunning={tourStep > 0}
         onToggleGuidedTour={handleToggleGuidedTour}
       />
+
+      {/* 1.1 Live IoT Telemetry & River Gauge Stream Bar */}
+      <LiveTelemetryTicker />
 
       {/* 2. Main 3-Column Tactical Console */}
       <div className="flex-1 grid grid-cols-12 overflow-hidden">

@@ -1,4 +1,4 @@
-import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset } from '../types';
+import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset, TelemetryData } from '../types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
@@ -528,4 +528,60 @@ export async function fetchHeatInterventions(): Promise<any[]> {
       estimated_budget_inr: "₹24.0 Lakhs"
     }
   ];
+}
+
+export async function fetchTelemetrySnapshot(): Promise<TelemetryData> {
+  try {
+    const res = await fetch(`${API_BASE}/telemetry/snapshot`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch (e) {}
+
+  return {
+    timestamp: new Date().toISOString(),
+    basin: "Roorkee - Solani - Haridwar Ganga Basin",
+    gauges: [
+      {
+        id: "GAUGE-SOLANI-01",
+        name: "Solani River Aqueduct",
+        location: [29.8720, 77.8920],
+        water_level_m: 5.48,
+        warning_level_m: 5.00,
+        danger_level_m: 6.20,
+        discharge_cusecs: 18450,
+        status: "WARNING",
+        trend: "+0.04 m/hr"
+      },
+      {
+        id: "GAUGE-GANGA-02",
+        name: "Upper Ganga Canal Barrage",
+        location: [29.8640, 77.8960],
+        water_level_m: 4.12,
+        warning_level_m: 4.80,
+        danger_level_m: 5.80,
+        discharge_cusecs: 12200,
+        status: "NORMAL",
+        trend: "STABLE"
+      }
+    ],
+    water_quality: {
+      station_id: "WATER-INTAKE-03",
+      station_name: "Purqazi Water Intake & WTP",
+      turbidity_ntu: 46.8,
+      safe_limit_ntu: 5.0,
+      is_anomalous: true,
+      boil_water_advisory: true
+    },
+    meteorological: {
+      station_name: "Civil Lines Microclimate Station",
+      temperature_c: 39.4,
+      heat_index_c: 44.8,
+      rainfall_accum_mm: 168.4,
+      wind_speed_kmh: 18.5
+    },
+    system_health: {
+      bedrock_nlp_latency_ms: 940,
+      active_fleet_readiness: "11/14 Vessels Deployed",
+      lora_gateway_status: "ONLINE (Solani Repeater #2)"
+    }
+  };
 }

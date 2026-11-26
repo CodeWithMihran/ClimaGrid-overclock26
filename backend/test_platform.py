@@ -139,6 +139,23 @@ def run_suite():
     assert_test("Tree Canopy & Shading ROI Matrix", res_int.status_code == 200)
     assert_test("Interventions Available >= 3", len(res_int.json()) >= 3)
 
+    # TEST 11: IoT River Gauges & Real-Time Telemetry Stream
+    res_snap = client.get("/api/v1/telemetry/snapshot")
+    assert_test("IoT Telemetry Snapshot Endpoint", res_snap.status_code == 200)
+    snap_data = res_snap.json()
+    assert_test("River Gauges Count >= 2", len(snap_data.get("gauges", [])) >= 2)
+    assert_test("Solani River Gauge Present", any(g["name"] == "Solani River Aqueduct" for g in snap_data.get("gauges", [])))
+    assert_test("Water Quality Anomaly Stream Active", snap_data.get("water_quality", {}).get("turbidity_ntu", 0) > 0)
+
+    # Test Anomaly Injection
+    res_inj = client.post("/api/v1/telemetry/inject", json={
+        "station_id": "solani_aqueduct",
+        "parameter": "water_level_m",
+        "value": 6.85,
+        "reason": "Test Inundation Pulse"
+    })
+    assert_test("Live Sensor Anomaly Injection", res_inj.status_code == 200 and res_inj.json().get("status") == "INJECTED")
+
     # SUMMARY
     print("=" * 70)
     print(f"  TOTAL TESTS RUN : {total_tests}")

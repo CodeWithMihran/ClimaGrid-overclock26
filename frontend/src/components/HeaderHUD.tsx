@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square, Home } from 'lucide-react';
+import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square, Home, Megaphone } from 'lucide-react';
 
 interface HeaderHUDProps {
   activeModule: 'flood' | 'water' | 'heat';
@@ -11,6 +11,7 @@ interface HeaderHUDProps {
   criticalCount: number;
   onOpenArchitecture?: () => void;
   onOpenShelters?: () => void;
+  onOpenCAPAlert?: () => void;
   isTourRunning?: boolean;
   onToggleGuidedTour?: () => void;
 }
@@ -22,6 +23,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   criticalCount,
   onOpenArchitecture,
   onOpenShelters,
+  onOpenCAPAlert,
   isTourRunning = false,
   onToggleGuidedTour
 }) => {
@@ -138,6 +140,14 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
         >
           <Home className="w-3.5 h-3.5 text-emerald-400" />
           <span>Relief Camps</span>
+        </button>
+
+        <button
+          onClick={onOpenCAPAlert}
+          className="bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white border border-red-500/50 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md font-sans font-bold"
+        >
+          <Megaphone className="w-3.5 h-3.5 text-red-400 animate-pulse" />
+          <span>CAP Siren</span>
         </button>
 
         <button

@@ -191,3 +191,39 @@ export interface ShelterAllocationResponse {
   remaining_shelter_capacity: number;
 }
 
+export interface CAPAlert {
+  identifier: string;
+  sender: string;
+  sent: string;
+  status: string;
+  msgType: string;
+  scope: string;
+  category: string;
+  event: string;
+  urgency: string;
+  severity: string;
+  certainty: string;
+  headline_en: string;
+  headline_hi: string;
+  description_en: string;
+  description_hi: string;
+  instruction: string;
+  area_description: string;
+  polygon_coordinates: string;
+  cap_xml: string;
+  cell_towers_targeted: number;
+  estimated_recipients: number;
+}
+
+export interface CAPTemplate {
+  id: string;
+  title: string;
+  severity: string;
+  event: string;
+  headline_en: string;
+  headline_hi: string;
+  description_en: string;
+  description_hi: string;
+  area_description: string;
+}
+

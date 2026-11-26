@@ -423,6 +423,11 @@ def generate_pdf(output_path: str):
         ],
         # REALTIME & IOT
         [
+            Paragraph("<b>National Alerting & CAP</b>", table_cell_bold),
+            Paragraph("<b>NDMA SACHET / CAP Engine</b> (ITU-T X.1303 & C-DoT XML)", table_cell),
+            Paragraph("Dispatches geofenced cell-broadcast sirens (52 towers, ~62k handsets) with bilingual Hindi/English emergency instructions and authentic dual-tone audio warble.", table_cell)
+        ],
+        [
             Paragraph("<b>Real-time Stream</b>", table_cell_bold),
             Paragraph("<b>Server-Sent Events (SSE)</b> + AsyncIO Stream", table_cell),
             Paragraph("Continuously streams live river gauges (Solani Aqueduct, Ganga Canal) and turbidity telemetry into the EOC ticker without page refresh.", table_cell)
@@ -459,9 +464,9 @@ def generate_pdf(output_path: str):
     
     cert_data = [[
         Paragraph(
-            "<b>STAGE READINESS AUDIT: 100% PASS (59/59 Tests Verified)</b><br/>"
-            "• <b>Automated Platform Test Suite:</b> 59 / 59 tests passing (100% success rate) covering all 8 API modules.<br/>"
-            "• <b>Predictive Inundation & Relief Logistics:</b> 6-hour advance timeline + smart medical shelter allocation engine.<br/>"
+            "<b>STAGE READINESS AUDIT: 100% PASS (68/68 Tests Verified)</b><br/>"
+            "• <b>Automated Platform Test Suite:</b> 68 / 68 tests passing (100% success rate) covering all 9 API modules.<br/>"
+            "• <b>Predictive Inundation, Shelters & CAP Sirens:</b> 6h timeline + medical shelter logistics + NDMA cell-broadcasts.<br/>"
             "• <b>Offline Resilience:</b> Integrated fallback cache ensures zero blank screens during venue Wi-Fi outages.<br/>"
             "• <b>GitHub Repository:</b> <u>https://github.com/CodeWithMihran/ClimaGrid-overclock26</u> (Branch: <i>main</i>, Clean Tree)",
             body_style

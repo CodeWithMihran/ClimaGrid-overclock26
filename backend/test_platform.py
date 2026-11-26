@@ -216,6 +216,36 @@ def run_suite():
     res_drop = client.post("/api/v1/shelters/SHELTER-RIT-01/supply-drop", json={"added_water_liters": 5000, "added_rations": 200})
     assert_test("Relief Supply Drop API", res_drop.status_code == 200 and res_drop.json()["shelter"]["potable_water_liters"] >= 23500)
 
+    # TEST 14: NDMA SACHET / CAP Emergency Broadcast Siren Engine
+    res_act = client.get("/api/v1/alerts/active")
+    assert_test("Active CAP Alerts Endpoint", res_act.status_code == 200)
+    alerts = res_act.json()
+    assert_test("Pre-seeded Flash Flood Alert Present", len(alerts) >= 1)
+    first_alert = alerts[0]
+    assert_test("CAP Alert Has Identifier", first_alert["identifier"].startswith("IN-NDMA-ROORKEE"))
+    assert_test("Bilingual Alert Formatted (Hindi & English)", len(first_alert.get("headline_hi", "")) > 10 and len(first_alert.get("headline_en", "")) > 10)
+    assert_test("Valid OASIS CAP XML Generated", "<alert" in first_alert.get("cap_xml", "") and "</alert>" in first_alert.get("cap_xml", ""))
+
+    # Test Transmit New Siren Alert
+    new_alert_payload = {
+        "event": "Cloudburst & Rapid River Rise",
+        "severity": "Extreme",
+        "headline_en": "🚨 URGENT SIREN: Solani breach imminent in Ramnagar Ward 4.",
+        "headline_hi": "🚨 आपातकालीन सायरन: रामनगर वार्ड 4 में सोलानी नदी तटबंध टूटने का खतरा।",
+        "description_en": "Immediate evacuation ordered. Use elevated highway corridor.",
+        "description_hi": "तत्काल सुरक्षित स्थान पर जाएं। राष्ट्रीय राजमार्ग का प्रयोग करें।",
+        "area_description": "Ramnagar Sector 4 Flood Plain"
+    }
+    res_bc = client.post("/api/v1/alerts/broadcast", json=new_alert_payload)
+    assert_test("Broadcast CAP Siren API", res_bc.status_code == 200)
+    bc_data = res_bc.json()
+    assert_test("Cell Towers Targeted >= 40", bc_data.get("cell_towers_targeted", 0) >= 40)
+    assert_test("Estimated Recipients >= 50,000", bc_data.get("estimated_recipients", 0) >= 50000)
+
+    # Test Raw XML Endpoint
+    res_xml = client.get(f"/api/v1/alerts/{bc_data['identifier']}/xml")
+    assert_test("OASIS CAP XML Document Endpoint", res_xml.status_code == 200 and "application/xml" in res_xml.headers.get("content-type", ""))
+
     # SUMMARY
     print("=" * 70)
     print(f"  TOTAL TESTS RUN : {total_tests}")

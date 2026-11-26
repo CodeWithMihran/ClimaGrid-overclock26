@@ -9,6 +9,7 @@ import { TacticalSideHUD } from '../components/TacticalSideHUD';
 import { QuickDistressSimulator } from '../components/QuickDistressSimulator';
 import { ArchitectureModal } from '../components/ArchitectureModal';
 import { ReliefShelterModal } from '../components/ReliefShelterModal';
+import { CAPBroadcastModal } from '../components/CAPBroadcastModal';
 import { PredictiveFloodTimeline } from '../components/PredictiveFloodTimeline';
 import {
   fetchIncidentQueue,
@@ -77,6 +78,7 @@ export default function CommandOperationsPage() {
   const [lastLatencyMs, setLastLatencyMs] = useState<number | null>(null);
   const [isArchModalOpen, setIsArchModalOpen] = useState<boolean>(false);
   const [isShelterModalOpen, setIsShelterModalOpen] = useState<boolean>(false);
+  const [isCAPModalOpen, setIsCAPModalOpen] = useState<boolean>(false);
   const [tourStep, setTourStep] = useState<number>(0); // 0 = off, 1-5 active
 
   // Execute Tour Stage Effects
@@ -262,6 +264,7 @@ export default function CommandOperationsPage() {
         criticalCount={criticalCount}
         onOpenArchitecture={() => setIsArchModalOpen(true)}
         onOpenShelters={() => setIsShelterModalOpen(true)}
+        onOpenCAPAlert={() => setIsCAPModalOpen(true)}
         isTourRunning={tourStep > 0}
         onToggleGuidedTour={handleToggleGuidedTour}
       />
@@ -394,6 +397,12 @@ export default function CommandOperationsPage() {
         isOpen={isShelterModalOpen}
         onClose={() => setIsShelterModalOpen(false)}
         selectedIncident={selectedIncident}
+      />
+
+      {/* NDMA SACHET / CAP Emergency Broadcast Siren Modal */}
+      <CAPBroadcastModal
+        isOpen={isCAPModalOpen}
+        onClose={() => setIsCAPModalOpen(false)}
       />
     </div>
   );

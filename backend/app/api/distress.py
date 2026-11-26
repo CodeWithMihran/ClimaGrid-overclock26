@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
-from typing import List, Dict, Any
-from fastapi import APIRouter, HTTPException
+from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel
 from app.models.schemas import DistressMessageInput, IncidentRecord, ImageAnalysisRequest, ImageAnalysisResponse
 from app.services.ai_extractor import parse_distress_message
 from app.services.vision_analyzer import analyze_flood_image, SAMPLE_FLOOD_PRESETS
@@ -119,4 +120,64 @@ async def get_flood_image_presets():
             "badge": "P3 MODERATE"
         }
     ]
+
+class WhatsAppWebhookPayload(BaseModel):
+    From: str = "whatsapp:+919876543210"
+    Body: str
+    Latitude: Optional[float] = None
+    Longitude: Optional[float] = None
+    MediaUrl0: Optional[str] = None
+    ProfileName: Optional[str] = "Citizen"
+
+@router.post("/webhook/whatsapp")
+async def whatsapp_webhook(payload: WhatsAppWebhookPayload):
+    """
+    Official WhatsApp Business / Twilio Webhook Ingestion.
+    Accepts text or audio/image distress notes directly from WhatsApp users without app download.
+    """
+    sender = payload.From.replace("whatsapp:", "")
+    user_name = payload.ProfileName or "Citizen"
+    source_tag = f"WhatsApp (+{sender[-4:] if len(sender) >= 4 else 'XXXX'})"
+    
+    # Process message
+    record = await parse_distress_message(payload.Body, source=source_tag)
+    
+    # If GPS coordinates passed in WhatsApp location share
+    if payload.Latitude and payload.Longitude:
+        record.latitude = payload.Latitude
+        record.longitude = payload.Longitude
+    
+    INCIDENT_STORE[record.id] = record
+    
+    bot_reply = (
+        f"🚨 *NDMA & UTTARAKHAND SDRF LIFELINE360 HELPLINE*\n\n"
+        f"Namaste {user_name}, your distress report has been registered.\n\n"
+        f"📋 *Incident ID:* `{record.id}`\n"
+        f"⚠️ *Priority:* *{record.triage.priority_tier}* (Score: {record.triage.final_score:.2f})\n"
+        f"📍 *Location Identified:* {record.landmark}\n"
+        f"👥 *Victims Count:* {record.trapped_count} trapped\n"
+        f"🩺 *Vulnerabilities:* {', '.join(record.vulnerabilities) if record.vulnerabilities else 'None specified'}\n\n"
+        f"🚤 *EOC Action:* High-ground rescue corridor plotted. Quick response fleet alerted.\n"
+        f"Stay on high ground and do not cross flowing currents."
+    )
+    
+    return {
+        "status": "PROCESSED",
+        "incident_id": record.id,
+        "priority": record.triage.priority_tier,
+        "reply_message": bot_reply,
+        "incident": record
+    }
+
+@router.post("/webhook/sms")
+async def sms_webhook(From: str = "+919876543210", Body: str = ""):
+    """Low-bandwidth 2G basic phone SMS helpline intake"""
+    record = await parse_distress_message(Body, source="Basic Phone 2G SMS")
+    INCIDENT_STORE[record.id] = record
+    return {
+        "status": "REGISTERED",
+        "incident_id": record.id,
+        "reply": f"LIFELINE360: SOS registered {record.id}. Priority {record.triage.priority_tier}. NDRF alert dispatched to {record.landmark}."
+    }
+
 

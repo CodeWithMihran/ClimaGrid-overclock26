@@ -64,6 +64,24 @@ def run_suite():
     assert_test("Citizen Status Polling", res.status_code == 200)
     assert_test("Citizen Sees Assigned Unit", res.json().get("assigned_unit") == "NDRF-BOAT-04")
 
+    # TEST 5.1: WhatsApp Business / Twilio Webhook Ingestion
+    wa_payload = {
+        "From": "whatsapp:+919876543210",
+        "Body": "Brij Bridge ke pas dadi behosh hain aur baby bhi hai car me, pani 5 feet hai jaldi madad bhejo",
+        "ProfileName": "Amit Sharma",
+        "Latitude": 29.8610,
+        "Longitude": 77.8950
+    }
+    res_wa = client.post("/api/v1/distress/webhook/whatsapp", json=wa_payload)
+    assert_test("WhatsApp Webhook Ingestion", res_wa.status_code == 200)
+    wa_data = res_wa.json()
+    assert_test("WhatsApp Reply Formatted", "NDMA" in wa_data.get("reply_message", ""))
+    assert_test("WhatsApp Triage Assigned (P1/P2)", wa_data.get("priority", "") in ["P1 - CRITICAL", "P2 - HIGH"], f"Priority: {wa_data.get('priority')}")
+
+    # TEST 5.2: 2G Basic Phone SMS Webhook
+    res_sms = client.post("/api/v1/distress/webhook/sms?From=+919876500000&Body=SOS+Solani+water+rising")
+    assert_test("SMS Webhook Ingestion", res_sms.status_code == 200)
+
     # TEST 6: Dynamic Hazard-Aware Routing (Submerged Bridge Bypass)
     # Origin: Boat in Roorkee Cantt, Destination: Solani Aqueduct
     boat_origin = [29.8550, 77.8860]

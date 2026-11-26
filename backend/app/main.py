@@ -7,6 +7,7 @@ from app.api.water_safety import router as water_router
 from app.api.heat_shield import router as heat_router
 from app.api.fleet import router as fleet_router
 from app.api.telemetry import router as telemetry_router
+from app.api.predictive_flood import router as flood_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -30,6 +31,7 @@ app.include_router(water_router, prefix=settings.API_V1_PREFIX)
 app.include_router(heat_router, prefix=settings.API_V1_PREFIX)
 app.include_router(fleet_router, prefix=settings.API_V1_PREFIX)
 app.include_router(telemetry_router, prefix=settings.API_V1_PREFIX)
+app.include_router(flood_router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
 async def root():

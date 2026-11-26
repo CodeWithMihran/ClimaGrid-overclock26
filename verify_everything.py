@@ -59,7 +59,7 @@ def check_backend_test_suite():
     cmd = [str(venv_python), str(test_script)]
     res = subprocess.run(cmd, capture_output=True, text=True)
     if res.returncode == 0 and "100.0%" in res.stdout:
-        return True, "Automated test suite (44/44 tests) passed with 100.0% success"
+        return True, "Automated test suite (51/51 tests) passed with 100.0% success"
     return False, f"Test suite failed or returned code {res.returncode}"
 
 def check_frontend_build():
@@ -108,7 +108,7 @@ def main():
     checks = [
         ("Python 3 & Virtual Environment", check_python_env),
         ("Core ML / Geospatial Dependencies", check_required_packages),
-        ("44-Test Automated Platform Suite", check_backend_test_suite),
+        ("51-Test Automated Platform Suite", check_backend_test_suite),
         ("Next.js 14 Production Compilation", check_frontend_build),
         ("Essential Code & Pitch Deliverables", check_essential_files),
         ("Git Repository Synchronization", check_git_status)

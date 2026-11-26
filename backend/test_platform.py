@@ -174,6 +174,22 @@ def run_suite():
     })
     assert_test("Live Sensor Anomaly Injection", res_inj.status_code == 200 and res_inj.json().get("status") == "INJECTED")
 
+    # TEST 12: 6-Hour Predictive Inundation Timeline & Early Warning
+    res_pred = client.get("/api/v1/flood/predictive-timeline")
+    assert_test("Predictive Flood Timeline Endpoint", res_pred.status_code == 200)
+    pred_data = res_pred.json()
+    assert_test("Predictive Timeline Steps Count == 4", len(pred_data.get("steps", [])) == 4)
+    steps = pred_data.get("steps", [])
+    assert_test("First Step is T=0 (Current)", steps[0]["time_offset_hours"] == 0)
+    assert_test("Peak Crest Step T=+4h Detected", any(s["time_offset_hours"] == 4 for s in steps))
+    t2_step = next(s for s in steps if s["time_offset_hours"] == 2)
+    assert_test("T=+2h Early Warning Action Present", "PREEMPTIVE EVACUATION" in t2_step.get("recommended_action", ""))
+    assert_test("Dynamic GeoJSON Polygons Generated", len(t2_step.get("geojson", {}).get("features", [])) > 0)
+
+    # Test Custom Meteorological Inundation Simulation
+    res_sim = client.post("/api/v1/flood/simulate", json={"rain_rate_mm_hr": 45.0, "upstream_discharge_cusecs": 30000.0})
+    assert_test("Custom Flood Simulation API", res_sim.status_code == 200 and len(res_sim.json().get("steps", [])) == 4)
+
     # SUMMARY
     print("=" * 70)
     print(f"  TOTAL TESTS RUN : {total_tests}")

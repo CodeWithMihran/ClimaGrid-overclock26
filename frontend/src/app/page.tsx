@@ -8,6 +8,7 @@ import { DistressStream } from '../components/DistressStream';
 import { TacticalSideHUD } from '../components/TacticalSideHUD';
 import { QuickDistressSimulator } from '../components/QuickDistressSimulator';
 import { ArchitectureModal } from '../components/ArchitectureModal';
+import { PredictiveFloodTimeline } from '../components/PredictiveFloodTimeline';
 import {
   fetchIncidentQueue,
   parseDistressMessage,
@@ -286,6 +287,14 @@ export default function CommandOperationsPage() {
 
         {/* Center Column (Zone 1): Tactical Geospatial Map Canvas + Quick Simulator */}
         <div className="col-span-6 flex flex-col h-full overflow-hidden border-r border-slate-800">
+          {/* Top 6-Hour Predictive Inundation Timeline Slider (When in Flood Mode) */}
+          {activeModule === 'flood' && (
+            <PredictiveFloodTimeline
+              onSelectStepGeoJSON={(geo) => setFloodGeoJSON(geo)}
+              onTriggerEvacAlert={(action) => alert(`📢 NDMA SACHET PREEMPTIVE ALERT BROADCAST:\n\n${action}`)}
+            />
+          )}
+
           <div className="flex-1 relative">
             <TacticalMap
               activeModule={activeModule}

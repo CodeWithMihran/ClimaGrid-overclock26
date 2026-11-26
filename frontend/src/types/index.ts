@@ -129,3 +129,35 @@ export interface TelemetryData {
   };
 }
 
+export interface ImpassableInfra {
+  name: string;
+  status: string;
+  depth_feet: number;
+}
+
+export interface PredictiveFloodStep {
+  step_id: string;
+  time_offset_hours: number;
+  label: string;
+  status_badge: string;
+  solani_stage_meters: number;
+  discharge_cusecs: number;
+  flooded_area_hectares: number;
+  citizens_in_hazard_zone: number;
+  impassable_infrastructure: ImpassableInfra[];
+  at_risk_next: string;
+  recommended_action: string;
+  geojson: any;
+}
+
+export interface PredictiveTimelineResponse {
+  model_version: string;
+  meteorological_baseline: {
+    rain_rate_mm_hr: number;
+    upstream_source: string;
+    upstream_discharge_cusecs: number;
+    danger_threshold_stage_m: number;
+  };
+  steps: PredictiveFloodStep[];
+}
+

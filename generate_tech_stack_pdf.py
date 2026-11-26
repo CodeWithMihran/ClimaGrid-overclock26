@@ -407,6 +407,11 @@ def generate_pdf(output_path: str):
             Paragraph("Models upstream Haridwar discharge & rain rates to project 6-hour advance flood polygons (T=0, +2h, +4h, +6h), warning which bridges will submerge next.", table_cell)
         ],
         [
+            Paragraph("<b>Relief Logistics & Camps</b>", table_cell_bold),
+            Paragraph("<b>Smart Shelter Allocation Engine</b> (Medical Matching / Triage)", table_cell),
+            Paragraph("Roster of 4 Roorkee mega-camps (2,750 beds); matches rescued victims with closest camp offering needed pediatric/maternity care and available cots.", table_cell)
+        ],
+        [
             Paragraph("<b>Dynamic Routing</b>", table_cell_bold),
             Paragraph("<b>NetworkX</b> + Weighted Dijkstra / A* Algorithm", table_cell),
             Paragraph("Calculates shortest safe rescue route across Roorkee road graph, dynamically penalizing and bypassing submerged bridges (Brij Bridge).", table_cell)
@@ -454,9 +459,9 @@ def generate_pdf(output_path: str):
     
     cert_data = [[
         Paragraph(
-            "<b>STAGE READINESS AUDIT: 100% PASS (51/51 Tests Verified)</b><br/>"
-            "• <b>Automated Platform Test Suite:</b> 51 / 51 tests passing (100% success rate) covering all 7 API modules.<br/>"
-            "• <b>Predictive Inundation Early Warning:</b> 6-hour advance timeline forecasting bridge washouts & preemptive evac zones.<br/>"
+            "<b>STAGE READINESS AUDIT: 100% PASS (59/59 Tests Verified)</b><br/>"
+            "• <b>Automated Platform Test Suite:</b> 59 / 59 tests passing (100% success rate) covering all 8 API modules.<br/>"
+            "• <b>Predictive Inundation & Relief Logistics:</b> 6-hour advance timeline + smart medical shelter allocation engine.<br/>"
             "• <b>Offline Resilience:</b> Integrated fallback cache ensures zero blank screens during venue Wi-Fi outages.<br/>"
             "• <b>GitHub Repository:</b> <u>https://github.com/CodeWithMihran/ClimaGrid-overclock26</u> (Branch: <i>main</i>, Clean Tree)",
             body_style

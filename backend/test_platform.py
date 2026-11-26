@@ -190,6 +190,32 @@ def run_suite():
     res_sim = client.post("/api/v1/flood/simulate", json={"rain_rate_mm_hr": 45.0, "upstream_discharge_cusecs": 30000.0})
     assert_test("Custom Flood Simulation API", res_sim.status_code == 200 and len(res_sim.json().get("steps", [])) == 4)
 
+    # TEST 13: Smart Relief Shelter Logistics & Bed Allocation Engine
+    res_sh = client.get("/api/v1/shelters/list")
+    assert_test("Relief Shelters List Endpoint", res_sh.status_code == 200)
+    shelters = res_sh.json()
+    assert_test("Relief Shelters Count >= 4", len(shelters) >= 4)
+    assert_test("RIT Roorkee Safe Campus Present", any("RIT Roorkee" in s["name"] for s in shelters))
+
+    # Test Medical-Matching Shelter Allocation (Infant + Medical Needs -> RIT Safe Campus)
+    alloc_req = {
+        "incident_id": "SOS-TEST-ALLOC-01",
+        "incident_latitude": 29.8650,
+        "incident_longitude": 77.8990,
+        "headcount": 4,
+        "vulnerabilities": ["infant", "acute_medical_distress"]
+    }
+    res_alloc = client.post("/api/v1/shelters/allocate", json=alloc_req)
+    assert_test("Smart Shelter Allocation Endpoint", res_alloc.status_code == 200)
+    alloc_data = res_alloc.json()
+    assert_test("Shelter Allocation Status ALLOCATED", alloc_data.get("status") == "ALLOCATED")
+    assert_test("Allocated Beds Count == 4", alloc_data.get("allocated_beds") == 4)
+    assert_test("Rationale Identifies Medical Care", "critical facilities:" in alloc_data.get("rationale", "") or "Maternity" in alloc_data.get("rationale", ""))
+
+    # Test Supply Drop Inventory Update
+    res_drop = client.post("/api/v1/shelters/SHELTER-RIT-01/supply-drop", json={"added_water_liters": 5000, "added_rations": 200})
+    assert_test("Relief Supply Drop API", res_drop.status_code == 200 and res_drop.json()["shelter"]["potable_water_liters"] >= 23500)
+
     # SUMMARY
     print("=" * 70)
     print(f"  TOTAL TESTS RUN : {total_tests}")

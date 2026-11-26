@@ -161,3 +161,33 @@ export interface PredictiveTimelineResponse {
   steps: PredictiveFloodStep[];
 }
 
+export interface ReliefShelter {
+  id: string;
+  name: string;
+  landmark: string;
+  latitude: number;
+  longitude: number;
+  total_capacity_beds: number;
+  occupied_beds: number;
+  available_beds: number;
+  medical_capabilities: string[];
+  has_pediatric: boolean;
+  has_maternity: boolean;
+  potable_water_liters: number;
+  dry_ration_kits: number;
+  power_backup: string;
+  status: 'OPERATIONAL_ACCEPTING' | 'HIGH_OCCUPANCY' | 'CRITICAL_CAPACITY';
+  contact_officer: string;
+  contact_phone: string;
+}
+
+export interface ShelterAllocationResponse {
+  status: string;
+  incident_id: string;
+  recommended_shelter: ReliefShelter;
+  distance_km: number;
+  allocated_beds: number;
+  rationale: string;
+  remaining_shelter_capacity: number;
+}
+

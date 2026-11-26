@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square } from 'lucide-react';
+import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square, Home } from 'lucide-react';
 
 interface HeaderHUDProps {
   activeModule: 'flood' | 'water' | 'heat';
@@ -10,6 +10,7 @@ interface HeaderHUDProps {
   sosCount: number;
   criticalCount: number;
   onOpenArchitecture?: () => void;
+  onOpenShelters?: () => void;
   isTourRunning?: boolean;
   onToggleGuidedTour?: () => void;
 }
@@ -20,6 +21,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   sosCount,
   criticalCount,
   onOpenArchitecture,
+  onOpenShelters,
   isTourRunning = false,
   onToggleGuidedTour
 }) => {
@@ -129,6 +131,14 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
             )}
           </button>
         )}
+
+        <button
+          onClick={onOpenShelters}
+          className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-sm font-sans font-bold"
+        >
+          <Home className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Relief Camps</span>
+        </button>
 
         <button
           onClick={onOpenArchitecture}

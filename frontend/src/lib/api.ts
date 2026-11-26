@@ -1,4 +1,4 @@
-import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset, TelemetryData, PredictiveFloodStep, PredictiveTimelineResponse } from '../types';
+import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset, TelemetryData, PredictiveFloodStep, PredictiveTimelineResponse, ReliefShelter, ShelterAllocationResponse } from '../types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
@@ -673,5 +673,142 @@ export async function fetchPredictiveFloodTimeline(): Promise<PredictiveTimeline
         geojson: FALLBACK_FLOOD_GEO
       }
     ]
+  };
+}
+
+export async function fetchReliefShelters(): Promise<ReliefShelter[]> {
+  try {
+    const res = await fetch(`${API_BASE}/shelters/list`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch (e) {}
+
+  return [
+    {
+      id: "SHELTER-RIT-01",
+      name: "RIT Roorkee Safe Campus Safe Zone",
+      landmark: "RIT Roorkee Campus, Puhana",
+      latitude: 29.8350,
+      longitude: 77.8920,
+      total_capacity_beds: 650,
+      occupied_beds: 420,
+      available_beds: 230,
+      medical_capabilities: ["24/7 Trauma Triage", "Pediatric Care", "Maternity Ward", "Oxygen Concentrators"],
+      has_pediatric: true,
+      has_maternity: true,
+      potable_water_liters: 18500,
+      dry_ration_kits: 1400,
+      power_backup: "Solar Microgrid + 125kVA Genset",
+      status: "OPERATIONAL_ACCEPTING",
+      contact_officer: "Prof. S. Sharma (Camp Commandant)",
+      contact_phone: "+91-98970-11201"
+    },
+    {
+      id: "SHELTER-STADIUM-02",
+      name: "Roorkee Sports Stadium Mega-Camp",
+      landmark: "Nehru Stadium, Civil Lines",
+      latitude: 29.8690,
+      longitude: 77.8840,
+      total_capacity_beds: 1200,
+      occupied_beds: 980,
+      available_beds: 220,
+      medical_capabilities: ["General First Aid", "Dehydration Treatment", "Mobile Dispensary"],
+      has_pediatric: false,
+      has_maternity: false,
+      potable_water_liters: 32000,
+      dry_ration_kits: 3200,
+      power_backup: "Municipal Dual Genset",
+      status: "HIGH_OCCUPANCY",
+      contact_officer: "R. K. Verma (District Sports Officer)",
+      contact_phone: "+91-98970-11202"
+    },
+    {
+      id: "SHELTER-CIVIL-03",
+      name: "Civil Lines Community Center & School",
+      landmark: "Near Shiv Mandir, Civil Lines",
+      latitude: 29.8590,
+      longitude: 77.8940,
+      total_capacity_beds: 400,
+      occupied_beds: 380,
+      available_beds: 20,
+      medical_capabilities: ["Maternity Isolation Ward", "Elderly Care", "Cardiac Defibrillator"],
+      has_pediatric: true,
+      has_maternity: true,
+      potable_water_liters: 8200,
+      dry_ration_kits: 650,
+      power_backup: "Dedicated Generator",
+      status: "CRITICAL_CAPACITY",
+      contact_officer: "Dr. Meenakshi Joshi (Chief Medical Officer)",
+      contact_phone: "+91-98970-11203"
+    },
+    {
+      id: "SHELTER-SOLANI-04",
+      name: "Solani High-Ground Relief Tent City",
+      landmark: "Solani Aqueduct North High Ridge",
+      latitude: 29.8780,
+      longitude: 77.8900,
+      total_capacity_beds: 500,
+      occupied_beds: 190,
+      available_beds: 310,
+      medical_capabilities: ["Rapid First Aid Tents", "Mobile Jeevan Water Filter"],
+      has_pediatric: false,
+      has_maternity: false,
+      potable_water_liters: 15000,
+      dry_ration_kits: 950,
+      power_backup: "Mobile Solar Towers",
+      status: "OPERATIONAL_ACCEPTING",
+      contact_officer: "Inspector Vikram Rawat (SDRF)",
+      contact_phone: "+91-98970-11204"
+    }
+  ];
+}
+
+export async function allocateShelterForIncident(
+  incidentId: string,
+  latitude: number,
+  longitude: number,
+  headcount: number,
+  vulnerabilities: string[]
+): Promise<ShelterAllocationResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/shelters/allocate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        incident_id: incidentId,
+        incident_latitude: latitude,
+        incident_longitude: longitude,
+        headcount,
+        vulnerabilities
+      })
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {}
+
+  return {
+    status: "ALLOCATED",
+    incident_id: incidentId,
+    recommended_shelter: {
+      id: "SHELTER-RIT-01",
+      name: "RIT Roorkee Safe Campus Safe Zone",
+      landmark: "RIT Roorkee Campus, Puhana",
+      latitude: 29.8350,
+      longitude: 77.8920,
+      total_capacity_beds: 650,
+      occupied_beds: 424,
+      available_beds: 226,
+      medical_capabilities: ["24/7 Trauma Triage", "Pediatric Care", "Maternity Ward", "Oxygen Concentrators"],
+      has_pediatric: true,
+      has_maternity: true,
+      potable_water_liters: 18500,
+      dry_ration_kits: 1400,
+      power_backup: "Solar Microgrid + 125kVA Genset",
+      status: "OPERATIONAL_ACCEPTING",
+      contact_officer: "Prof. S. Sharma (Camp Commandant)",
+      contact_phone: "+91-98970-11201"
+    },
+    distance_km: 1.85,
+    allocated_beds: headcount,
+    rationale: "Matched based on proximity (1.85km) and critical facilities: Pediatric Care, Maternity Ward.",
+    remaining_shelter_capacity: 226
   };
 }

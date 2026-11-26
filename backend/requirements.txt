@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+httpx
+numpy
+pandas
+scikit-learn
+shapely
+networkx
+boto3

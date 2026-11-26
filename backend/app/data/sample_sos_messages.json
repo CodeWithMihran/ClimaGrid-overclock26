@@ -1,0 +1,32 @@
+[
+  {
+    "title": "Scenario A (P1 Critical - Baby & Unconscious Elder)",
+    "message": "Solani aqueduct ke paas paani 6ft ho gaya hai, dadi behosh hai aur chhota baby bhi hai chhat par, jaldi aao please!",
+    "source": "WhatsApp",
+    "expected_tier": "P1 - CRITICAL"
+  },
+  {
+    "title": "Scenario B (P1 Critical - Ground Floor Trapped & Rising Water)",
+    "message": "Sector 4 me ground floor kamre me 2 log fas gaye hain darwaza jam ho gaya hai, paani 5 feet badh gaya hai!",
+    "source": "Emergency 112",
+    "expected_tier": "P1 - CRITICAL"
+  },
+  {
+    "title": "Scenario C (P2 High - Pregnant Woman Near Shiv Mandir)",
+    "message": "Civil Lines near shiv mandir 4 log hain, ek pregnant aurat hai jinki delivery hone wali hai, boat dispatch karo.",
+    "source": "WhatsApp",
+    "expected_tier": "P2 - HIGH"
+  },
+  {
+    "title": "Scenario D (P3 Medium - Stranded but Safe on High Ground)",
+    "message": "Ramnagar brij bridge ke paas 6 log chhat par surakshit hain, pani 3ft hai road par, dry food and water kit chahiye.",
+    "source": "SMS Gateway",
+    "expected_tier": "P3 - MEDIUM"
+  },
+  {
+    "title": "Scenario E (P4 Low - Minor Road Waterlogging)",
+    "message": "Nehru nagar road par 1 foot waterlogging hai, gari nikalne me dikkat ho rahi hai.",
+    "source": "Citizen App",
+    "expected_tier": "P4 - LOW"
+  }
+]

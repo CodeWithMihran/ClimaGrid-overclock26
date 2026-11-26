@@ -1,0 +1,92 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "heat_zone_1",
+        "zone_name": "Roorkee Railway Station & Industrial Concrete Corridor",
+        "surface_temp_celsius": 44.8,
+        "ndvi_vegetation_index": 0.08,
+        "heat_stress_level": "EXTREME",
+        "vulnerable_population_density": 8200,
+        "cooling_center_needed": true,
+        "recommended_interventions": [
+          "Establish high-capacity misting & hydration station at Station Chowk",
+          "Deploy urban tree canopy along 2.4km paved asphalt corridor",
+          "Convert industrial flat roofs to reflective cool roofs"
+        ],
+        "fillColor": "#DC2626"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.8780, 29.8450],
+            [77.8890, 29.8470],
+            [77.8860, 29.8400],
+            [77.8760, 29.8390],
+            [77.8780, 29.8450]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "heat_zone_2",
+        "zone_name": "Old Roorkee Bazar Dense Commercial Trap",
+        "surface_temp_celsius": 42.1,
+        "ndvi_vegetation_index": 0.12,
+        "heat_stress_level": "HIGH",
+        "vulnerable_population_density": 6500,
+        "cooling_center_needed": true,
+        "recommended_interventions": [
+          "Install retractable pedestrian fabric shade canopies",
+          "Designate Old Tehsil complex as public air-conditioned relief refuge"
+        ],
+        "fillColor": "#EA580C"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.8870, 29.8580],
+            [77.8930, 29.8600],
+            [77.8920, 29.8550],
+            [77.8860, 29.8530],
+            [77.8870, 29.8580]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "heat_cool_buffer",
+        "zone_name": "IIT Roorkee Botanical & Forest Buffer (Thermal Sink)",
+        "surface_temp_celsius": 32.4,
+        "ndvi_vegetation_index": 0.65,
+        "heat_stress_level": "OPTIMAL_GREEN",
+        "vulnerable_population_density": 1800,
+        "cooling_center_needed": false,
+        "recommended_interventions": [
+          "Maintain existing dense sal and eucalyptus canopy as urban cool island"
+        ],
+        "fillColor": "#16A34A"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.8940, 29.8630],
+            [77.9030, 29.8660],
+            [77.9020, 29.8590],
+            [77.8930, 29.8570],
+            [77.8940, 29.8630]
+          ]
+        ]
+      }
+    }
+  ]
+}

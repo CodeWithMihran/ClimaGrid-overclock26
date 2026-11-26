@@ -1,0 +1,118 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "flood_zone_1",
+        "name": "Solani River Basin Inundation Zone",
+        "severity": "CRITICAL_RED",
+        "depth_feet": 6.8,
+        "hazard_score": 0.88,
+        "fillColor": "#EF4444"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.8920, 29.8690],
+            [77.9040, 29.8710],
+            [77.9080, 29.8640],
+            [77.8970, 29.8590],
+            [77.8920, 29.8690]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "flood_zone_2",
+        "name": "Civil Lines / Ganga Canal Low-Lying Breach",
+        "severity": "HIGH_ORANGE",
+        "depth_feet": 4.2,
+        "hazard_score": 0.65,
+        "fillColor": "#F97316"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.8850, 29.8550],
+            [77.8950, 29.8570],
+            [77.8930, 29.8500],
+            [77.8830, 29.8490],
+            [77.8850, 29.8550]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "flood_zone_3",
+        "name": "Ramnagar Peripheral Waterlogging",
+        "severity": "MODERATE_YELLOW",
+        "depth_feet": 2.1,
+        "hazard_score": 0.35,
+        "fillColor": "#EAB308"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.8760, 29.8650],
+            [77.8830, 29.8670],
+            [77.8820, 29.8600],
+            [77.8750, 29.8590],
+            [77.8760, 29.8650]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "submerged_bridge",
+        "name": "Brij Bridge (Submerged / Inaccessible)",
+        "type": "HAZARD_OBSTACLE",
+        "hazard_description": "Water current > 3.2 m/s, structure submerged by 5.5ft",
+        "is_impassable": true
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.8950, 29.8610]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "shelter_1",
+        "name": "Roorkee Cantt High-Ground Relief Camp",
+        "type": "SAFE_SHELTER",
+        "capacity": 500,
+        "occupancy": 210,
+        "status": "OPERATIONAL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.8820, 29.8510]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "shelter_2",
+        "name": "IIT Roorkee Multi-Purpose Hall Shelter",
+        "type": "SAFE_SHELTER",
+        "capacity": 800,
+        "occupancy": 340,
+        "status": "OPERATIONAL"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [77.8960, 29.8640]
+      }
+    }
+  ]
+}

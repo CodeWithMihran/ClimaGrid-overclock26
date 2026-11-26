@@ -1,0 +1,62 @@
+[
+  {
+    "id": "WS-SOLANI-01",
+    "name": "HydraSense Solani Aqueduct Intake",
+    "landmark": "Solani River Inundation Fringe",
+    "latitude": 29.8660,
+    "longitude": 77.8980,
+    "turbidity_ntu": 46.8,
+    "ph_level": 5.8,
+    "tds_ppm": 780,
+    "dissolved_oxygen_mg_l": 3.1,
+    "is_anomalous": true,
+    "status": "CRITICAL_CONTAMINATION",
+    "alert_message": "CRITICAL: Flood runoff breach detected! Turbidity 46.8 NTU exceeds safe limit (5 NTU). Extreme contamination risk.",
+    "updated_at": "Just now"
+  },
+  {
+    "id": "WS-CIVIL-02",
+    "name": "HydraSense Civil Lines Sub-Station",
+    "landmark": "Civil Lines Municipal Line",
+    "latitude": 29.8560,
+    "longitude": 77.8890,
+    "turbidity_ntu": 24.3,
+    "ph_level": 6.3,
+    "tds_ppm": 540,
+    "dissolved_oxygen_mg_l": 4.8,
+    "is_anomalous": true,
+    "status": "WARNING",
+    "alert_message": "WARNING: Pipeline pressure drop & secondary silt ingress detected. Issue precautionary boil-water notice.",
+    "updated_at": "2 mins ago"
+  },
+  {
+    "id": "WS-CANTT-03",
+    "name": "HydraSense Roorkee Cantt High-Ground Well",
+    "landmark": "Cantt Safe Reservoir",
+    "latitude": 29.8510,
+    "longitude": 77.8830,
+    "turbidity_ntu": 1.2,
+    "ph_level": 7.4,
+    "tds_ppm": 160,
+    "dissolved_oxygen_mg_l": 7.2,
+    "is_anomalous": false,
+    "status": "SAFE",
+    "alert_message": "All parameters normal. Potable water distribution operating safely.",
+    "updated_at": "1 min ago"
+  },
+  {
+    "id": "WS-IITR-04",
+    "name": "HydraSense IIT Roorkee Treatment Plant",
+    "landmark": "IIT Main Campus Feed",
+    "latitude": 29.8630,
+    "longitude": 77.8940,
+    "turbidity_ntu": 2.1,
+    "ph_level": 7.2,
+    "tds_ppm": 190,
+    "dissolved_oxygen_mg_l": 6.9,
+    "is_anomalous": false,
+    "status": "SAFE",
+    "alert_message": "Chlorine residual and TDS within standard WHO/IS-10500 limits.",
+    "updated_at": "4 mins ago"
+  }
+]

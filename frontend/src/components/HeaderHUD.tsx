@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu } from 'lucide-react';
+import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square } from 'lucide-react';
 
 interface HeaderHUDProps {
   activeModule: 'flood' | 'water' | 'heat';
@@ -10,6 +10,8 @@ interface HeaderHUDProps {
   sosCount: number;
   criticalCount: number;
   onOpenArchitecture?: () => void;
+  isTourRunning?: boolean;
+  onToggleGuidedTour?: () => void;
 }
 
 export const HeaderHUD: React.FC<HeaderHUDProps> = ({
@@ -17,7 +19,9 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   onModuleChange,
   sosCount,
   criticalCount,
-  onOpenArchitecture
+  onOpenArchitecture,
+  isTourRunning = false,
+  onToggleGuidedTour
 }) => {
   return (
     <header className="bg-[#0b132b] border-b border-slate-800 px-5 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-50 shadow-2xl">
@@ -102,6 +106,29 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
           <span className="text-slate-400">Fleet Ready:</span>
           <span className="text-emerald-400 font-semibold">11/14 Boats</span>
         </div>
+
+        {onToggleGuidedTour && (
+          <button
+            onClick={onToggleGuidedTour}
+            className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md font-sans font-bold text-xs ${
+              isTourRunning
+                ? 'bg-rose-600 text-white animate-pulse'
+                : 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black'
+            }`}
+          >
+            {isTourRunning ? (
+              <>
+                <Square className="w-3.5 h-3.5 fill-current" />
+                <span>Stop Tour</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>▶ 3-Min Pitch Tour</span>
+              </>
+            )}
+          </button>
+        )}
 
         <button
           onClick={onOpenArchitecture}

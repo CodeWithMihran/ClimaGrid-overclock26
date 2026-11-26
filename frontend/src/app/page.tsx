@@ -26,6 +26,39 @@ const TacticalMap = dynamic(
   { ssr: false }
 );
 
+const TOUR_STAGES = [
+  {
+    step: 1,
+    title: "STAGE 1/5: COMPOUND FLOOD INUNDATION",
+    narration: "A severe cloudburst strikes Roorkee. Solani river basin is submerged under 6.8ft of water; Brij Bridge is rendered impassable.",
+    module: 'flood' as const
+  },
+  {
+    step: 2,
+    title: "STAGE 2/5: MULTIMODAL VERNACULAR SOS INGESTION",
+    narration: "Citizen panicked voice SOS in Hindi is parsed. Bedrock extracts 4 trapped victims, flags unconscious elder + infant, and assigns P1-CRITICAL in <1.2s.",
+    module: 'flood' as const
+  },
+  {
+    step: 3,
+    title: "STAGE 3/5: HAZARD-AWARE SUBMERGED ROUTE BYPASS",
+    narration: "Direct path crosses submerged bridge. Lifeline360 dynamically plots a high-ground detour corridor. Operator approves fleet dispatch.",
+    module: 'flood' as const
+  },
+  {
+    step: 4,
+    title: "STAGE 4/5: CASCADING WATER QUALITY CONTAMINATION (JEEVAN)",
+    narration: "Flood recedes but seeps into municipal pipes. JEEVAN detects 9.3x turbidity spike (46.8 NTU) and generates official district Boil-Water Notice.",
+    module: 'water' as const
+  },
+  {
+    step: 5,
+    title: "STAGE 5/5: PRE-DISASTER URBAN HEAT RESILIENCE (HEATSHIELD)",
+    narration: "Before monsoons, this same area was a 44°C concrete heat trap. Simulates summer heatwave, scales cooling centers, and calculates tree canopy ROI.",
+    module: 'heat' as const
+  }
+];
+
 export default function CommandOperationsPage() {
   const [activeModule, setActiveModule] = useState<'flood' | 'water' | 'heat'>('flood');
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
@@ -40,6 +73,42 @@ export default function CommandOperationsPage() {
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [lastLatencyMs, setLastLatencyMs] = useState<number | null>(null);
   const [isArchModalOpen, setIsArchModalOpen] = useState<boolean>(false);
+  const [tourStep, setTourStep] = useState<number>(0); // 0 = off, 1-5 active
+
+  // Execute Tour Stage Effects
+  const goToTourStep = (stepNumber: number) => {
+    if (stepNumber < 1 || stepNumber > 5) {
+      setTourStep(0);
+      return;
+    }
+    setTourStep(stepNumber);
+    const target = TOUR_STAGES[stepNumber - 1];
+    setActiveModule(target.module);
+
+    if (stepNumber === 1) {
+      setAvoidHazards(true);
+    } else if (stepNumber === 2) {
+      playTacticalAlertSound();
+      if (incidents.length > 0) {
+        setSelectedIncident(incidents[0]);
+      }
+    } else if (stepNumber === 3) {
+      if (incidents.length > 0) {
+        handleCalculateRoute(incidents[0], true);
+        handleApproveDispatch(incidents[0].id);
+      }
+    } else if (stepNumber === 5) {
+      // open architecture modal on final step close or trigger
+    }
+  };
+
+  const handleToggleGuidedTour = () => {
+    if (tourStep > 0) {
+      setTourStep(0);
+    } else {
+      goToTourStep(1);
+    }
+  };
 
   // Live update of thermal polygons on map when user moves heatwave slider
   const handleHeatSimulationUpdate = (simulatedGeoJSON: any) => {
@@ -188,6 +257,8 @@ export default function CommandOperationsPage() {
         sosCount={incidents.length}
         criticalCount={criticalCount}
         onOpenArchitecture={() => setIsArchModalOpen(true)}
+        isTourRunning={tourStep > 0}
+        onToggleGuidedTour={handleToggleGuidedTour}
       />
 
       {/* 2. Main 3-Column Tactical Console */}
@@ -249,6 +320,52 @@ export default function CommandOperationsPage() {
           />
         </div>
       </div>
+
+      {/* Floating Guided Tour Walkthrough Controller */}
+      {tourStep > 0 && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#0b132b]/95 border-2 border-cyan-400 rounded-2xl shadow-2xl p-4 max-w-2xl w-full flex items-center justify-between gap-4 animate-bounce-subtle backdrop-blur-md">
+          <div className="space-y-1 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black font-mono bg-cyan-500 text-slate-950 px-2 py-0.5 rounded">
+                {TOUR_STAGES[tourStep - 1].title}
+              </span>
+              <span className="text-[10px] text-slate-400 font-mono">180s Pitch Tour</span>
+            </div>
+            <p className="text-xs text-slate-200 leading-snug">
+              {TOUR_STAGES[tourStep - 1].narration}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => goToTourStep(tourStep - 1)}
+              disabled={tourStep <= 1}
+              className="bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold"
+            >
+              Prev
+            </button>
+            <button
+              onClick={() => {
+                if (tourStep === 5) {
+                  setIsArchModalOpen(true);
+                  setTourStep(0);
+                } else {
+                  goToTourStep(tourStep + 1);
+                }
+              }}
+              className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-1.5 rounded-lg text-xs font-black"
+            >
+              {tourStep === 5 ? 'Finish & Open Architecture' : 'Next Step →'}
+            </button>
+            <button
+              onClick={() => setTourStep(0)}
+              className="text-slate-500 hover:text-slate-300 text-xs px-2 py-1"
+            >
+              Exit
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Judges Architecture & System Cloud Depth Modal */}
       <ArchitectureModal

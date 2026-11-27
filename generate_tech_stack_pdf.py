@@ -1,5 +1,5 @@
 """
-LIFELINE360 // CLIMAGRID
+CLIMAGRID
 Tech Stack Specification & End-to-End System Flowchart PDF Generator
 Overclock '26 Hackathon (RIT Roorkee)
 Produces a clean, executive 3-page whitepaper with zero awkward overflows.
@@ -41,7 +41,7 @@ class NumberedCanvas(canvas.Canvas):
         
         # Header (pages 2+)
         if self._pageNumber > 1:
-            self.drawString(40, 755, "LIFELINE360 // CLIMAGRID — Technical Stack Specification & System Workflow")
+            self.drawString(40, 755, "CLIMAGRID — Technical Stack Specification & System Workflow")
             self.setStrokeColor(colors.HexColor("#cbd5e1"))
             self.setLineWidth(0.5)
             self.line(40, 749, 572, 749)
@@ -52,7 +52,7 @@ class NumberedCanvas(canvas.Canvas):
         self.line(40, 36, 572, 36)
         
         self.setFont("Helvetica", 7.5)
-        self.drawString(40, 25, "Overclock '26 Hackathon (RIT Roorkee) | Team Lifeline360 / ClimaGrid | Confidential Architecture Whitepaper")
+        self.drawString(40, 25, "Overclock '26 Hackathon (RIT Roorkee) | Team ClimaGrid / ClimaGrid | Confidential Architecture Whitepaper")
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(572, 25, page_str)
         self.restoreState()
@@ -218,7 +218,7 @@ def generate_pdf(output_path: str):
     # =========================================================================
     # PAGE 1: EXECUTIVE SUMMARY & SYSTEM FLOWCHART
     # =========================================================================
-    story.append(Paragraph("LIFELINE360 // CLIMAGRID", title_style))
+    story.append(Paragraph("CLIMAGRID", title_style))
     story.append(Paragraph("Unified Technical Stack Specification & End-to-End System Architecture", subtitle_style))
     story.append(Spacer(1, 2))
     story.append(Paragraph("<b>Event:</b> Overclock '26 Hackathon (RIT Roorkee) | <b>Geographic Anchor:</b> Roorkee / Solani Aqueduct / Haridwar Ganga Basin", body_style))
@@ -231,7 +231,7 @@ def generate_pdf(output_path: str):
     ))
     story.append(Spacer(1, 4))
     story.append(Paragraph(
-        "<b>Lifeline360 solves this end-to-end through a single unified tactical platform across three critical phases:</b>",
+        "<b>ClimaGrid solves this end-to-end through a single unified tactical platform across three critical phases:</b>",
         body_bold
     ))
     story.append(Spacer(1, 4))
@@ -240,7 +240,7 @@ def generate_pdf(output_path: str):
         [
             Paragraph("<b>Disaster Phase</b>", table_header),
             Paragraph("<b>Real-World Problem</b>", table_header),
-            Paragraph("<b>How Lifeline360 Solves It</b>", table_header)
+            Paragraph("<b>How ClimaGrid Solves It</b>", table_header)
         ],
         [
             Paragraph("<b>DURING</b><br/>(Floods - 60%)", table_cell_bold),
@@ -282,7 +282,7 @@ def generate_pdf(output_path: str):
     # =========================================================================
     story.append(Paragraph("3. Step-by-Step Workflow Explained in Simple Language", h1_style))
     story.append(Paragraph(
-        "Here is the simple journey of an emergency incident through Lifeline360 from start to finish:",
+        "Here is the simple journey of an emergency incident through ClimaGrid from start to finish:",
         body_style
     ))
     story.append(Spacer(1, 4))
@@ -295,7 +295,7 @@ def generate_pdf(output_path: str):
          "In less than 1.2 seconds, AWS Bedrock (Claude 3.5 Sonnet) parses the natural speech. It extracts colloquial phrases like <i>'dadi behosh hai'</i> (elderly unconscious), identifies headcount (4 trapped), locks onto landmark proximity ('Solani Aqueduct'), and gauges water depth from photos."),
         
         ("Step 3: Open & Auditable Mathematical Triage Formula",
-         "Rather than using an untrustworthy 'black-box' neural network for life-and-death ranking, Lifeline360 uses a 100% transparent and auditable mathematical equation to rank every incident:"),
+         "Rather than using an untrustworthy 'black-box' neural network for life-and-death ranking, ClimaGrid uses a 100% transparent and auditable mathematical equation to rank every incident:"),
         
         ("Step 4: Dark-Navy EOC Operations Command Console",
          "The EOC Commander interface is organized into 3 high-contrast tactical zones: Zone 1 (Center) features Leaflet maps with dark CartoDB WebGL tiles, flood contours, and boat positions; Zone 2 (Left) streams the incident queue sorted strictly by triage score; Zone 3 (Right) displays fleet fuel/battery and sensor gauges."),
@@ -304,7 +304,7 @@ def generate_pdf(output_path: str):
          "To guarantee ethical AI standards, the AI never dispatches military or rescue units autonomously. An authorized NDRF human dispatcher reviews the verified photo and audio evidence, selects an available boat (e.g., NDRF-BOAT-04), and clicks 'Approve Dispatch'. The citizen's phone immediately shows their assigned unit."),
         
         ("Step 6: Hazard-Aware Dynamic Routing (A* Dijkstra Graph Bypass)",
-         "Normal routing engines send rescue boats across Brij Bridge (which is 5.5ft underwater and structurally compromised). Lifeline360 applies high penalty weights to flooded roads and bridges, automatically generating a safe, elevated high-ground detour that keeps rescue crews out of danger."),
+         "Normal routing engines send rescue boats across Brij Bridge (which is 5.5ft underwater and structurally compromised). ClimaGrid applies high penalty weights to flooded roads and bridges, automatically generating a safe, elevated high-ground detour that keeps rescue crews out of danger."),
         
         ("Step 7: JEEVAN Water Contamination Intelligence (Post-Disaster)",
          "Once the flood recedes, IoT water sensors detect a sudden 9.3x spike in turbidity (46.8 NTU) at the Purqazi water intake. The JEEVAN module alerts operators, automatically generates a printable municipal Boil-Water Advisory notice, and maps emergency potable water tanker locations."),
@@ -346,7 +346,7 @@ def generate_pdf(output_path: str):
     # =========================================================================
     story.append(Paragraph("4. Complete Technical Stack & Exact Work Provided", h1_style))
     story.append(Paragraph(
-        "The following matrix outlines every technology, library, framework, and cloud service used in Lifeline360, accompanied by its exact functional responsibility:",
+        "The following matrix outlines every technology, library, framework, and cloud service used in ClimaGrid, accompanied by its exact functional responsibility:",
         body_style
     ))
     story.append(Spacer(1, 4))
@@ -493,5 +493,5 @@ def generate_pdf(output_path: str):
     print(f"[✓] Successfully generated technical specification PDF at: {output_path}")
 
 if __name__ == "__main__":
-    out_file = sys.argv[1] if len(sys.argv) > 1 else "LIFELINE360_TECH_STACK_AND_ARCHITECTURE.pdf"
+    out_file = sys.argv[1] if len(sys.argv) > 1 else "CLIMAGRID_TECH_STACK_AND_ARCHITECTURE.pdf"
     generate_pdf(out_file)

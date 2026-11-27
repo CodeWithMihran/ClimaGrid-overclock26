@@ -3,162 +3,78 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { 
-  Map as MapIcon, 
-  AlertTriangle, 
-  Activity, 
-  Zap, 
+  AlertCircle, 
+  CheckCircle2, 
+  Navigation, 
+  Send, 
+  MapPin, 
+  Users, 
+  Waves, 
+  Clock, 
+  AlertTriangle,
+  ShieldAlert,
+  BatteryCharging,
   Layers,
-  ChevronRight,
-  Square,
-  Play
+  Radio,
+  Zap,
+  Sparkles,
+  MessageSquare
 } from 'lucide-react';
-import { HeaderHUD } from '../components/HeaderHUD';
-import { LiveTelemetryTicker } from '../components/LiveTelemetryTicker';
-import { DistressStream } from '../components/DistressStream';
-import { TacticalSideHUD } from '../components/TacticalSideHUD';
-import { QuickDistressSimulator } from '../components/QuickDistressSimulator';
-import { ArchitectureModal } from '../components/ArchitectureModal';
-import { ReliefShelterModal } from '../components/ReliefShelterModal';
-import { CAPBroadcastModal } from '../components/CAPBroadcastModal';
-import { DamageAssessmentModal } from '../components/DamageAssessmentModal';
-import { PredictiveFloodTimeline } from '../components/PredictiveFloodTimeline';
-import {
-  fetchIncidentQueue,
-  parseDistressMessage,
-  approveDispatch,
-  fetchFloodGeoJSON,
+import { Navbar } from '../components/Navbar';
+import { 
+  fetchIncidentQueue, 
+  parseDistressMessage, 
+  approveDispatch, 
+  calculateRoute, 
+  fetchFleetAssets, 
+  fetchSampleMessages,
   fetchWaterSensors,
   fetchHeatZones,
-  calculateRoute,
-  fetchFleetAssets,
-  fetchSampleMessages
+  fetchFloodGeoJSON
 } from '../lib/api';
-import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage } from '../types';
+import { IncidentRecord, RouteSegment, FleetAsset, SampleMessage, WaterSensorNode } from '../types';
 
-// Load TacticalMap dynamically to avoid SSR window/Leaflet errors
+// Load TacticalMap dynamically to avoid SSR window/Leaflet issues
 const TacticalMap = dynamic(
   () => import('../components/TacticalMap').then((mod) => mod.TacticalMap),
   { ssr: false }
 );
 
-const TOUR_STAGES = [
-  {
-    step: 1,
-    title: "STAGE 1/5: COMPOUND FLOOD INUNDATION",
-    narration: "A severe cloudburst strikes Roorkee. Solani river basin is submerged under 6.8ft of water; Brij Bridge is rendered impassable.",
-    module: 'flood' as const
-  },
-  {
-    step: 2,
-    title: "STAGE 2/5: MULTIMODAL VERNACULAR SOS INGESTION",
-    narration: "Citizen panicked voice SOS in Hindi is parsed. Bedrock extracts 4 trapped victims, flags unconscious elder + infant, and assigns P1-CRITICAL in <1.2s.",
-    module: 'flood' as const
-  },
-  {
-    step: 3,
-    title: "STAGE 3/5: HAZARD-AWARE SUBMERGED ROUTE BYPASS",
-    narration: "Direct path crosses submerged bridge. ClimaGrid dynamically plots a high-ground detour corridor. Operator approves fleet dispatch.",
-    module: 'flood' as const
-  },
-  {
-    step: 4,
-    title: "STAGE 4/5: CASCADING WATER QUALITY CONTAMINATION (JEEVAN)",
-    narration: "Flood recedes but seeps into municipal pipes. JEEVAN detects 9.3x turbidity spike (46.8 NTU) and generates official district Boil-Water Notice.",
-    module: 'water' as const
-  },
-  {
-    step: 5,
-    title: "STAGE 5/5: PRE-DISASTER URBAN HEAT RESILIENCE (HEATSHIELD)",
-    narration: "Before monsoons, this same area was a 44°C concrete heat trap. Simulates summer heatwave, scales cooling centers, and calculates tree canopy ROI.",
-    module: 'heat' as const
-  }
-];
-
-export default function CommandOperationsPage() {
-  const [activeModule, setActiveModule] = useState<'flood' | 'water' | 'heat'>('flood');
-  const [mobileTab, setMobileTab] = useState<'map' | 'sos' | 'intel' | 'simulator'>('map');
+export default function DispatchCommandPage() {
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<IncidentRecord | null>(null);
+  const [activeRoute, setActiveRoute] = useState<RouteSegment | null>(null);
+  const [avoidHazards, setAvoidHazards] = useState<boolean>(true);
+  const [fleetAssets, setFleetAssets] = useState<FleetAsset[]>([]);
+  const [sampleMessages, setSampleMessages] = useState<SampleMessage[]>([]);
   const [waterSensors, setWaterSensors] = useState<WaterSensorNode[]>([]);
   const [heatData, setHeatData] = useState<any>(null);
   const [floodGeoJSON, setFloodGeoJSON] = useState<any>(null);
-  const [fleetAssets, setFleetAssets] = useState<FleetAsset[]>([]);
-  const [sampleMessages, setSampleMessages] = useState<SampleMessage[]>([]);
-  const [activeRoute, setActiveRoute] = useState<RouteSegment | null>(null);
-  const [avoidHazards, setAvoidHazards] = useState<boolean>(true);
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  // Quick Ingestion Input
+  const [inputText, setInputText] = useState('');
+  const [selectedSource, setSelectedSource] = useState('WhatsApp');
+  const [isProcessing, setIsProcessing] = useState(false);
   const [lastLatencyMs, setLastLatencyMs] = useState<number | null>(null);
-  const [isArchModalOpen, setIsArchModalOpen] = useState<boolean>(false);
-  const [isShelterModalOpen, setIsShelterModalOpen] = useState<boolean>(false);
-  const [isCAPModalOpen, setIsCAPModalOpen] = useState<boolean>(false);
-  const [isDamageModalOpen, setIsDamageModalOpen] = useState<boolean>(false);
-  const [tourStep, setTourStep] = useState<number>(0); // 0 = off, 1-5 active
 
-  // Execute Tour Stage Effects
-  const goToTourStep = (stepNumber: number) => {
-    if (stepNumber < 1 || stepNumber > 5) {
-      setTourStep(0);
-      return;
-    }
-    setTourStep(stepNumber);
-    const target = TOUR_STAGES[stepNumber - 1];
-    setActiveModule(target.module);
-
-    if (stepNumber === 1) {
-      setAvoidHazards(true);
-      setMobileTab('map');
-    } else if (stepNumber === 2) {
-      playTacticalAlertSound();
-      setMobileTab('sos');
-      if (incidents.length > 0) {
-        setSelectedIncident(incidents[0]);
-      }
-    } else if (stepNumber === 3) {
-      setMobileTab('map');
-      if (incidents.length > 0) {
-        handleCalculateRoute(incidents[0], true);
-        handleApproveDispatch(incidents[0].id);
-      }
-    } else if (stepNumber === 4) {
-      setMobileTab('intel');
-    } else if (stepNumber === 5) {
-      setMobileTab('intel');
-    }
-  };
-
-  const handleToggleGuidedTour = () => {
-    if (tourStep > 0) {
-      setTourStep(0);
-    } else {
-      goToTourStep(1);
-    }
-  };
-
-  // Live update of thermal polygons on map when user moves heatwave slider
-  const handleHeatSimulationUpdate = (simulatedGeoJSON: any) => {
-    setHeatData(simulatedGeoJSON);
-  };
-
-  // Initial Data Load
   useEffect(() => {
     async function init() {
       try {
-        const [q, flood, water, heat, fleet, samples] = await Promise.all([
+        const [q, fleet, samples, water, heat, flood] = await Promise.all([
           fetchIncidentQueue(),
-          fetchFloodGeoJSON(),
+          fetchFleetAssets(),
+          fetchSampleMessages(),
           fetchWaterSensors(),
           fetchHeatZones(),
-          fetchFleetAssets(),
-          fetchSampleMessages()
+          fetchFloodGeoJSON()
         ]);
         setIncidents(q);
-        setFloodGeoJSON(flood);
-        setWaterSensors(water);
-        setHeatData(heat);
         setFleetAssets(fleet);
         setSampleMessages(samples);
+        setWaterSensors(water);
+        setHeatData(heat);
+        setFloodGeoJSON(flood);
 
-        // Pre-select first P1 critical incident if present
         if (q.length > 0) {
           setSelectedIncident(q[0]);
           handleCalculateRoute(q[0], true);
@@ -169,20 +85,19 @@ export default function CommandOperationsPage() {
     }
     init();
 
-    // Live Queue Sync: Auto-polls every 2.5s to catch SOS incoming from /citizen mobile app
-    const syncInterval = setInterval(async () => {
+    // Auto-poll incident queue every 2.5s for live citizen updates
+    const interval = setInterval(async () => {
       try {
-        const liveQueue = await fetchIncidentQueue();
-        setIncidents(liveQueue);
+        const liveQ = await fetchIncidentQueue();
+        setIncidents(liveQ);
       } catch (e) {
-        // quiet sync fallback
+        // quiet sync
       }
     }, 2500);
 
-    return () => clearInterval(syncInterval);
+    return () => clearInterval(interval);
   }, []);
 
-  // Calculate dynamic route for an incident
   const handleCalculateRoute = async (incident: IncidentRecord, avoid: boolean = avoidHazards) => {
     try {
       const boatOrigin: [number, number] = [29.8550, 77.8860];
@@ -190,12 +105,11 @@ export default function CommandOperationsPage() {
       const route = await calculateRoute(boatOrigin, targetDest, avoid);
       setActiveRoute(route);
     } catch (err) {
-      console.error('Failed to calculate safe corridor:', err);
+      console.error('Route calculation error:', err);
     }
   };
 
-  // Toggle Hazard Avoidance (Show Safe Detour vs Direct Danger Path)
-  const handleToggleHazardAvoidance = () => {
+  const handleToggleAvoidance = () => {
     const nextAvoid = !avoidHazards;
     setAvoidHazards(nextAvoid);
     if (selectedIncident) {
@@ -203,29 +117,6 @@ export default function CommandOperationsPage() {
     }
   };
 
-  // Tactical Alert Sound Synthesizer (Web Audio API - Zero Asset Dependency)
-  const playTacticalAlertSound = () => {
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.3);
-    } catch (e) {
-      // quiet fallback
-    }
-  };
-
-  // Human-in-the-loop Approve Dispatch
   const handleApproveDispatch = async (incidentId: string) => {
     try {
       await approveDispatch(incidentId, 'NDRF-BOAT-04');
@@ -241,19 +132,17 @@ export default function CommandOperationsPage() {
     }
   };
 
-  // Ingest raw citizen distress text
-  const handleSendMessage = async (message: string, source: string) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+
     setIsProcessing(true);
     const start = performance.now();
     try {
-      const record = await parseDistressMessage(message, source);
+      const record = await parseDistressMessage(inputText, selectedSource);
       const elapsed = Math.round(performance.now() - start);
       setLastLatencyMs(elapsed);
 
-      // Play tactical sensory chime for incoming distress call
-      playTacticalAlertSound();
-
-      // Re-sort queue so new P1 immediately tops the list
       setIncidents((prev) => {
         const next = [record, ...prev.filter((i) => i.id !== record.id)];
         next.sort((a, b) => b.triage.final_score - a.triage.final_score);
@@ -262,119 +151,267 @@ export default function CommandOperationsPage() {
 
       setSelectedIncident(record);
       handleCalculateRoute(record, avoidHazards);
+      setInputText('');
     } catch (err) {
-      console.error('Failed to parse distress message:', err);
+      console.error('Message parsing failed:', err);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const criticalCount = incidents.filter((i) => i.triage.priority_tier.includes('P1')).length;
-
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#070d1e] text-slate-100">
-      {/* 1. Header Tactical Bar with Module Toggles */}
-      <HeaderHUD
-        activeModule={activeModule}
-        onModuleChange={setActiveModule}
-        sosCount={incidents.length}
-        criticalCount={criticalCount}
-        onOpenArchitecture={() => setIsArchModalOpen(true)}
-        onOpenShelters={() => setIsShelterModalOpen(true)}
-        onOpenCAPAlert={() => setIsCAPModalOpen(true)}
-        onOpenDamageAssessment={() => setIsDamageModalOpen(true)}
-        isTourRunning={tourStep > 0}
-        onToggleGuidedTour={handleToggleGuidedTour}
-      />
+    <div className="min-h-screen bg-[#070d1e] text-slate-100 flex flex-col font-sans">
+      <Navbar />
 
-      {/* 1.1 Live IoT Telemetry & River Gauge Stream Bar */}
-      <LiveTelemetryTicker />
+      {/* Main Content Area - Spacious 2-Column Grid */}
+      <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column (5 Cols on LG): Live Distress Triage Stream & Ingestion */}
+        <section className="lg:col-span-5 flex flex-col gap-5">
+          {/* Section Header */}
+          <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-4 shadow-xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-white tracking-wide">
+                  LIVE DISTRESS TRIAGE QUEUE (AAPDA360)
+                </h2>
+                <p className="text-xs text-slate-400">Real-time NLP priority scoring & emergency dispatch</p>
+              </div>
+            </div>
+            <span className="text-xs font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-800 px-3 py-1 rounded-full">
+              {incidents.length} Records Active
+            </span>
+          </div>
 
-      {/* 1.2 Mobile / Tablet View Switcher Tab Bar (Visible on < lg) */}
-      <div className="lg:hidden bg-[#0b132b] border-b border-slate-800 px-3 py-1.5 flex items-center justify-between text-xs font-semibold gap-1 shrink-0">
-        <button
-          onClick={() => setMobileTab('map')}
-          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === 'map'
-              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <MapIcon className="w-3.5 h-3.5" />
-          <span>Map View</span>
-        </button>
+          {/* Incident Cards List */}
+          <div className="space-y-3.5 max-h-[640px] overflow-y-auto pr-1">
+            {incidents.map((inc) => {
+              const isSelected = selectedIncident?.id === inc.id;
+              const isP1 = inc.triage.priority_tier.includes('P1');
+              const isP2 = inc.triage.priority_tier.includes('P2');
+              const isDispatched = inc.status === 'DISPATCHED';
 
-        <button
-          onClick={() => setMobileTab('sos')}
-          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === 'sos'
-              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />
-          <span>SOS Queue ({incidents.length})</span>
-        </button>
+              return (
+                <div
+                  key={inc.id}
+                  onClick={() => {
+                    setSelectedIncident(inc);
+                    handleCalculateRoute(inc, avoidHazards);
+                  }}
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer shadow-lg ${
+                    isSelected
+                      ? 'bg-slate-800/95 border-cyan-400 ring-2 ring-cyan-500/30 shadow-cyan-950/60'
+                      : 'bg-[#0b132b] border-slate-800/90 hover:border-slate-700 hover:bg-[#0e1738]'
+                  }`}
+                >
+                  {/* Top Bar: ID, Priority Badge & Score */}
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono text-sm font-bold text-slate-200">{inc.id}</span>
+                      <span
+                        className={`text-xs font-bold px-2.5 py-0.5 rounded-md font-mono ${
+                          isP1
+                            ? 'bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse'
+                            : isP2
+                            ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                            : 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
+                        }`}
+                      >
+                        {inc.triage.priority_tier}
+                      </span>
+                    </div>
 
-        <button
-          onClick={() => setMobileTab('intel')}
-          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === 'intel'
-              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <Activity className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Fleet & Intel</span>
-        </button>
+                    <span className="font-mono text-sm font-bold text-cyan-400 bg-cyan-950/70 border border-cyan-800/60 px-2.5 py-0.5 rounded-lg">
+                      Score: {inc.triage.final_score.toFixed(2)}
+                    </span>
+                  </div>
 
-        <button
-          onClick={() => setMobileTab('simulator')}
-          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
-            mobileTab === 'simulator'
-              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-              : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <Zap className="w-3.5 h-3.5 text-purple-400" />
-          <span>Simulator</span>
-        </button>
-      </div>
+                  {/* Raw Citizen Distress Message */}
+                  <div className="bg-[#070d1e] p-3 rounded-xl border border-slate-800/80 mb-3">
+                    <p className="text-sm text-slate-200 leading-relaxed italic">
+                      &ldquo;{inc.raw_message}&rdquo;
+                    </p>
+                  </div>
 
-      {/* 2. Main Tactical Console: Responsive 3-Column on Desktop (lg+), Tabbed on Mobile (< lg) */}
-      <div className="flex-1 lg:grid lg:grid-cols-12 overflow-hidden relative">
-        {/* Left Column (Zone 2): Distress Triage Stream */}
-        <div className={`h-full overflow-hidden ${mobileTab === 'sos' ? 'block' : 'hidden'} lg:block lg:col-span-3 border-r border-slate-800`}>
-          <DistressStream
-            incidents={incidents}
-            selectedIncident={selectedIncident}
-            onSelectIncident={(inc) => {
-              setSelectedIncident(inc);
-              handleCalculateRoute(inc, avoidHazards);
-              if (window.innerWidth < 1024) setMobileTab('map');
-            }}
-            onApproveDispatch={handleApproveDispatch}
-            onCalculateRoute={(inc) => {
-              setSelectedIncident(inc);
-              handleCalculateRoute(inc, avoidHazards);
-              if (window.innerWidth < 1024) setMobileTab('map');
-            }}
-          />
-        </div>
+                  {/* Extracted Details Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-[#070d1e]/80 p-2.5 rounded-xl border border-slate-800/70 mb-3 font-medium">
+                    <div className="flex items-center gap-2 text-slate-300">
+                      <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <span className="truncate">{inc.landmark}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-300">
+                      <Users className="w-4 h-4 text-yellow-400 shrink-0" />
+                      <span>{inc.trapped_count} Trapped</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-300">
+                      <Waves className="w-4 h-4 text-blue-400 shrink-0" />
+                      <span>Water: {inc.water_level_feet} ft</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
+                      <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                      <span>{inc.timestamp}</span>
+                    </div>
+                  </div>
 
-        {/* Center Column (Zone 1): Tactical Geospatial Map Canvas + Quick Simulator */}
-        <div className={`h-full flex-col overflow-hidden ${mobileTab === 'map' ? 'flex' : 'hidden'} lg:flex lg:col-span-6 border-r border-slate-800`}>
-          {/* Top 6-Hour Predictive Inundation Timeline Slider (When in Flood Mode) */}
-          {activeModule === 'flood' && (
-            <PredictiveFloodTimeline
-              onSelectStepGeoJSON={(geo) => setFloodGeoJSON(geo)}
-              onTriggerEvacAlert={(action) => alert(`NDMA SACHET PREEMPTIVE ALERT BROADCAST:\n\n${action}`)}
-            />
-          )}
+                  {/* Vulnerability Tags */}
+                  {inc.vulnerabilities.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mb-3">
+                      {inc.vulnerabilities.map((v, i) => (
+                        <span
+                          key={i}
+                          className="text-xs bg-rose-950/70 text-rose-300 border border-rose-800/60 px-2 py-0.5 rounded-md font-mono flex items-center gap-1.5"
+                        >
+                          <AlertTriangle className="w-3 h-3 text-rose-400" />
+                          <span>{v}</span>
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-          <div className="flex-1 relative min-h-[300px]">
+                  {/* Reasoning */}
+                  <p className="text-xs text-slate-400 mb-3 font-mono leading-relaxed">
+                    <b>Triage Rationale:</b> {inc.triage.explanation}
+                  </p>
+
+                  {/* Actions: Route Preview & Approve Fleet */}
+                  <div className="flex items-center gap-3 pt-2.5 border-t border-slate-800">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedIncident(inc);
+                        handleCalculateRoute(inc, avoidHazards);
+                      }}
+                      className="flex-1 bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs py-2 px-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all border border-slate-700 shadow-sm"
+                    >
+                      <Navigation className="w-4 h-4 text-cyan-400" />
+                      <span>Preview Route</span>
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleApproveDispatch(inc.id);
+                      }}
+                      disabled={isDispatched}
+                      className={`flex-1 text-xs py-2 px-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+                        isDispatched
+                          ? 'bg-emerald-950 text-emerald-400 border border-emerald-800 cursor-not-allowed'
+                          : 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-950'
+                      }`}
+                    >
+                      {isDispatched ? (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          <span>Dispatched</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4" />
+                          <span>Approve Fleet Dispatch</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Quick Distress Message Ingestion Box */}
+          <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <Zap className="w-4 h-4 text-cyan-400" />
+                <span>Simulate Emergency Distress Ingestion</span>
+              </h3>
+              {lastLatencyMs && (
+                <span className="text-xs font-mono text-emerald-400 font-bold">
+                  Bedrock NLP: {(lastLatencyMs / 1000).toFixed(2)}s
+                </span>
+              )}
+            </div>
+
+            {/* Quick Presets */}
+            <div className="flex flex-wrap gap-1.5">
+              <span className="text-xs text-slate-400 flex items-center gap-1 font-medium mr-1">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                Presets:
+              </span>
+              {sampleMessages.map((sample, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setInputText(sample.message);
+                    setSelectedSource(sample.source);
+                  }}
+                  className="text-xs bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-cyan-500/50 px-2.5 py-1 rounded-lg transition-all"
+                >
+                  <span className="font-bold text-cyan-400">{sample.title.split(' ')[0]}</span>{' '}
+                  <span className="text-slate-400">({sample.expected_tier})</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Ingestion Form */}
+            <form onSubmit={handleSendMessage} className="flex gap-2">
+              <input
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Paste Hindi/English distress message (e.g., 'Solani aqueduct ke paas paani 6ft ho gaya hai...')"
+                className="flex-1 bg-[#070d1e] border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+              />
+              <select
+                value={selectedSource}
+                onChange={(e) => setSelectedSource(e.target.value)}
+                className="bg-[#070d1e] border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-300 focus:outline-none"
+              >
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Emergency 112">Emergency 112</option>
+                <option value="SMS Gateway">SMS</option>
+              </select>
+              <button
+                type="submit"
+                disabled={isProcessing || !inputText.trim()}
+                className="bg-cyan-500 hover:bg-cyan-400 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-cyan-950"
+              >
+                {isProcessing ? <span>Extracting...</span> : <><Zap className="w-4 h-4 fill-current" /><span>Triage</span></>}
+              </button>
+            </form>
+          </div>
+        </section>
+
+        {/* Right Column (7 Cols on LG): Map & Live Route Optimization */}
+        <section className="lg:col-span-7 flex flex-col gap-5">
+          {/* Section Header */}
+          <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-4 shadow-xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                <Navigation className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-white tracking-wide">
+                  TACTICAL GEOSPATIAL MAP & LIVE ROUTE OPTIMIZATION
+                </h2>
+                <p className="text-xs text-slate-400">Hazard-aware obstacle bypass & high-ground rescue routing</p>
+              </div>
+            </div>
+            <button
+              onClick={handleToggleAvoidance}
+              className="text-xs font-bold py-1.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-2 transition-all shadow-sm"
+            >
+              <Layers className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{avoidHazards ? 'Bypass Active: Safe High-Ground' : 'Blind Path: Direct Danger'}</span>
+            </button>
+          </div>
+
+          {/* Map Container */}
+          <div className="bg-[#0b132b] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl h-[460px] relative">
             <TacticalMap
-              activeModule={activeModule}
+              activeModule="flood"
               incidents={incidents}
               selectedIncident={selectedIncident}
               onSelectIncident={(inc) => {
@@ -388,115 +425,121 @@ export default function CommandOperationsPage() {
             />
           </div>
 
-          {/* Bottom Live Bedrock Distress Simulator (Visible on Desktop) */}
-          <div className="hidden lg:block">
-            <QuickDistressSimulator
-              onSendMessage={handleSendMessage}
-              sampleMessages={sampleMessages}
-              isProcessing={isProcessing}
-              lastLatencyMs={lastLatencyMs}
-            />
-          </div>
-        </div>
+          {/* Route Optimization Telemetry Card (SW-01) */}
+          {activeRoute && (
+            <div className="bg-[#0b132b] border border-cyan-500/40 rounded-2xl p-4 shadow-xl space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-bold text-white">
+                  <Navigation className="w-4 h-4 text-cyan-400" />
+                  <span>DYNAMIC RESCUE CORRIDOR TELEMETRY</span>
+                </div>
+                <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full ${
+                  activeRoute.is_safe
+                    ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
+                    : 'bg-red-950 text-red-400 border border-red-800'
+                }`}>
+                  {activeRoute.is_safe ? 'SUBMERGED-SAFE HIGH-GROUND' : 'DANGEROUS DIRECT CORRIDOR'}
+                </span>
+              </div>
 
-        {/* Mobile Dedicated Simulator Tab (< lg) */}
-        <div className={`h-full overflow-y-auto ${mobileTab === 'simulator' ? 'block' : 'hidden'} lg:hidden p-3`}>
-          <QuickDistressSimulator
-            onSendMessage={async (msg, src) => {
-              await handleSendMessage(msg, src);
-              setMobileTab('map');
-            }}
-            sampleMessages={sampleMessages}
-            isProcessing={isProcessing}
-            lastLatencyMs={lastLatencyMs}
-          />
-        </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                <div className="bg-[#070d1e] p-3 rounded-xl border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">CORRIDOR DISTANCE</span>
+                  <span className="text-base font-bold text-white">{activeRoute.distance_km} km</span>
+                </div>
+                <div className="bg-[#070d1e] p-3 rounded-xl border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">ESTIMATED TRAVEL TIME</span>
+                  <span className="text-base font-bold text-cyan-400">{activeRoute.duration_minutes} mins</span>
+                </div>
+                <div className="bg-[#070d1e] p-3 rounded-xl border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">TARGET INCIDENT</span>
+                  <span className="text-base font-bold text-yellow-400">{selectedIncident?.id || 'Selected'}</span>
+                </div>
+                <div className="bg-[#070d1e] p-3 rounded-xl border border-slate-800">
+                  <span className="text-slate-400 block text-[11px]">ESTIMATED WATER DEPTH</span>
+                  <span className="text-base font-bold text-rose-400">{selectedIncident?.water_level_feet || 6} ft</span>
+                </div>
+              </div>
 
-        {/* Right Column (Zone 3): Fleet Telemetry, Water & Heat Intel, Route Stats */}
-        <div className={`h-full overflow-hidden ${mobileTab === 'intel' ? 'block' : 'hidden'} lg:block lg:col-span-3`}>
-          <TacticalSideHUD
-            activeModule={activeModule}
-            fleetAssets={fleetAssets}
-            waterSensors={waterSensors}
-            activeRoute={activeRoute}
-            onToggleHazardAvoidance={handleToggleHazardAvoidance}
-            avoidHazards={avoidHazards}
-            onHeatSimulationUpdate={handleHeatSimulationUpdate}
-          />
-        </div>
-      </div>
-
-      {/* Floating Guided Tour Walkthrough Controller */}
-      {tourStep > 0 && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#0b132b]/95 border-2 border-cyan-400 rounded-2xl shadow-2xl p-4 max-w-2xl w-[92%] sm:w-full flex flex-col sm:flex-row items-center justify-between gap-3 backdrop-blur-md">
-          <div className="space-y-1 flex-1 text-center sm:text-left">
-            <div className="flex items-center justify-center sm:justify-start gap-2">
-              <span className="text-xs font-black font-mono bg-cyan-500 text-slate-950 px-2 py-0.5 rounded">
-                {TOUR_STAGES[tourStep - 1].title}
-              </span>
-              <span className="text-[10px] text-slate-400 font-mono">180s Pitch Tour</span>
+              {activeRoute.avoided_hazards.length > 0 && (
+                <div className="p-3 bg-red-950/30 border border-red-900/50 rounded-xl text-xs space-y-1">
+                  <span className="font-bold text-red-300 flex items-center gap-1.5">
+                    <AlertTriangle className="w-4 h-4 text-red-400" />
+                    <span>Real-Time Road Blockages Automatically Detoured:</span>
+                  </span>
+                  <ul className="list-disc pl-5 text-red-200/90 space-y-0.5 text-xs font-medium">
+                    {activeRoute.avoided_hazards.map((h, i) => (
+                      <li key={i}>{h}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
-            <p className="text-xs text-slate-200 leading-snug">
-              {TOUR_STAGES[tourStep - 1].narration}
-            </p>
+          )}
+
+          {/* Staging Hubs & Fleet Assets (SW-01 Multi-Tier Dispatch) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Optimal Drop Zones */}
+            <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
+              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-cyan-400" />
+                  <span>Optimal Drop Zones & Staging (SW-01)</span>
+                </span>
+                <span className="text-xs text-cyan-400 font-mono font-bold">2 ACTIVE</span>
+              </h3>
+              <div className="space-y-2 text-xs">
+                <div className="bg-[#070d1e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-white">Solani High-Ground Helipad (LZ-1)</p>
+                    <p className="text-[11px] text-slate-400">Elevation: 274m • Air Drop & Boat Launch</p>
+                  </div>
+                  <span className="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-md font-mono font-bold">
+                    ACTIVE
+                  </span>
+                </div>
+                <div className="bg-[#070d1e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-white">IIT Roorkee Stadium Staging Depot</p>
+                    <p className="text-[11px] text-slate-400">Volunteer Assembly & Medical Depot</p>
+                  </div>
+                  <span className="text-xs bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-md font-mono font-bold">
+                    READY
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Live Fleet Assets */}
+            <div className="bg-[#0b132b] border border-slate-800 rounded-2xl p-4 shadow-xl space-y-2.5">
+              <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center justify-between">
+                <span className="flex items-center gap-1.5">
+                  <Radio className="w-4 h-4 text-emerald-400" />
+                  <span>Rescue Fleet Readiness</span>
+                </span>
+                <span className="text-xs text-emerald-400 font-mono font-bold">LIVE GPS</span>
+              </h3>
+              <div className="space-y-2 text-xs">
+                {fleetAssets.slice(0, 3).map((asset) => (
+                  <div
+                    key={asset.id}
+                    className="bg-[#070d1e] p-2.5 rounded-xl border border-slate-800 flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="font-bold text-white">{asset.callsign}</p>
+                      <p className="text-[11px] text-slate-400">{asset.type} • {asset.status}</p>
+                    </div>
+                    <div className="flex items-center gap-1.5 font-mono text-xs text-slate-300">
+                      <BatteryCharging className="w-4 h-4 text-cyan-400" />
+                      <span>{asset.battery_or_fuel_pct}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => goToTourStep(tourStep - 1)}
-              disabled={tourStep <= 1}
-              className="bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-            >
-              Prev
-            </button>
-            <button
-              onClick={() => {
-                if (tourStep === 5) {
-                  setIsArchModalOpen(true);
-                  setTourStep(0);
-                } else {
-                  goToTourStep(tourStep + 1);
-                }
-              }}
-              className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-1.5 rounded-lg text-xs font-black shadow-md shadow-cyan-950 transition-all flex items-center gap-1"
-            >
-              <span>{tourStep === 5 ? 'Open Architecture' : 'Next Step'}</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => setTourStep(0)}
-              className="text-slate-400 hover:text-slate-200 text-xs px-2 py-1 transition-colors"
-            >
-              Exit
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Cloud Architecture & Technical Depth Modal */}
-      <ArchitectureModal
-        isOpen={isArchModalOpen}
-        onClose={() => setIsArchModalOpen(false)}
-      />
-
-      {/* Smart Relief Shelters & Multi-Warehouse Logistics Modal */}
-      <ReliefShelterModal
-        isOpen={isShelterModalOpen}
-        onClose={() => setIsShelterModalOpen(false)}
-        selectedIncident={selectedIncident}
-      />
-
-      {/* NDMA SACHET / CAP Geofenced Emergency Siren Generator Modal */}
-      <CAPBroadcastModal
-        isOpen={isCAPModalOpen}
-        onClose={() => setIsCAPModalOpen(false)}
-      />
-
-      {/* Autonomous Drone Damage & MHA SDRF Relief Loss Calculator Modal */}
-      <DamageAssessmentModal
-        isOpen={isDamageModalOpen}
-        onClose={() => setIsDamageModalOpen(false)}
-      />
+        </section>
+      </main>
     </div>
   );
 }

@@ -55,6 +55,10 @@ body {
   font-family: inherit;
 }
 
+.leaflet-tile {
+  filter: brightness(0.7) invert(1) contrast(1.6) hue-rotate(200deg) saturate(0.3);
+}
+
 .leaflet-popup-content-wrapper {
   background: #0b132b !important;
   color: #f1f5f9 !important;

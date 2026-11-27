@@ -46,39 +46,39 @@ export default function HeatResiliencePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
-      <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 space-y-8">
         {/* Header Card */}
-        <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 flex items-center justify-center text-rose-600 dark:text-rose-400 shadow-xs">
-              <Flame className="w-6 h-6 animate-pulse" />
+        <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
+            <div className="h-14 w-14 rounded-2xl bg-[#fef9ee] dark:bg-[#342918] border border-[#fcedca] dark:border-[#4d3a1f] flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-2xs">
+              <Flame className="w-7 h-7 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#2f2e2b] dark:text-[#f4f4f5] tracking-tight">
                   HEATSHIELD URBAN HEAT RESILIENCE & ROI SIMULATOR
                 </h1>
-                <span className="bg-rose-50 dark:bg-zinc-800 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-zinc-700 text-xs font-mono font-semibold px-3 py-0.5 rounded-full">
+                <span className="bg-[#fef9ee] dark:bg-[#342918] text-amber-700 dark:text-amber-300 border border-[#fcedca] dark:border-[#4d3a1f] text-xs font-mono font-semibold px-3 py-1 rounded-full">
                   PRE-DISASTER MITIGATION
                 </span>
               </div>
-              <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+              <p className="text-sm sm:text-[15px] text-[#787774] dark:text-[#9b9a97] mt-1">
                 Satellite thermal mapping, extreme heatwave stress testing & 3-year reflective cool roof municipal ROI
               </p>
             </div>
           </div>
 
           {/* Sub-Tab Navigation */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#09090b] p-1.5 rounded-xl border border-slate-200 dark:border-zinc-800">
+          <div className="flex items-center bg-[#f1f1ef] dark:bg-[#262626] p-1.5 rounded-xl border border-[#e3e2e0] dark:border-[#333333]">
             <button
               onClick={() => setActiveTab('simulator')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === 'simulator'
-                  ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-zinc-700 font-semibold'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  ? 'bg-white dark:bg-[#2e2e2e] text-[#2f2e2b] dark:text-white shadow-xs border border-[#deddd9] dark:border-[#404040] font-semibold'
+                  : 'text-[#6b6966] dark:text-[#a8a7a4] hover:text-[#2f2e2b] dark:hover:text-white'
               }`}
             >
               <Thermometer className="w-4 h-4 text-rose-600 dark:text-rose-400" />
@@ -87,10 +87,10 @@ export default function HeatResiliencePage() {
 
             <button
               onClick={() => setActiveTab('roi')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === 'roi'
-                  ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-zinc-700 font-semibold'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  ? 'bg-white dark:bg-[#2e2e2e] text-[#2f2e2b] dark:text-white shadow-xs border border-[#deddd9] dark:border-[#404040] font-semibold'
+                  : 'text-[#6b6966] dark:text-[#a8a7a4] hover:text-[#2f2e2b] dark:hover:text-white'
               }`}
             >
               <TrendingDown className="w-4 h-4 text-amber-600 dark:text-amber-400" />
@@ -100,17 +100,17 @@ export default function HeatResiliencePage() {
         </div>
 
         {/* Interactive Temperature Slider Card */}
-        <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4">
+        <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-7 shadow-xs space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <span className="text-xs font-mono font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider block">
                 EXTREME AMBIENT TEMPERATURE SLIDER
               </span>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1">
+              <h3 className="text-xl font-bold text-[#2f2e2b] dark:text-[#f4f4f5] mt-1">
                 Simulate Roorkee Peak Summer Heatwave ({ambientTemp}°C)
               </h3>
             </div>
-            <span className="text-3xl font-bold text-rose-600 dark:text-rose-400 font-mono">
+            <span className="text-4xl font-bold text-rose-600 dark:text-rose-400 font-mono">
               {ambientTemp}°C
             </span>
           </div>
@@ -122,10 +122,10 @@ export default function HeatResiliencePage() {
             step={1}
             value={ambientTemp}
             onChange={(e) => handleTempChange(Number(e.target.value))}
-            className="w-full h-2.5 bg-slate-200 dark:bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-rose-600"
+            className="w-full h-3 bg-[#e9e9e7] dark:bg-[#333333] rounded-lg appearance-none cursor-pointer accent-rose-600"
           />
 
-          <div className="flex justify-between text-xs font-mono text-slate-500 dark:text-zinc-400">
+          <div className="flex justify-between text-xs sm:text-sm font-mono text-[#787774] dark:text-[#9b9a97]">
             <span>35°C (Moderate)</span>
             <span>40°C (Heatwave Alert)</span>
             <span>44°C (Severe)</span>
@@ -135,67 +135,67 @@ export default function HeatResiliencePage() {
 
         {/* Dynamic Simulation Output Metrics */}
         {simData && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
-            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-              <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">COOLING SHELTERS SCALED</span>
-              <span className="text-2xl font-bold text-rose-600 dark:text-rose-400 block">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 font-mono">
+            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+              <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">COOLING SHELTERS SCALED</span>
+              <span className="text-3xl font-bold text-rose-600 dark:text-rose-400 block">
                 {simData.required_cooling_shelters} Centers
               </span>
-              <span className="text-xs text-slate-500 dark:text-zinc-400 block mt-1">AC & Misting Stations</span>
+              <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1">AC & Misting Stations</span>
             </div>
 
-            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-              <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">POPULATION AT RISK</span>
-              <span className="text-2xl font-bold text-amber-700 dark:text-amber-400 block">
+            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+              <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">POPULATION AT RISK</span>
+              <span className="text-3xl font-bold text-amber-600 dark:text-amber-400 block">
                 {simData.vulnerable_citizens_at_risk.toLocaleString()}
               </span>
-              <span className="text-xs text-amber-600 dark:text-amber-400 block mt-1">Informal Settlements</span>
+              <span className="text-xs sm:text-sm text-amber-600 dark:text-amber-400 block mt-1">Informal Settlements</span>
             </div>
 
-            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-              <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">HEAT INDEX PEAK</span>
-              <span className="text-2xl font-bold text-slate-900 dark:text-zinc-100 block">
+            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+              <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">HEAT INDEX PEAK</span>
+              <span className="text-3xl font-bold text-[#2f2e2b] dark:text-white block">
                 {simData.projected_heat_index_c}°C
               </span>
-              <span className="text-xs text-rose-600 dark:text-rose-400 block mt-1">Wet-Bulb Danger Mark</span>
+              <span className="text-xs sm:text-sm text-rose-600 dark:text-rose-400 block mt-1">Wet-Bulb Danger Mark</span>
             </div>
 
-            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-              <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">ADVISORY STATUS</span>
-              <span className="text-2xl font-bold text-rose-600 dark:text-rose-400 block truncate">
+            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+              <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">ADVISORY STATUS</span>
+              <span className="text-3xl font-bold text-rose-600 dark:text-rose-400 block truncate">
                 {simData.heat_alert_level}
               </span>
-              <span className="text-xs text-emerald-700 dark:text-emerald-400 block mt-1">NDMA Protocol Active</span>
+              <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1">NDMA Protocol Active</span>
             </div>
           </div>
         )}
 
         {/* TAB 1: HEAT SIMULATOR WARDS */}
         {activeTab === 'simulator' && simData && (
-          <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-7 shadow-xs space-y-5">
+            <h3 className="text-lg font-bold text-[#2f2e2b] dark:text-white flex items-center gap-2.5">
               <Thermometer className="w-5 h-5 text-rose-600 dark:text-rose-400" />
               <span>Ward-Level Urban Heat Island Telemetry</span>
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {simData.hotspot_wards?.map((ward: any, i: number) => (
                 <div
                   key={i}
-                  className="bg-slate-50 dark:bg-[#18181b] p-4 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-2 text-xs font-mono"
+                  className="bg-[#f7f6f3] dark:bg-[#191919] p-5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] space-y-2.5 text-sm font-mono"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900 dark:text-white text-sm">{ward.name}</span>
-                    <span className="bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 px-2 py-0.5 rounded font-bold text-xs">
+                    <span className="font-bold text-[#2f2e2b] dark:text-white text-base">{ward.name}</span>
+                    <span className="bg-[#fdf2f2] dark:bg-[#341d1d] text-[#b91c1c] dark:text-[#f87171] border border-[#fae1e1] dark:border-[#4d2525] px-3 py-1 rounded-md font-bold text-xs">
                       {ward.surface_temp_c}°C Surface Temp
                     </span>
                   </div>
-                  <p className="text-slate-600 dark:text-zinc-300 font-sans text-xs">
+                  <p className="text-[#575653] dark:text-[#d4d4d4] font-sans text-sm">
                     <b>Risk:</b> {ward.vulnerability_reason}
                   </p>
-                  <div className="flex items-center justify-between text-slate-500 dark:text-zinc-400 pt-2 border-t border-slate-200 dark:border-zinc-800">
+                  <div className="flex items-center justify-between text-[#787774] dark:text-[#9b9a97] pt-2.5 border-t border-[#e9e9e7] dark:border-[#2e2e2e] text-xs">
                     <span>Target Population: <b>{ward.population.toLocaleString()}</b></span>
-                    <span className="text-sky-700 dark:text-sky-400">Canopy: {ward.tree_canopy_pct}%</span>
+                    <span className="text-sky-600 dark:text-sky-400">Canopy: {ward.tree_canopy_pct}%</span>
                   </div>
                 </div>
               ))}
@@ -205,41 +205,41 @@ export default function HeatResiliencePage() {
 
         {/* TAB 2: COOL ROOF 3-YEAR ROI */}
         {activeTab === 'roi' && (
-          <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-5">
+          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-7 shadow-xs space-y-6">
             <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h3 className="text-xl font-bold text-[#2f2e2b] dark:text-white flex items-center gap-2.5">
                 <TrendingDown className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 <span>Tree Canopy & Reflective Cool Roof 3-Year Municipal ROI</span>
               </h3>
-              <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+              <p className="text-sm text-[#787774] dark:text-[#9b9a97] mt-1">
                 Projected thermal reduction and energy savings across Roorkee municipal housing clusters:
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {interventions.map((inv, i) => (
                 <div
                   key={i}
-                  className="bg-slate-50 dark:bg-[#18181b] p-5 rounded-xl border border-slate-200 dark:border-zinc-800 space-y-3 shadow-xs"
+                  className="bg-[#f7f6f3] dark:bg-[#191919] p-6 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] space-y-3.5 shadow-xs"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-mono font-bold text-amber-700 dark:text-amber-400 uppercase">{inv.category}</span>
-                    <span className="text-xs bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full font-mono font-semibold">
+                    <span className="text-xs bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34] px-3 py-1 rounded-full font-mono font-semibold">
                       -{inv.temp_reduction_c}°C Drop
                     </span>
                   </div>
-                  <h4 className="font-bold text-sm text-slate-900 dark:text-white">{inv.title}</h4>
-                  <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{inv.description}</p>
-                  <div className="pt-3 border-t border-slate-200 dark:border-zinc-800 font-mono text-xs space-y-1">
+                  <h4 className="font-bold text-base text-[#2f2e2b] dark:text-white">{inv.title}</h4>
+                  <p className="text-sm text-[#575653] dark:text-[#d4d4d4] leading-relaxed">{inv.description}</p>
+                  <div className="pt-3 border-t border-[#e9e9e7] dark:border-[#2e2e2e] font-mono text-xs sm:text-sm space-y-1.5">
                     <div className="flex justify-between">
-                      <span className="text-slate-500 dark:text-zinc-400">Cost:</span>
-                      <b className="text-slate-900 dark:text-zinc-100">₹{(inv.cost_inr / 100000).toFixed(1)} Lakhs</b>
+                      <span className="text-[#787774] dark:text-[#9b9a97]">Cost:</span>
+                      <b className="text-[#2f2e2b] dark:text-white">₹{(inv.cost_inr / 100000).toFixed(1)} Lakhs</b>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-slate-500 dark:text-zinc-400">3-Yr Savings:</span>
-                      <b className="text-emerald-700 dark:text-emerald-400">₹{(inv.three_year_savings_inr / 100000).toFixed(1)} Lakhs</b>
+                      <span className="text-[#787774] dark:text-[#9b9a97]">3-Yr Savings:</span>
+                      <b className="text-emerald-600 dark:text-emerald-400">₹{(inv.three_year_savings_inr / 100000).toFixed(1)} Lakhs</b>
                     </div>
-                    <div className="flex justify-between text-sky-700 dark:text-sky-300 font-semibold">
+                    <div className="flex justify-between text-sky-600 dark:text-sky-400 font-semibold">
                       <span>ROI Payback:</span>
                       <span>{inv.payback_months} Months</span>
                     </div>

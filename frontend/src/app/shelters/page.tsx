@@ -63,39 +63,39 @@ export default function ReliefSheltersPage() {
   const totalRations = shelters.reduce((acc, s) => acc + s.dry_ration_kits, 0);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
-      <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 space-y-8">
         {/* Header Banner */}
-        <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-xs">
-              <Home className="w-6 h-6" />
+        <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
+            <div className="h-14 w-14 rounded-2xl bg-[#eef8f2] dark:bg-[#1b2b22] border border-[#ccecd8] dark:border-[#244b34] flex items-center justify-center text-[#227744] dark:text-[#4ade80] shadow-2xs">
+              <Home className="w-7 h-7" />
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#2f2e2b] dark:text-[#f4f4f5] tracking-tight">
                   RELIEF CAMPS & MULTI-WAREHOUSE LOGISTICS
                 </h1>
-                <span className="bg-emerald-50 dark:bg-zinc-800 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-zinc-700 text-xs font-mono font-semibold px-3 py-0.5 rounded-full">
+                <span className="bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34] text-xs font-mono font-semibold px-3 py-1 rounded-full">
                   SW-01 OPTIMIZER
                 </span>
               </div>
-              <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+              <p className="text-sm sm:text-[15px] text-[#787774] dark:text-[#9b9a97] mt-1">
                 Real-time bed occupancy, medical triage facility matching & regional stock synchronization across Roorkee
               </p>
             </div>
           </div>
 
           {/* Sub-Tab Navigation */}
-          <div className="flex items-center bg-slate-100 dark:bg-[#09090b] p-1.5 rounded-xl border border-slate-200 dark:border-zinc-800">
+          <div className="flex items-center bg-[#f1f1ef] dark:bg-[#262626] p-1.5 rounded-xl border border-[#e3e2e0] dark:border-[#333333]">
             <button
               onClick={() => setActiveTab('shelters')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === 'shelters'
-                  ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-zinc-700 font-semibold'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  ? 'bg-white dark:bg-[#2e2e2e] text-[#2f2e2b] dark:text-white shadow-xs border border-[#deddd9] dark:border-[#404040] font-semibold'
+                  : 'text-[#6b6966] dark:text-[#a8a7a4] hover:text-[#2f2e2b] dark:hover:text-white'
               }`}
             >
               <Home className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
@@ -104,10 +104,10 @@ export default function ReliefSheltersPage() {
 
             <button
               onClick={() => setActiveTab('warehouse')}
-              className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-2 transition-all ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all ${
                 activeTab === 'warehouse'
-                  ? 'bg-white dark:bg-zinc-800 text-slate-900 dark:text-white shadow-xs border border-slate-200/80 dark:border-zinc-700 font-semibold'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-zinc-100'
+                  ? 'bg-white dark:bg-[#2e2e2e] text-[#2f2e2b] dark:text-white shadow-xs border border-[#deddd9] dark:border-[#404040] font-semibold'
+                  : 'text-[#6b6966] dark:text-[#a8a7a4] hover:text-[#2f2e2b] dark:hover:text-white'
               }`}
             >
               <Package className="w-4 h-4 text-sky-600 dark:text-sky-400" />
@@ -117,53 +117,53 @@ export default function ReliefSheltersPage() {
         </div>
 
         {/* Top KPI Metrics Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono">
-          <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-            <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">TOTAL BED OCCUPANCY</span>
-            <span className="text-2xl font-bold text-slate-900 dark:text-zinc-100 block">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 font-mono">
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">TOTAL BED OCCUPANCY</span>
+            <span className="text-3xl font-bold text-[#2f2e2b] dark:text-white block">
               {occupiedBeds} / {totalBeds}
             </span>
-            <span className="text-xs text-amber-700 dark:text-amber-400 block mt-1">({availableBeds} Free Cots Available)</span>
+            <span className="text-xs sm:text-sm text-amber-600 dark:text-amber-400 block mt-1">({availableBeds} Free Cots Available)</span>
           </div>
 
-          <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-            <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">POTABLE DRINKING WATER</span>
-            <span className="text-2xl font-bold text-sky-700 dark:text-sky-400 block">
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">POTABLE DRINKING WATER</span>
+            <span className="text-3xl font-bold text-sky-600 dark:text-sky-400 block">
               {totalWater.toLocaleString()} Liters
             </span>
-            <span className="text-xs text-slate-500 dark:text-zinc-400 block mt-1">Jeevan Verified Safe Stock</span>
+            <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1">Jeevan Verified Safe Stock</span>
           </div>
 
-          <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-            <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">DRY RATION FOOD KITS</span>
-            <span className="text-2xl font-bold text-amber-700 dark:text-amber-400 block">
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">DRY RATION FOOD KITS</span>
+            <span className="text-3xl font-bold text-amber-600 dark:text-amber-400 block">
               {totalRations.toLocaleString()} Kits
             </span>
-            <span className="text-xs text-slate-500 dark:text-zinc-400 block mt-1">72-Hour Ready Meal Packs</span>
+            <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1">72-Hour Ready Meal Packs</span>
           </div>
 
-          <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
-            <span className="text-xs text-slate-500 dark:text-zinc-400 block mb-1">CAPACITY UTILIZATION</span>
-            <span className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 block">
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">CAPACITY UTILIZATION</span>
+            <span className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 block">
               {totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : 0}%
             </span>
-            <span className="text-xs text-emerald-600 dark:text-emerald-400 block mt-1">Safe Threshold (&lt;85%)</span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1">Safe Threshold (&lt;85%)</span>
           </div>
         </div>
 
         {/* TAB 1: SHELTERS & MEDICAL BED ALLOCATION */}
         {activeTab === 'shelters' && (
-          <div className="space-y-6">
+          <div className="space-y-7">
             {/* 1-Click Medical Matching Simulation Bar */}
-            <div className="bg-white dark:bg-[#121214] border border-sky-200 dark:border-sky-800/80 rounded-2xl p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
               <div>
                 <span className="text-xs font-mono font-semibold text-sky-700 dark:text-sky-400 uppercase tracking-wider block">
                   MULTI-CRITERIA BED ALLOCATION ENGINE
                 </span>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-1">
+                <h3 className="text-base sm:text-lg font-bold text-[#2f2e2b] dark:text-[#f4f4f5] mt-1">
                   Automated Medical Matching for Pregnant Women, Infants & Critical Patients
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                <p className="text-sm text-[#787774] dark:text-[#9b9a97] mt-1">
                   Routes vulnerable patients to shelters with matching pediatric cribs, maternity beds, and doctors.
                 </p>
               </div>
@@ -171,25 +171,25 @@ export default function ReliefSheltersPage() {
               <button
                 onClick={handleSimulateAllocation}
                 disabled={isAllocating}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-xs transition-colors shrink-0 disabled:opacity-50"
+                className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-bold text-sm sm:text-base px-6 py-3 rounded-xl flex items-center gap-2.5 shadow-xs transition-all shrink-0 disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4 fill-current" />
+                <Sparkles className="w-5 h-5 fill-current text-sky-400 dark:text-sky-600" />
                 <span>{isAllocating ? 'Matching Patients...' : 'Run Auto-Allocation Simulation'}</span>
               </button>
             </div>
 
             {/* Allocation Result Banner */}
             {allocationResult && (
-              <div className="p-4 bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 rounded-2xl flex items-start gap-4 shadow-xs text-xs">
+              <div className="p-5 bg-[#eef8f2] dark:bg-[#192b1f] border border-[#ccecd8] dark:border-[#274f35] rounded-2xl flex items-start gap-4 shadow-xs text-sm">
                 <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <div className="flex-1 space-y-1">
-                  <h4 className="text-sm font-bold text-emerald-900 dark:text-emerald-200">
+                <div className="flex-1 space-y-1.5">
+                  <h4 className="text-base font-bold text-emerald-900 dark:text-emerald-200">
                     Beds Successfully Allocated at {allocationResult.recommended_shelter.name}
                   </h4>
-                  <p className="text-slate-700 dark:text-zinc-300 leading-relaxed">
+                  <p className="text-[#3b3a37] dark:text-[#d4d4d4] leading-relaxed">
                     <b>Rationale:</b> {allocationResult.rationale} Distance: <b>{allocationResult.distance_km} km</b>.
                   </p>
-                  <p className="text-slate-600 dark:text-zinc-400 font-mono">
+                  <p className="text-[#787774] dark:text-[#9b9a97] font-mono text-xs">
                     Officer in Charge: <b>{allocationResult.recommended_shelter.contact_officer}</b> (Phone: {allocationResult.recommended_shelter.contact_phone})
                   </p>
                 </div>
@@ -197,41 +197,41 @@ export default function ReliefSheltersPage() {
             )}
 
             {/* Grid of Shelter Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {shelters.map((shelter) => {
                 const pct = Math.round((shelter.occupied_beds / shelter.total_capacity_beds) * 100);
                 return (
                   <div
                     key={shelter.id}
-                    className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs hover:border-slate-300 dark:hover:border-zinc-700 transition-colors space-y-4"
+                    className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs hover:border-[#deddd9] dark:hover:border-[#383838] transition-colors space-y-5"
                   >
-                    <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
-                        <h3 className="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2.5">
+                        <h3 className="font-bold text-lg text-[#2f2e2b] dark:text-white flex items-center gap-3">
                           <span>{shelter.name}</span>
                           <span className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full ${
                             shelter.status === 'CRITICAL_CAPACITY'
-                              ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
+                              ? 'bg-[#fdf2f2] dark:bg-[#381e1e] text-[#b91c1c] dark:text-[#f87171] border border-[#fbd5d5] dark:border-[#522929]'
                               : shelter.status === 'HIGH_OCCUPANCY'
-                              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
-                              : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800'
+                              ? 'bg-[#fef9ee] dark:bg-[#342918] text-[#b45309] dark:text-[#fbbf24] border border-[#fcedca] dark:border-[#4d3a1f]'
+                              : 'bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34]'
                           }`}>
                             {shelter.status.replace('_', ' ')}
                           </span>
                         </h3>
-                        <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">{shelter.landmark}</p>
+                        <p className="text-sm text-[#787774] dark:text-[#9b9a97] mt-1">{shelter.landmark}</p>
                       </div>
 
-                      <div className="text-right font-mono text-xs">
-                        <span className="text-base font-bold text-slate-900 dark:text-zinc-100 block">{shelter.available_beds} beds free</span>
-                        <span className="text-slate-500 dark:text-zinc-400 text-xs block">
+                      <div className="text-right font-mono">
+                        <span className="text-lg font-bold text-[#2f2e2b] dark:text-white block">{shelter.available_beds} beds free</span>
+                        <span className="text-[#787774] dark:text-[#9b9a97] text-xs block">
                           ({shelter.occupied_beds}/{shelter.total_capacity_beds} occupied)
                         </span>
                       </div>
                     </div>
 
                     {/* Occupancy Progress Bar */}
-                    <div className="w-full bg-slate-100 dark:bg-zinc-800 rounded-full h-2.5 overflow-hidden border border-slate-200 dark:border-zinc-700">
+                    <div className="w-full bg-[#f1f1ef] dark:bg-[#2b2b2b] rounded-full h-3 overflow-hidden border border-[#e3e2e0] dark:border-[#383838]">
                       <div
                         className={`h-full transition-all duration-500 ${
                           pct > 85 ? 'bg-rose-500' : pct > 65 ? 'bg-amber-500' : 'bg-emerald-500'
@@ -242,16 +242,16 @@ export default function ReliefSheltersPage() {
 
                     {/* Medical Capabilities Chips */}
                     <div>
-                      <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono block mb-1.5 font-semibold">
+                      <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-2 font-semibold uppercase">
                         MEDICAL FACILITIES & CRITICAL CARE:
                       </span>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex flex-wrap gap-2">
                         {shelter.medical_capabilities.map((med, i) => (
                           <span
                             key={i}
-                            className="bg-slate-50 dark:bg-[#18181b] border border-slate-200 dark:border-zinc-800 text-slate-700 dark:text-zinc-300 px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 font-medium"
+                            className="bg-[#f7f6f3] dark:bg-[#191919] border border-[#e9e9e7] dark:border-[#2e2e2e] text-[#2f2e2b] dark:text-[#e6e6e5] px-3 py-1.5 rounded-lg text-xs sm:text-[13px] flex items-center gap-2 font-medium"
                           >
-                            <HeartPulse className="w-3.5 h-3.5 text-rose-500" />
+                            <HeartPulse className="w-4 h-4 text-rose-500" />
                             <span>{med}</span>
                           </span>
                         ))}
@@ -259,16 +259,16 @@ export default function ReliefSheltersPage() {
                     </div>
 
                     {/* Supplies & Contact Row */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-200 dark:border-zinc-800 text-xs font-mono text-slate-600 dark:text-zinc-300">
-                      <div className="flex items-center gap-1.5 text-sky-700 dark:text-sky-400 font-bold">
+                    <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e] text-sm font-mono text-[#575653] dark:text-[#a8a7a4]">
+                      <div className="flex items-center gap-2 text-sky-600 dark:text-sky-400 font-bold">
                         <Droplets className="w-4 h-4" />
                         <span>{shelter.potable_water_liters.toLocaleString()} L Water</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-bold">
+                      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold">
                         <Utensils className="w-4 h-4" />
                         <span>{shelter.dry_ration_kits.toLocaleString()} Ration Kits</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-bold">
+                      <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-bold">
                         <Phone className="w-4 h-4" />
                         <span>{shelter.contact_phone}</span>
                       </div>
@@ -282,123 +282,131 @@ export default function ReliefSheltersPage() {
 
         {/* TAB 2: MULTI-WAREHOUSE STOCK SYNC (SW-01 ADVANCED GOAL) */}
         {activeTab === 'warehouse' && (
-          <div className="space-y-6">
-            <div className="bg-white dark:bg-[#121214] border border-sky-200 dark:border-sky-800/80 rounded-2xl p-5 shadow-xs flex flex-wrap items-center justify-between gap-4">
+          <div className="space-y-7">
+            <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
               <div>
                 <span className="text-xs font-mono font-semibold text-sky-700 dark:text-sky-400 uppercase tracking-wider block">
                   REGIONAL DISASTER LOGISTICS HUBS
                 </span>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white mt-1">
+                <h3 className="text-base sm:text-lg font-bold text-[#2f2e2b] dark:text-[#f4f4f5] mt-1">
                   Automated Multi-Warehouse State Store Synchronization (SW-01 Advanced Goal)
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                <p className="text-sm text-[#787774] dark:text-[#9b9a97] mt-1">
                   Synchronizes emergency inventory across Roorkee depots via serverless Amazon DynamoDB & EventBridge streams.
                 </p>
               </div>
 
-              <span className="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 rounded-full text-xs font-mono font-semibold flex items-center gap-2">
-                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              <span className="bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34] px-4 py-2 rounded-full text-xs font-mono font-semibold flex items-center gap-2 shadow-2xs">
+                <RefreshCw className="w-4 h-4 animate-spin text-emerald-600 dark:text-emerald-400" />
                 <span>STATE STORE SYNCED</span>
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
-                  <span className="font-bold text-base text-slate-900 dark:text-white">Roorkee Central Depot (Civil Lines)</span>
-                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold">NODE: WH-01</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-[#e9e9e7] dark:border-[#2e2e2e] pb-4">
+                  <span className="font-bold text-lg text-[#2f2e2b] dark:text-white">Roorkee Central Depot (Civil Lines)</span>
+                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold bg-[#f0f7fb] dark:bg-[#1a2634] px-2.5 py-1 rounded-md border border-[#d8eaf6] dark:border-[#223547]">
+                    NODE: WH-01
+                  </span>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Rescue Boats:</span>
-                    <span className="text-base font-bold text-slate-900 dark:text-zinc-100 mt-0.5 block">8 Boats Ready</span>
+                <div className="grid grid-cols-2 gap-4 text-sm font-mono">
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Rescue Boats:</span>
+                    <span className="text-lg font-bold text-[#2f2e2b] dark:text-white block">8 Boats Ready</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Dry Ration Packs:</span>
-                    <span className="text-base font-bold text-amber-700 dark:text-amber-400 mt-0.5 block">1,850 Kits</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Dry Ration Packs:</span>
+                    <span className="text-lg font-bold text-amber-600 dark:text-amber-400 block">1,850 Kits</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Purification Tablets:</span>
-                    <span className="text-base font-bold text-sky-700 dark:text-sky-400 mt-0.5 block">6,000 Units</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Purification Tablets:</span>
+                    <span className="text-lg font-bold text-sky-600 dark:text-sky-400 block">6,000 Units</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Trauma First-Aid:</span>
-                    <span className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 block">140 Kits</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
-                  <span className="font-bold text-base text-slate-900 dark:text-white">IIT Roorkee Disaster Logistics Hub</span>
-                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold">NODE: WH-02</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Rescue Boats:</span>
-                    <span className="text-base font-bold text-slate-900 dark:text-zinc-100 mt-0.5 block">4 Boats Ready</span>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Dry Ration Packs:</span>
-                    <span className="text-base font-bold text-amber-700 dark:text-amber-400 mt-0.5 block">1,400 Kits</span>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Purification Tablets:</span>
-                    <span className="text-base font-bold text-sky-700 dark:text-sky-400 mt-0.5 block">5,200 Units</span>
-                  </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Trauma First-Aid:</span>
-                    <span className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 block">110 Kits</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Trauma First-Aid:</span>
+                    <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 block">140 Kits</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
-                  <span className="font-bold text-base text-slate-900 dark:text-white">Gurukul Kangri Medical Staging Depot</span>
-                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold">NODE: WH-03</span>
+              <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-[#e9e9e7] dark:border-[#2e2e2e] pb-4">
+                  <span className="font-bold text-lg text-[#2f2e2b] dark:text-white">IIT Roorkee Disaster Logistics Hub</span>
+                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold bg-[#f0f7fb] dark:bg-[#1a2634] px-2.5 py-1 rounded-md border border-[#d8eaf6] dark:border-[#223547]">
+                    NODE: WH-02
+                  </span>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Rescue Boats:</span>
-                    <span className="text-base font-bold text-slate-900 dark:text-zinc-100 mt-0.5 block">2 Boats Ready</span>
+                <div className="grid grid-cols-2 gap-4 text-sm font-mono">
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Rescue Boats:</span>
+                    <span className="text-lg font-bold text-[#2f2e2b] dark:text-white block">4 Boats Ready</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Dry Ration Packs:</span>
-                    <span className="text-base font-bold text-amber-700 dark:text-amber-400 mt-0.5 block">950 Kits</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Dry Ration Packs:</span>
+                    <span className="text-lg font-bold text-amber-600 dark:text-amber-400 block">1,400 Kits</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Purification Tablets:</span>
-                    <span className="text-base font-bold text-sky-700 dark:text-sky-400 mt-0.5 block">3,800 Units</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Purification Tablets:</span>
+                    <span className="text-lg font-bold text-sky-600 dark:text-sky-400 block">5,200 Units</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Trauma First-Aid:</span>
-                    <span className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 block">95 Kits</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Trauma First-Aid:</span>
+                    <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 block">110 Kits</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
-                  <span className="font-bold text-base text-slate-900 dark:text-white">Roorkee Cantt Army Logistics Depot</span>
-                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold">NODE: WH-04</span>
+              <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-[#e9e9e7] dark:border-[#2e2e2e] pb-4">
+                  <span className="font-bold text-lg text-[#2f2e2b] dark:text-white">Gurukul Kangri Medical Staging Depot</span>
+                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold bg-[#f0f7fb] dark:bg-[#1a2634] px-2.5 py-1 rounded-md border border-[#d8eaf6] dark:border-[#223547]">
+                    NODE: WH-03
+                  </span>
                 </div>
-                <div className="grid grid-cols-2 gap-3 text-xs font-mono">
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Heavy Assault Boats:</span>
-                    <span className="text-base font-bold text-slate-900 dark:text-zinc-100 mt-0.5 block">6 Boats Ready</span>
+                <div className="grid grid-cols-2 gap-4 text-sm font-mono">
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Rescue Boats:</span>
+                    <span className="text-lg font-bold text-[#2f2e2b] dark:text-white block">2 Boats Ready</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Military MRE Packs:</span>
-                    <span className="text-base font-bold text-amber-700 dark:text-amber-400 mt-0.5 block">2,200 Kits</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Dry Ration Packs:</span>
+                    <span className="text-lg font-bold text-amber-600 dark:text-amber-400 block">950 Kits</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Mobile RO Tankers:</span>
-                    <span className="text-base font-bold text-sky-700 dark:text-sky-400 mt-0.5 block">4 Units</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Purification Tablets:</span>
+                    <span className="text-lg font-bold text-sky-600 dark:text-sky-400 block">3,800 Units</span>
                   </div>
-                  <div className="bg-slate-50 dark:bg-[#18181b] p-3.5 rounded-xl border border-slate-200 dark:border-zinc-800">
-                    <span className="text-slate-500 dark:text-zinc-400 block text-xs">Surgical Field Bags:</span>
-                    <span className="text-base font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 block">85 Packs</span>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Trauma First-Aid:</span>
+                    <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 block">95 Kits</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs space-y-5">
+                <div className="flex items-center justify-between border-b border-[#e9e9e7] dark:border-[#2e2e2e] pb-4">
+                  <span className="font-bold text-lg text-[#2f2e2b] dark:text-white">Roorkee Cantt Army Logistics Depot</span>
+                  <span className="text-xs font-mono text-sky-700 dark:text-sky-400 font-bold bg-[#f0f7fb] dark:bg-[#1a2634] px-2.5 py-1 rounded-md border border-[#d8eaf6] dark:border-[#223547]">
+                    NODE: WH-04
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm font-mono">
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Heavy Assault Boats:</span>
+                    <span className="text-lg font-bold text-[#2f2e2b] dark:text-white block">6 Boats Ready</span>
+                  </div>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Military MRE Packs:</span>
+                    <span className="text-lg font-bold text-amber-600 dark:text-amber-400 block">2,200 Kits</span>
+                  </div>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Mobile RO Tankers:</span>
+                    <span className="text-lg font-bold text-sky-600 dark:text-sky-400 block">4 Units</span>
+                  </div>
+                  <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e]">
+                    <span className="text-[#787774] dark:text-[#9b9a97] block text-xs mb-1">Surgical Field Bags:</span>
+                    <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 block">85 Packs</span>
                   </div>
                 </div>
               </div>

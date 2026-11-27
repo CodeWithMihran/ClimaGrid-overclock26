@@ -32,7 +32,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-[#f8fafc] dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 antialiased font-sans min-h-screen transition-colors duration-200">
+      <body className="bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] antialiased min-h-screen transition-colors duration-200">
         <ThemeProvider>
           {children}
         </ThemeProvider>

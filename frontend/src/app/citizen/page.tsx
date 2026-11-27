@@ -245,7 +245,7 @@ export default function CitizenSOSPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col items-center justify-start p-4 sm:p-8 font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col items-center justify-start p-4 sm:p-8 pb-40 sm:pb-48 font-sans transition-colors duration-200">
       {/* Top Navigation & Return to EOC Bar */}
       <div className="w-full max-w-lg flex items-center justify-between py-2 px-1 mb-4">
         <Link

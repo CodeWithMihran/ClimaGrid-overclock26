@@ -39,6 +39,29 @@ export const CrisisTourHUD: React.FC = () => {
 
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
+  // Keyboard navigation for presentation clickers and arrows
+  React.useEffect(() => {
+    if (!isTourActive) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextStep();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevStep();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        stopTour();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isTourActive, nextStep, prevStep, stopTour]);
+
   if (!isTourActive) return null;
 
   const stageIcons = [Waves, Megaphone, Smartphone, MapPin, Home, Camera];
@@ -198,15 +221,21 @@ export const CrisisTourHUD: React.FC = () => {
 
             {/* Navigation Buttons Row */}
             <div className="flex items-center justify-between pt-1 gap-3">
-              <button
-                type="button"
-                onClick={prevStep}
-                disabled={currentStepIndex === 0}
-                className="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-[#deddd9] dark:border-[#383838] bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#282828] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1.5 transition-all shadow-2xs font-mono"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Previous Stage</span>
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  disabled={currentStepIndex === 0}
+                  className="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border border-[#deddd9] dark:border-[#383838] bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#282828] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white disabled:opacity-40 disabled:pointer-events-none flex items-center gap-1.5 transition-all shadow-2xs font-mono"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Previous</span>
+                </button>
+
+                <span className="text-[11px] font-mono text-[#8c8a85] dark:text-[#787774] hidden md:inline">
+                  Keys: <kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded">→</kbd> Next • <kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded">←</kbd> Prev • <kbd className="px-1.5 py-0.5 bg-black/5 dark:bg-white/10 rounded">Esc</kbd> Exit
+                </span>
+              </div>
 
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono text-[#787774] dark:text-[#9b9a97] hidden sm:inline">

@@ -59,6 +59,7 @@ export default function DispatchCommandPage() {
   // Operator Controls: Filter & Unit Selection
   const [priorityFilter, setPriorityFilter] = useState<'ALL' | 'P1' | 'P2' | 'P3' | 'DISPATCHED'>('ALL');
   const [selectedUnit, setSelectedUnit] = useState<string>('NDRF-BOAT-04');
+  const [routeToast, setRouteToast] = useState<string | null>(null);
 
   useEffect(() => {
     async function init() {
@@ -93,12 +94,18 @@ export default function DispatchCommandPage() {
     try {
       const fleetLat = 29.8550;
       const fleetLng = 77.8860;
+      const destLat = incident.latitude || 29.8650;
+      const destLng = incident.longitude || 77.8990;
       const route = await calculateRoute(
         [fleetLat, fleetLng],
-        [incident.latitude, incident.longitude],
+        [destLat, destLng],
         avoid
       );
       setActiveRoute(route);
+      setRouteToast(
+        `Safe corridor to ${incident.landmark || 'Incident'} plotted: ${route.distance_km} km • ETA ${route.duration_minutes} mins (Bypassing Brij Bridge 5.5ft flood).`
+      );
+      setTimeout(() => setRouteToast(null), 6000);
     } catch (err) {
       console.error('Routing error:', err);
     }
@@ -328,10 +335,14 @@ export default function DispatchCommandPage() {
                         setSelectedIncident(inc);
                         handleCalculateRoute(inc, avoidHazards);
                       }}
-                      className="flex-1 bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white text-sm py-2.5 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all border border-[#deddd9] dark:border-[#3d3d3d] shadow-2xs"
+                      className={`flex-1 text-sm py-2.5 px-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all border shadow-2xs ${
+                        isSelected && activeRoute !== null
+                          ? 'bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/60 dark:hover:bg-sky-900/60 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-700 font-bold'
+                          : 'bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white border-[#deddd9] dark:border-[#3d3d3d]'
+                      }`}
                     >
-                      <Navigation className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                      <span>Preview Route</span>
+                      <Navigation className={`w-4 h-4 ${isSelected && activeRoute !== null ? 'text-sky-600 dark:text-sky-400 animate-pulse' : 'text-sky-600 dark:text-sky-400'}`} />
+                      <span>{isSelected && activeRoute !== null ? '✓ Route Active' : 'Preview Route'}</span>
                     </button>
 
                     <button
@@ -454,6 +465,17 @@ export default function DispatchCommandPage() {
               <span>{avoidHazards ? 'Bypass Active: Safe Path' : 'Direct Path: Risk Alert'}</span>
             </button>
           </div>
+
+          {/* Dynamic Route Notification Toast */}
+          {routeToast && (
+            <div className="bg-[#f0f7fb] dark:bg-[#182736] border border-[#d8eaf6] dark:border-[#274059] p-3.5 rounded-xl flex items-center justify-between text-xs sm:text-sm text-sky-900 dark:text-sky-200 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2.5">
+                <Navigation className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
+                <span className="font-medium">{routeToast}</span>
+              </div>
+              <button onClick={() => setRouteToast(null)} className="font-bold text-sky-600 dark:text-sky-400 ml-2">✕</button>
+            </div>
+          )}
 
           {/* Map Container */}
           <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl overflow-hidden shadow-xs h-[520px] relative">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Polygon, Polyline, Marker, Popup, Circle } from 'react-leaflet';
+import { MapContainer, TileLayer, Polygon, Polyline, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { IncidentRecord, WaterSensorNode, RouteSegment } from '../types';
 
@@ -15,6 +15,35 @@ interface TacticalMapProps {
   floodGeoJSON: any;
   activeRoute: RouteSegment | null;
 }
+
+// Controller to smoothly animate and frame map to route or selected incident
+const MapController: React.FC<{
+  selectedIncident: IncidentRecord | null;
+  activeRoute: RouteSegment | null;
+}> = ({ selectedIncident, activeRoute }) => {
+  const map = useMap();
+
+  useEffect(() => {
+    if (activeRoute?.coordinates && activeRoute.coordinates.length > 1) {
+      const bounds = L.latLngBounds(
+        activeRoute.coordinates.map((coord) => [coord[0], coord[1]])
+      );
+      map.fitBounds(bounds, {
+        padding: [60, 60],
+        maxZoom: 15,
+        animate: true,
+        duration: 1.0
+      });
+    } else if (selectedIncident && selectedIncident.latitude && selectedIncident.longitude) {
+      map.flyTo([selectedIncident.latitude, selectedIncident.longitude], 15, {
+        animate: true,
+        duration: 1.0
+      });
+    }
+  }, [selectedIncident?.id, activeRoute, map]);
+
+  return null;
+};
 
 // Custom SVG Icons for tactical EOC look
 const createCustomIcon = (color: string, label: string) => {
@@ -105,6 +134,9 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={19}
         />
+
+        {/* Dynamic map viewport controller for smooth routing flyTo */}
+        <MapController selectedIncident={selectedIncident} activeRoute={activeRoute} />
 
         {/* 1. FLOOD INUNDATION HAZARDS (Visible in flood or all modes) */}
         {activeModule === 'flood' && floodGeoJSON?.features && (

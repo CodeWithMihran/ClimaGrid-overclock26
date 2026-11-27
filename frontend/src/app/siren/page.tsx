@@ -9,7 +9,13 @@ import {
   Volume2, 
   Globe, 
   FileCode,
-  Check
+  Check,
+  Smartphone,
+  TowerControl,
+  Users,
+  ShieldAlert,
+  Zap,
+  VolumeX
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { fetchActiveCAPAlerts, fetchCAPTemplates, broadcastCAPAlert } from '../../lib/api';
@@ -89,7 +95,7 @@ export default function CAPSirenPage() {
       lfoGain.connect(osc1.frequency);
       lfoGain.connect(osc2.frequency);
 
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
 
       osc1.connect(gain);
@@ -145,6 +151,7 @@ export default function CAPSirenPage() {
       <Navbar />
 
       <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 space-y-8">
+        
         {/* Header Card */}
         <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-4 sm:gap-5">
@@ -166,7 +173,7 @@ export default function CAPSirenPage() {
             </div>
           </div>
 
-          {/* Test Siren Button */}
+          {/* Test Siren Button with Waveform Visualizer */}
           <button
             onClick={playEmergencySirenSound}
             className={`px-6 py-3 rounded-xl text-sm sm:text-base font-semibold flex items-center gap-2.5 shadow-2xs transition-all ${
@@ -176,8 +183,43 @@ export default function CAPSirenPage() {
             }`}
           >
             <Volume2 className={`w-5 h-5 ${isPlayingSiren ? 'text-white animate-bounce' : 'text-rose-600 dark:text-rose-400'}`} />
-            <span>{isPlayingSiren ? 'Warble Siren Active (2.5s)...' : 'Test 853Hz+960Hz Siren'}</span>
+            <span>{isPlayingSiren ? 'Dual-Tone 853Hz+960Hz Active...' : 'Test 853Hz+960Hz Acoustic Siren'}</span>
           </button>
+        </div>
+
+        {/* Top KPI Metrics Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 font-mono">
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">CELL TOWERS TARGETED</span>
+            <span className="text-3xl font-bold text-[#2f2e2b] dark:text-white block">
+              42 Towers
+            </span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1 font-sans">Geofenced 100% Active</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">POPULATION REACH</span>
+            <span className="text-3xl font-bold text-sky-600 dark:text-sky-400 block">
+              68,400+
+            </span>
+            <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1 font-sans">Instant Lockscreen Alert</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">BILINGUAL COMPLIANCE</span>
+            <span className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400 block truncate">
+              English + हिंदी
+            </span>
+            <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1 font-sans">Zero App Download Needed</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">BROADCAST STANDARD</span>
+            <span className="text-2xl sm:text-3xl font-bold text-rose-600 dark:text-rose-400 block truncate">
+              OASIS CAP 1.2
+            </span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1 font-sans">NDMA SACHET Native</span>
+          </div>
         </div>
 
         {/* Navigation Tabs */}
@@ -221,155 +263,217 @@ export default function CAPSirenPage() {
 
         {/* TAB 1: COMPOSE ALERT */}
         {activeTab === 'compose' && (
-          <form onSubmit={handleBroadcast} className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-            {/* Template Selector */}
-            <div>
-              <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2.5 uppercase tracking-wider font-mono">
-                Select Predefined Disaster Template:
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {templates.map((tpl) => (
-                  <button
-                    key={tpl.id}
-                    type="button"
-                    onClick={() => handleApplyTemplate(tpl)}
-                    className={`p-5 rounded-xl border text-left transition-colors ${
-                      selectedTemplateId === tpl.id
-                        ? 'bg-[#fdf2f2]/60 dark:bg-[#341d1d]/60 border-red-500 dark:border-red-500 ring-2 ring-red-500/15'
-                        : 'bg-[#f7f6f3] dark:bg-[#191919] border-[#e9e9e7] dark:border-[#2e2e2e] hover:border-[#deddd9] dark:hover:border-[#383838]'
-                    }`}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Form Column (8 Cols on LG) */}
+            <form onSubmit={handleBroadcast} className="lg:col-span-8 bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+              {/* Template Selector */}
+              <div>
+                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2.5 uppercase tracking-wider font-mono">
+                  Select Predefined Disaster Template:
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {templates.map((tpl) => (
+                    <button
+                      key={tpl.id}
+                      type="button"
+                      onClick={() => handleApplyTemplate(tpl)}
+                      className={`p-5 rounded-xl border text-left transition-colors ${
+                        selectedTemplateId === tpl.id
+                          ? 'bg-[#fdf2f2]/60 dark:bg-[#341d1d]/60 border-red-500 dark:border-red-500 ring-2 ring-red-500/15'
+                          : 'bg-[#f7f6f3] dark:bg-[#191919] border-[#e9e9e7] dark:border-[#2e2e2e] hover:border-[#deddd9] dark:hover:border-[#383838]'
+                      }`}
+                    >
+                      <span className="text-base font-bold text-[#2f2e2b] dark:text-white block mb-1">{tpl.event}</span>
+                      <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block truncate">{tpl.area_description}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Severity & Event */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 uppercase tracking-wider font-mono">
+                    Alert Severity Tier:
+                  </label>
+                  <select
+                    value={severity}
+                    onChange={(e) => setSeverity(e.target.value)}
+                    className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 font-semibold"
                   >
-                    <span className="text-base font-bold text-[#2f2e2b] dark:text-white block mb-1">{tpl.event}</span>
-                    <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block truncate">{tpl.area_description}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+                    <option value="Extreme">RED ALERT - EXTREME (Immediate Danger to Life)</option>
+                    <option value="Severe">AMBER ALERT - SEVERE (Significant Threat)</option>
+                    <option value="Moderate">YELLOW ALERT - MODERATE (Precautionary)</option>
+                  </select>
+                </div>
 
-            {/* Severity & Event */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 uppercase tracking-wider font-mono">
-                  Alert Severity Tier:
-                </label>
-                <select
-                  value={severity}
-                  onChange={(e) => setSeverity(e.target.value)}
-                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 font-semibold"
-                >
-                  <option value="Extreme">RED ALERT - EXTREME (Immediate Danger to Life)</option>
-                  <option value="Severe">AMBER ALERT - SEVERE (Significant Threat)</option>
-                  <option value="Moderate">YELLOW ALERT - MODERATE (Precautionary)</option>
-                </select>
+                <div>
+                  <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 uppercase tracking-wider font-mono">
+                    Geofenced Hazard Event:
+                  </label>
+                  <input
+                    type="text"
+                    value={event}
+                    onChange={(e) => setEvent(e.target.value)}
+                    className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500"
+                  />
+                </div>
               </div>
 
+              {/* Bilingual Headlines */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 flex items-center gap-2 font-mono">
+                    <Globe className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                    <span>English Siren Headline:</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={headlineEn}
+                    onChange={(e) => setHeadlineEn(e.target.value)}
+                    className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 font-mono leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 flex items-center gap-2 font-mono">
+                    <Globe className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>Hindi Siren Headline (हिंदी):</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={headlineHi}
+                    onChange={(e) => setHeadlineHi(e.target.value)}
+                    className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 leading-relaxed font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Bilingual Instructions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 font-mono">Detailed Evacuation Action (English):</label>
+                  <textarea
+                    rows={3}
+                    value={descriptionEn}
+                    onChange={(e) => setDescriptionEn(e.target.value)}
+                    className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 leading-relaxed"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 font-mono">विस्तृत नागरिक निर्देश (हिंदी):</label>
+                  <textarea
+                    rows={3}
+                    value={descriptionHi}
+                    onChange={(e) => setDescriptionHi(e.target.value)}
+                    className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 leading-relaxed font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Target Area */}
               <div>
-                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 uppercase tracking-wider font-mono">
-                  Geofenced Hazard Event:
-                </label>
+                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 font-mono">Target Geofenced Polygon / Municipal Wards:</label>
                 <input
                   type="text"
-                  value={event}
-                  onChange={(e) => setEvent(e.target.value)}
-                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500"
-                />
-              </div>
-            </div>
-
-            {/* Bilingual Headlines */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 flex items-center gap-2 font-mono">
-                  <Globe className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                  <span>English Siren Headline:</span>
-                </label>
-                <textarea
-                  rows={2}
-                  value={headlineEn}
-                  onChange={(e) => setHeadlineEn(e.target.value)}
-                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 font-mono leading-relaxed"
+                  value={areaDesc}
+                  onChange={(e) => setAreaDesc(e.target.value)}
+                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 font-mono"
                 />
               </div>
 
-              <div>
-                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 flex items-center gap-2 font-mono">
-                  <Globe className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                  <span>Hindi Siren Headline (हिंदी):</span>
-                </label>
-                <textarea
-                  rows={2}
-                  value={headlineHi}
-                  onChange={(e) => setHeadlineHi(e.target.value)}
-                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 leading-relaxed font-sans"
-                />
-              </div>
-            </div>
-
-            {/* Bilingual Instructions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 font-mono">Detailed Evacuation Action (English):</label>
-                <textarea
-                  rows={3}
-                  value={descriptionEn}
-                  onChange={(e) => setDescriptionEn(e.target.value)}
-                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 leading-relaxed"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 font-mono">विस्तृत नागरिक निर्देश (हिंदी):</label>
-                <textarea
-                  rows={3}
-                  value={descriptionHi}
-                  onChange={(e) => setDescriptionHi(e.target.value)}
-                  className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl p-4 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 leading-relaxed font-sans"
-                />
-              </div>
-            </div>
-
-            {/* Target Area */}
-            <div>
-              <label className="text-xs font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-2 font-mono">Target Geofenced Polygon / Municipal Wards:</label>
-              <input
-                type="text"
-                value={areaDesc}
-                onChange={(e) => setAreaDesc(e.target.value)}
-                className="w-full bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm sm:text-base text-[#2f2e2b] dark:text-white focus:outline-none focus:border-red-500 font-mono"
-              />
-            </div>
-
-            {/* Broadcast Confirmation Banner */}
-            {broadcastSuccess && (
-              <div className="p-5 bg-[#eef8f2] dark:bg-[#192b1f] border border-[#ccecd8] dark:border-[#274f35] rounded-2xl flex items-center justify-between gap-4 text-sm sm:text-base shadow-xs">
-                <div className="flex items-center gap-3.5 text-[#227744] dark:text-[#4ade80]">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>
-                    Emergency siren transmitted successfully to <b>45 cell towers</b>! Identifier: <b>{broadcastSuccess.identifier}</b>
-                  </span>
+              {/* Broadcast Confirmation Banner */}
+              {broadcastSuccess && (
+                <div className="p-5 bg-[#eef8f2] dark:bg-[#192b1f] border border-[#ccecd8] dark:border-[#274f35] rounded-2xl flex items-center justify-between gap-4 text-sm sm:text-base shadow-xs animate-fadeIn">
+                  <div className="flex items-center gap-3.5 text-[#227744] dark:text-[#4ade80]">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>
+                      Emergency siren transmitted successfully to <b>42 cell towers</b>! Identifier: <b>{broadcastSuccess.identifier}</b>
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('xml')}
+                    className="bg-[#227744] hover:bg-[#1b5e36] text-white font-mono text-xs sm:text-sm px-4 py-2 rounded-lg"
+                  >
+                    Inspect XML Payload
+                  </button>
                 </div>
+              )}
+
+              {/* Submit Action */}
+              <div className="pt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center justify-end">
                 <button
-                  type="button"
-                  onClick={() => setActiveTab('xml')}
-                  className="bg-[#227744] hover:bg-[#1b5e36] text-white font-mono text-xs sm:text-sm px-4 py-2 rounded-lg"
+                  type="submit"
+                  disabled={isTransmitting}
+                  className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-bold text-sm sm:text-base px-7 py-3.5 rounded-xl shadow-xs flex items-center gap-2.5 transition-all disabled:opacity-50"
                 >
-                  Inspect XML Payload
+                  <Megaphone className="w-5 h-5 text-rose-400 dark:text-rose-600" />
+                  <span>{isTransmitting ? 'Transmitting to Cell Towers...' : 'Broadcast Emergency Siren to Region'}</span>
                 </button>
               </div>
-            )}
+            </form>
 
-            {/* Submit Action */}
-            <div className="pt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center justify-end">
-              <button
-                type="submit"
-                disabled={isTransmitting}
-                className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-bold text-sm sm:text-base px-7 py-3.5 rounded-xl shadow-xs flex items-center gap-2.5 transition-all disabled:opacity-50"
-              >
-                <Megaphone className="w-5 h-5 text-rose-400 dark:text-rose-600" />
-                <span>{isTransmitting ? 'Transmitting to Cell Towers...' : 'Broadcast Emergency Siren to Region'}</span>
-              </button>
+            {/* Right Column (4 Cols on LG): Smartphone Lockscreen Simulator Preview */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 shadow-xs space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-sm text-[#2f2e2b] dark:text-white uppercase tracking-wider flex items-center gap-2">
+                    <Smartphone className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                    <span>Citizen Lockscreen Preview</span>
+                  </span>
+                  <span className="text-[11px] font-mono text-[#787774] dark:text-[#9b9a97] bg-[#f7f6f3] dark:bg-[#2b2b2b] px-2 py-0.5 rounded">
+                    GSM-CB CH 4370
+                  </span>
+                </div>
+
+                {/* Mock Smartphone Frame */}
+                <div className="bg-slate-950 text-white rounded-3xl p-5 border-4 border-slate-800 shadow-xl space-y-4 font-sans">
+                  {/* Status Bar */}
+                  <div className="flex justify-between items-center text-[10px] text-slate-400 font-mono">
+                    <span>11:24 AM</span>
+                    <span>5G • 88%</span>
+                  </div>
+
+                  {/* Android / iOS Emergency Alert Modal */}
+                  <div className="bg-red-950/90 border-2 border-red-500 rounded-2xl p-4 space-y-3 animate-pulse">
+                    <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wide">
+                      <ShieldAlert className="w-4 h-4" />
+                      <span>CRITICAL EMERGENCY ALERT</span>
+                    </div>
+
+                    <p className="text-xs font-bold text-white leading-snug">
+                      {headlineEn}
+                    </p>
+
+                    <p className="text-[11px] text-slate-200 leading-relaxed">
+                      {descriptionEn}
+                    </p>
+
+                    <div className="pt-2 border-t border-red-900/60 text-[10px] text-slate-300 font-mono">
+                      Target Area: {areaDesc}
+                    </div>
+                  </div>
+
+                  {/* Hindi Alternate Notification */}
+                  <div className="bg-slate-900/90 border border-slate-700 rounded-xl p-3 space-y-1.5 text-[11px]">
+                    <span className="text-amber-400 font-bold block text-[10px]">
+                      राष्ट्रीय आपदा चेतावनी (हिंदी):
+                    </span>
+                    <p className="text-slate-200 leading-relaxed font-sans">
+                      {headlineHi}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-xs text-[#787774] dark:text-[#9b9a97] leading-relaxed">
+                  <b>Zero App Barrier:</b> Bypasses silent switches on iOS/Android devices within the geofenced cell towers using the national standard Emergency Alert protocol.
+                </p>
+              </div>
             </div>
-          </form>
+          </div>
         )}
 
         {/* TAB 2: RAW OASIS CAP XML */}
@@ -416,7 +520,7 @@ export default function CAPSirenPage() {
                 <div className="flex items-center gap-6 text-xs sm:text-sm font-mono text-[#787774] dark:text-[#9b9a97] pt-3 border-t border-[#e9e9e7] dark:border-[#2e2e2e]">
                   <span>Target Area: <b>{alert.area_description}</b></span>
                   <span>Targeted Cell Towers: <b>{alert.cell_towers_targeted}</b></span>
-                  <span>Estimated Recipients: <b>{alert.estimated_recipients.toLocaleString()}</b></span>
+                  <span>Estimated Recipients: <b>{Number(alert.estimated_recipients || 0).toLocaleString()}</b></span>
                 </div>
               </div>
             ))}

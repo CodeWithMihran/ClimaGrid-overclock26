@@ -679,6 +679,26 @@ export async function fetchPredictiveFloodTimeline(): Promise<PredictiveTimeline
   };
 }
 
+export async function simulateFloodInundation(
+  rainRate: number,
+  upstreamDischarge: number
+): Promise<PredictiveTimelineResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/flood/simulate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        rain_rate_mm_hr: rainRate,
+        upstream_discharge_cusecs: upstreamDischarge
+      })
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Flood simulation API error:', e);
+  }
+  return fetchPredictiveFloodTimeline();
+}
+
 export async function fetchReliefShelters(): Promise<ReliefShelter[]> {
   try {
     const res = await fetch(`${API_BASE}/shelters/list`, { cache: 'no-store' });

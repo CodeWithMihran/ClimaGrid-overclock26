@@ -9,13 +9,20 @@ import {
   ShieldAlert, 
   Megaphone,
   Play,
-  Pause
+  Pause,
+  Sliders,
+  Sparkles,
+  Droplets,
+  Activity,
+  CheckCircle2,
+  MapPin,
+  RefreshCw
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
-import { fetchPredictiveFloodTimeline, fetchFloodGeoJSON } from '../../lib/api';
+import { fetchPredictiveFloodTimeline, fetchFloodGeoJSON, simulateFloodInundation } from '../../lib/api';
 import { PredictiveTimelineResponse, PredictiveFloodStep } from '../../types';
 
-// Dynamic Leaflet Map
+// Dynamic Leaflet Map with no SSR
 const TacticalMap = dynamic(
   () => import('../../components/TacticalMap').then((mod) => mod.TacticalMap),
   { ssr: false }
@@ -27,6 +34,11 @@ export default function PredictiveFloodPage() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [floodGeoJSON, setFloodGeoJSON] = useState<any>(null);
   const [alertTriggered, setAlertTriggered] = useState<string | null>(null);
+
+  // Hydrodynamic Simulation Parameters
+  const [rainRate, setRainRate] = useState<number>(35.0);
+  const [upstreamDischarge, setUpstreamDischarge] = useState<number>(24500.0);
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   useEffect(() => {
     async function load() {
@@ -49,7 +61,7 @@ export default function PredictiveFloodPage() {
 
   // Auto-simulation loop
   useEffect(() => {
-    if (!isPlaying || !data) return;
+    if (!isPlaying || !data || data.steps.length === 0) return;
     const interval = setInterval(() => {
       setSelectedIdx((prev) => {
         const next = (prev + 1) % data.steps.length;
@@ -68,18 +80,44 @@ export default function PredictiveFloodPage() {
     }
   };
 
+  const handleRunSimulation = async (newRain: number, newDischarge: number) => {
+    setRainRate(newRain);
+    setUpstreamDischarge(newDischarge);
+    setIsSimulating(true);
+    try {
+      const res = await simulateFloodInundation(newRain, newDischarge);
+      setData(res);
+      if (res.steps.length > 0) {
+        const idx = Math.min(selectedIdx, res.steps.length - 1);
+        setSelectedIdx(idx);
+        setFloodGeoJSON(res.steps[idx].geojson);
+      }
+    } catch (e) {
+      console.error('Simulation error:', e);
+    } finally {
+      setIsSimulating(false);
+    }
+  };
+
   const handleTriggerAlert = (action: string) => {
     setAlertTriggered(action);
-    setTimeout(() => setAlertTriggered(null), 5000);
+    setTimeout(() => setAlertTriggered(null), 6000);
   };
 
   const currentStep: PredictiveFloodStep | undefined = data?.steps[selectedIdx];
+
+  const presets = [
+    { label: 'Baseline Monsoon', rain: 35.0, discharge: 24500.0, badge: 'Normal Risk' },
+    { label: 'Cloudburst Surge', rain: 55.0, discharge: 36000.0, badge: 'High Alert' },
+    { label: 'Catastrophic Crest', rain: 75.0, discharge: 46000.0, badge: 'P1 Emergency' }
+  ];
 
   return (
     <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
       <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 space-y-8">
+        
         {/* Top Header Card */}
         <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-4 sm:gap-5">
@@ -101,27 +139,125 @@ export default function PredictiveFloodPage() {
             </div>
           </div>
 
-          {/* Play / Pause Simulator */}
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            className={`px-6 py-3 rounded-xl text-sm sm:text-base font-semibold flex items-center gap-2.5 shadow-xs transition-all ${
-              isPlaying
-                ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold'
-                : 'bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919]'
-            }`}
-          >
-            {isPlaying ? (
-              <>
-                <Pause className="w-5 h-5 fill-current" />
-                <span>Pause Forecast</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-5 h-5 fill-current" />
-                <span>Play 6-Hour Simulation</span>
-              </>
+          {/* Controls: Play/Pause */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2.5 shadow-xs transition-all ${
+                isPlaying
+                  ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold'
+                  : 'bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919]'
+              }`}
+            >
+              {isPlaying ? (
+                <>
+                  <Pause className="w-4 h-4 fill-current" />
+                  <span>Pause Forecast</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current" />
+                  <span>Play 6-Hour Simulation</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Interactive Hydro-Simulation Control Bar */}
+        <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <Sliders className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+              <h2 className="text-base sm:text-lg font-bold text-[#2f2e2b] dark:text-[#f4f4f5]">
+                INTERACTIVE HYDROLOGICAL SCENARIO SIMULATOR
+              </h2>
+            </div>
+            {isSimulating && (
+              <span className="text-xs font-mono font-bold text-sky-700 dark:text-sky-300 bg-[#f0f7fb] dark:bg-[#1a2634] px-3 py-1 rounded-full border border-[#d8eaf6] dark:border-[#25394e] flex items-center gap-1.5 animate-pulse">
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                Recalculating Saint-Venant 2D Mesh...
+              </span>
             )}
-          </button>
+          </div>
+
+          {/* Quick Presets */}
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs sm:text-sm font-medium text-[#787774] dark:text-[#9b9a97] flex items-center gap-1">
+              <Sparkles className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+              Scenario Presets:
+            </span>
+            {presets.map((p, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => handleRunSimulation(p.rain, p.discharge)}
+                className={`text-xs sm:text-sm px-3.5 py-1.5 rounded-lg border font-semibold transition-all ${
+                  rainRate === p.rain && upstreamDischarge === p.discharge
+                    ? 'bg-[#2f2e2b] text-white dark:bg-white dark:text-[#191919] border-transparent shadow-xs'
+                    : 'bg-[#f7f6f3] dark:bg-[#282828] text-[#575653] dark:text-[#d4d4d4] border-[#deddd9] dark:border-[#3a3a3a] hover:bg-[#efefed] dark:hover:bg-[#333333]'
+                }`}
+              >
+                <span>{p.label}</span>
+                <span className="text-[11px] opacity-75 font-mono ml-1.5">({p.badge})</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Dual Sliders */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            {/* Slider 1: Rain Rate */}
+            <div className="bg-[#f7f6f3] dark:bg-[#191919] p-5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-semibold text-[#787774] dark:text-[#9b9a97] uppercase">
+                  Rainfall Intensity (Rain Rate)
+                </span>
+                <span className="text-base font-bold font-mono text-blue-600 dark:text-blue-400">
+                  {rainRate} mm/hr
+                </span>
+              </div>
+              <input
+                type="range"
+                min={15}
+                max={85}
+                step={5}
+                value={rainRate}
+                onChange={(e) => handleRunSimulation(Number(e.target.value), upstreamDischarge)}
+                className="w-full h-2.5 bg-[#deddd9] dark:bg-[#333333] rounded-lg appearance-none cursor-pointer accent-blue-600"
+              />
+              <div className="flex justify-between text-[11px] font-mono text-[#787774] dark:text-[#9b9a97]">
+                <span>15 mm/hr (Light)</span>
+                <span>35 mm/hr (Cloudburst)</span>
+                <span>85 mm/hr (Extreme)</span>
+              </div>
+            </div>
+
+            {/* Slider 2: Upstream Discharge */}
+            <div className="bg-[#f7f6f3] dark:bg-[#191919] p-5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-semibold text-[#787774] dark:text-[#9b9a97] uppercase">
+                  Upstream Haridwar Barrage Discharge
+                </span>
+                <span className="text-base font-bold font-mono text-sky-600 dark:text-sky-400">
+                  {Number(upstreamDischarge).toLocaleString()} cusecs
+                </span>
+              </div>
+              <input
+                type="range"
+                min={15000}
+                max={50000}
+                step={2500}
+                value={upstreamDischarge}
+                onChange={(e) => handleRunSimulation(rainRate, Number(e.target.value))}
+                className="w-full h-2.5 bg-[#deddd9] dark:bg-[#333333] rounded-lg appearance-none cursor-pointer accent-sky-600"
+              />
+              <div className="flex justify-between text-[11px] font-mono text-[#787774] dark:text-[#9b9a97]">
+                <span>15,000 cusecs</span>
+                <span>24,500 cusecs (Gate 4 Open)</span>
+                <span>50,000 cusecs (Full Breach)</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Meteorological Baseline Stats Bar */}
@@ -138,7 +274,7 @@ export default function PredictiveFloodPage() {
             <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">UPSTREAM DISCHARGE</span>
               <span className="text-3xl font-bold text-sky-600 dark:text-sky-400 block">
-                {data.meteorological_baseline.upstream_discharge_cusecs.toLocaleString()} cusecs
+                {Number(data.meteorological_baseline?.upstream_discharge_cusecs || upstreamDischarge).toLocaleString()} cusecs
               </span>
               <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1">Haridwar Ganga Barrage</span>
             </div>
@@ -146,7 +282,7 @@ export default function PredictiveFloodPage() {
             <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">RAINFALL INTENSITY</span>
               <span className="text-3xl font-bold text-blue-600 dark:text-blue-400 block">
-                {data.meteorological_baseline.rain_rate_mm_hr} mm/hr
+                {data.meteorological_baseline?.rain_rate_mm_hr || rainRate} mm/hr
               </span>
               <span className="text-xs sm:text-sm text-amber-600 dark:text-amber-400 block mt-1">Extreme Cloudburst Band</span>
             </div>
@@ -154,7 +290,7 @@ export default function PredictiveFloodPage() {
             <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">CITIZENS AT RISK</span>
               <span className="text-3xl font-bold text-amber-600 dark:text-amber-400 block">
-                {currentStep?.citizens_in_hazard_zone.toLocaleString() || '14,000'}
+                {Number(currentStep?.citizens_in_hazard_zone || 14000).toLocaleString()}
               </span>
               <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1">In Projected Inundation Mesh</span>
             </div>
@@ -195,7 +331,7 @@ export default function PredictiveFloodPage() {
                   </div>
 
                   <p className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] font-medium">
-                    {s.citizens_in_hazard_zone.toLocaleString()} residents in risk zone
+                    {Number(s.citizens_in_hazard_zone || 0).toLocaleString()} residents in risk zone
                   </p>
                 </button>
               );
@@ -205,7 +341,7 @@ export default function PredictiveFloodPage() {
 
         {/* Evacuation Alert Notification Banner */}
         {alertTriggered && (
-          <div className="p-5 bg-[#fdf2f2] dark:bg-[#341d1d] border border-[#fae1e1] dark:border-[#4d2525] rounded-2xl flex items-center justify-between gap-4 text-sm sm:text-base shadow-xs">
+          <div className="p-5 bg-[#fdf2f2] dark:bg-[#341d1d] border border-[#fae1e1] dark:border-[#4d2525] rounded-2xl flex items-center justify-between gap-4 text-sm sm:text-base shadow-xs animate-fadeIn">
             <div className="flex items-center gap-3.5 text-[#b91c1c] dark:text-[#f87171]">
               <Megaphone className="w-5 h-5 text-rose-600 dark:text-rose-400 animate-pulse shrink-0" />
               <span>
@@ -221,17 +357,35 @@ export default function PredictiveFloodPage() {
         {/* Map & Step Detail Split Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left: Tactical Map (7 Cols) */}
-          <div className="lg:col-span-7 bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl overflow-hidden shadow-xs h-[540px] relative">
-            <TacticalMap
-              activeModule="flood"
-              incidents={[]}
-              selectedIncident={null}
-              onSelectIncident={() => {}}
-              waterSensors={[]}
-              heatData={null}
-              floodGeoJSON={floodGeoJSON}
-              activeRoute={null}
-            />
+          <div className="lg:col-span-7 flex flex-col gap-5">
+            <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl overflow-hidden shadow-xs h-[540px] relative">
+              <TacticalMap
+                activeModule="flood"
+                incidents={[]}
+                selectedIncident={null}
+                onSelectIncident={() => {}}
+                waterSensors={[]}
+                heatData={null}
+                floodGeoJSON={floodGeoJSON}
+                activeRoute={null}
+              />
+            </div>
+
+            {/* Inundation Physics Explanation Card */}
+            <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 shadow-xs space-y-3 font-mono text-xs sm:text-sm">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-[#2f2e2b] dark:text-white uppercase tracking-wider flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                  <span>Hydrodynamic Flood Physics Engine</span>
+                </span>
+                <span className="text-xs text-sky-700 dark:text-sky-400 bg-[#f0f7fb] dark:bg-[#1a2634] px-2.5 py-1 rounded-md border border-[#d8eaf6] dark:border-[#25394e]">
+                  Saint-Venant 2D Mesh
+                </span>
+              </div>
+              <p className="text-[#575653] dark:text-[#a8a7a4] font-sans text-xs leading-relaxed">
+                Inundation expansion uses 2D shallow-water equations coupled with 30m ALOS-PALSAR Digital Elevation Models (DEM). Embankment overtopping triggers hydrodynamic cell spreading at 1.4 m/s over Roorkee&apos;s alluvial plain.
+              </p>
+            </div>
           </div>
 
           {/* Right: Selected Forecast Step Detail (5 Cols) */}

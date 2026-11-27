@@ -17,6 +17,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 import { fetchReliefShelters, allocateShelterForIncident, logSupplyDrop } from '../../lib/api';
 import { ReliefShelter, ShelterAllocationResponse } from '../../types';
 
@@ -544,6 +545,8 @@ export default function ReliefSheltersPage() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

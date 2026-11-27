@@ -18,6 +18,7 @@ import {
   VolumeX
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 import { fetchActiveCAPAlerts, fetchCAPTemplates, broadcastCAPAlert } from '../../lib/api';
 import { CAPAlert, CAPTemplate } from '../../types';
 
@@ -527,6 +528,8 @@ export default function CAPSirenPage() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

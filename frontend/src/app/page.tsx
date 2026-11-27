@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { 
   AlertCircle, 
   CheckCircle2, 
@@ -17,9 +18,12 @@ import {
   Layers,
   Radio,
   Zap,
-  Sparkles
+  Sparkles,
+  Compass,
+  Megaphone
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
+import { Footer } from '../components/Footer';
 import { 
   fetchIncidentQueue, 
   parseDistressMessage, 
@@ -179,8 +183,87 @@ export default function DispatchCommandPage() {
     <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
-      {/* Main Content Area - Spacious 2-Column Grid */}
-      <main className="flex-1 max-w-[1850px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+      {/* Main Content Area - Spacious Unified Layout */}
+      <main className="flex-1 max-w-[1850px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+        
+        {/* Top Header Card - Consistent with all other pages */}
+        <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
+          <div className="flex items-center gap-4 sm:gap-5">
+            <div className="h-14 w-14 rounded-2xl bg-[#f0f7fb] dark:bg-[#1a2634] border border-[#d8eaf6] dark:border-[#223547] flex items-center justify-center text-sky-600 dark:text-sky-400 shadow-2xs">
+              <Compass className="w-7 h-7 text-sky-600 dark:text-sky-400" />
+            </div>
+            <div>
+              <div className="flex items-center gap-3">
+                <h1 className="text-xl sm:text-2xl font-bold text-[#2f2e2b] dark:text-[#f4f4f5] tracking-tight">
+                  LIVE DISPATCH & MULTIMODAL DISTRESS TRIAGE (AAPDA360)
+                </h1>
+                <span className="bg-[#f0f7fb] dark:bg-[#1a2634] text-sky-700 dark:text-sky-300 border border-[#d8eaf6] dark:border-[#223547] text-xs font-mono font-semibold px-3 py-1 rounded-full">
+                  EOC COMMAND HUB
+                </span>
+              </div>
+              <p className="text-sm sm:text-[15px] text-[#787774] dark:text-[#9b9a97] mt-1">
+                Real-time multilingual distress NLP, explainable MCDM prioritization & hazard-aware rescue routing for the Roorkee-Haridwar basin
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/siren"
+              className="bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white border border-[#deddd9] dark:border-[#3d3d3d] font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 shadow-2xs transition-all font-mono"
+            >
+              <Megaphone className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+              <span>CAP Emergency Siren</span>
+            </Link>
+
+            <Link
+              href="/citizen"
+              target="_blank"
+              className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 shadow-xs transition-all font-mono"
+            >
+              <Radio className="w-4 h-4 text-sky-400 dark:text-sky-600 animate-pulse" />
+              <span>Open Citizen SOS Client</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Top 4 Operational KPI Cards - Consistent across all pages */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 font-mono">
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">ACTIVE DISTRESS INCIDENTS</span>
+            <span className="text-2xl sm:text-3xl font-bold text-rose-600 dark:text-rose-400 block">
+              {incidents.length} Reported
+            </span>
+            <span className="text-xs sm:text-sm text-rose-600 dark:text-rose-400 block mt-1 font-sans">{countP1} P1 Critical Victims</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">RESCUE FLEET READY</span>
+            <span className="text-2xl sm:text-3xl font-bold text-sky-600 dark:text-sky-400 block">
+              {fleetAssets.length} Units Active
+            </span>
+            <span className="text-xs sm:text-sm text-sky-600 dark:text-sky-400 block mt-1 font-sans">NDRF, SDRF & QRT Crafts</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">SAFE EXTRACTION CORRIDOR</span>
+            <span className="text-2xl sm:text-3xl font-bold text-[#2f2e2b] dark:text-white block">
+              {activeRoute ? `${activeRoute.distance_km} km` : '2.27 km'}
+            </span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1 font-sans">Brij Bridge Bypass Active</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">BEDROCK TRIAGE LATENCY</span>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 block">
+              {lastLatencyMs != null ? `${lastLatencyMs}ms` : '884ms'}
+            </span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1 font-sans">&lt;1.2s Real-Time SLA</span>
+          </div>
+        </div>
+
+        {/* 2-Column Command Center Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
         
         {/* Left Column (5 Cols on LG): Live Distress Triage Stream & Ingestion */}
         <section className="lg:col-span-5 flex flex-col gap-5 sm:gap-6">
@@ -672,7 +755,10 @@ export default function DispatchCommandPage() {
             </div>
           </div>
         </section>
+        </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

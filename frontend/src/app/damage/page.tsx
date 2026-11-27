@@ -18,6 +18,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 import { fetchDamageAssessment, recalculateDamage } from '../../lib/api';
 import { DamageAssessmentResponse } from '../../types';
 
@@ -451,6 +452,8 @@ export default function DroneDamagePage() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

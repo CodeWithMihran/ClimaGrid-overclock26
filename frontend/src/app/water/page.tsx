@@ -15,6 +15,7 @@ import {
   Clock
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 import { 
   fetchWaterSensors, 
   fetchSensorHistory, 
@@ -401,6 +402,8 @@ export default function WaterSafetyPage() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

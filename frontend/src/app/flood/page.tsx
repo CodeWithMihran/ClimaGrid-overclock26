@@ -19,6 +19,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 import { fetchPredictiveFloodTimeline, fetchFloodGeoJSON, simulateFloodInundation } from '../../lib/api';
 import { PredictiveTimelineResponse, PredictiveFloodStep } from '../../types';
 
@@ -449,6 +450,8 @@ export default function PredictiveFloodPage() {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

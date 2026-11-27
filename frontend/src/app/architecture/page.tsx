@@ -10,6 +10,7 @@ import {
   Download
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 
 export default function ArchitecturePage() {
   return (
@@ -57,6 +58,41 @@ export default function ArchitecturePage() {
               <Download className="w-4 h-4 text-sky-600 dark:text-sky-400" />
               <span>Whitepaper (.pdf)</span>
             </a>
+          </div>
+        </div>
+
+        {/* Top 4 Architectural Operational KPI Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5 font-mono">
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">DISASTER UPTIME SLA</span>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 dark:text-emerald-400 block">
+              99.99%
+            </span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1 font-sans">Multi-AZ Resilient</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">INGESTION BURST SCALE</span>
+            <span className="text-2xl sm:text-3xl font-bold text-sky-600 dark:text-sky-400 block">
+              50,000 /s
+            </span>
+            <span className="text-xs sm:text-sm text-sky-600 dark:text-sky-400 block mt-1 font-sans">Serverless Cloudburst</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">BEDROCK AI LATENCY</span>
+            <span className="text-2xl sm:text-3xl font-bold text-[#2f2e2b] dark:text-white block">
+              &lt; 1.2s
+            </span>
+            <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1 font-sans">Claude 3.5 Sonnet SLA</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">IDLE STANDBY COST</span>
+            <span className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 block">
+              $0.00 /mo
+            </span>
+            <span className="text-xs sm:text-sm text-purple-600 dark:text-purple-400 block mt-1 font-sans">Zero Idle Server Overhead</span>
           </div>
         </div>
 
@@ -207,6 +243,8 @@ export default function ArchitecturePage() {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -18,6 +18,7 @@ import {
   Truck
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
+import { Footer } from '../../components/Footer';
 import { simulateHeatwave, fetchHeatInterventions } from '../../lib/api';
 
 export default function HeatResiliencePage() {
@@ -508,6 +509,8 @@ export default function HeatResiliencePage() {
           </div>
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

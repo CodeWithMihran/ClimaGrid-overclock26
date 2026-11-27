@@ -116,7 +116,7 @@ export default function PredictiveFloodPage() {
     <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
-      <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 space-y-8">
+      <main className="flex-1 max-w-[1850px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
         
         {/* Top Header Card */}
         <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
@@ -262,34 +262,34 @@ export default function PredictiveFloodPage() {
 
         {/* Meteorological Baseline Stats Bar */}
         {data && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
+            <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">RIVER STAGE LEVEL</span>
-              <span className="text-3xl font-bold text-[#2f2e2b] dark:text-white block">
+              <span className="text-2xl sm:text-3xl font-bold text-[#2f2e2b] dark:text-white block">
                 {currentStep?.solani_stage_meters || 5.42} m
               </span>
               <span className="text-xs sm:text-sm text-rose-600 dark:text-rose-400 font-medium block mt-1">Danger Mark: 6.20m</span>
             </div>
 
-            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">UPSTREAM DISCHARGE</span>
-              <span className="text-3xl font-bold text-sky-600 dark:text-sky-400 block">
+              <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-sky-600 dark:text-sky-400 block truncate">
                 {Number(data.meteorological_baseline?.upstream_discharge_cusecs || upstreamDischarge).toLocaleString()} cusecs
               </span>
               <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1">Haridwar Ganga Barrage</span>
             </div>
 
-            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">RAINFALL INTENSITY</span>
-              <span className="text-3xl font-bold text-blue-600 dark:text-blue-400 block">
+              <span className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 block">
                 {data.meteorological_baseline?.rain_rate_mm_hr || rainRate} mm/hr
               </span>
               <span className="text-xs sm:text-sm text-amber-600 dark:text-amber-400 block mt-1">Extreme Cloudburst Band</span>
             </div>
 
-            <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <div className="bg-white dark:bg-[#202020] p-4 sm:p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
               <span className="text-xs text-[#787774] dark:text-[#9b9a97] font-mono block mb-1 uppercase font-medium">CITIZENS AT RISK</span>
-              <span className="text-3xl font-bold text-amber-600 dark:text-amber-400 block">
+              <span className="text-2xl sm:text-3xl font-bold text-amber-600 dark:text-amber-400 block">
                 {Number(currentStep?.citizens_in_hazard_zone || 14000).toLocaleString()}
               </span>
               <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1">In Projected Inundation Mesh</span>

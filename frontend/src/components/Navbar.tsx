@@ -25,14 +25,14 @@ export const Navbar: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   const navLinks = [
-    { href: '/', label: 'Live Dispatch (SW-01)', icon: Map },
+    { href: '/', label: 'Live Dispatch', icon: Map },
     { href: '/flood', label: 'Predictive Flood', icon: Waves },
     { href: '/shelters', label: 'Relief Shelters', icon: Home },
     { href: '/siren', label: 'CAP Siren', icon: Megaphone },
-    { href: '/damage', label: 'Drone Damage & SDRF', icon: Camera },
+    { href: '/damage', label: 'Drone Damage', icon: Camera },
     { href: '/water', label: 'Water Safety', icon: Droplets },
-    { href: '/heat', label: 'Heat Resilience', icon: Flame },
-    { href: '/architecture', label: 'Cloud Architecture', icon: Cpu },
+    { href: '/heat', label: 'Heat Shield', icon: Flame },
+    { href: '/architecture', label: 'Architecture', icon: Cpu },
   ];
 
   return (
@@ -60,8 +60,8 @@ export const Navbar: React.FC = () => {
           </div>
         </Link>
 
-        {/* Navigation Links (Desktop: >= 2xl for full inline) */}
-        <nav className="hidden 2xl:flex items-center gap-1 bg-[#f1f1ef] dark:bg-[#242424] p-1 rounded-xl border border-[#e3e2e0] dark:border-[#333333]">
+        {/* Navigation Links (Desktop: >= xl for clean inline fitting on laptops and desktops) */}
+        <nav className="hidden xl:flex items-center gap-1 bg-[#f1f1ef] dark:bg-[#242424] p-1 rounded-xl border border-[#e3e2e0] dark:border-[#333333]">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             const Icon = link.icon;
@@ -69,7 +69,7 @@ export const Navbar: React.FC = () => {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 2xl:gap-2 px-2.5 2xl:px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   isActive
                     ? 'bg-white dark:bg-[#2e2e2e] text-[#2f2e2b] dark:text-white shadow-xs border border-[#deddd9] dark:border-[#404040] font-semibold'
                     : 'text-[#6b6966] dark:text-[#a8a7a4] hover:text-[#2f2e2b] dark:hover:text-white hover:bg-white/60 dark:hover:bg-[#2c2c2c]'
@@ -116,8 +116,8 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Secondary Horizontal Nav Row for Screens < 2xl */}
-      <div className="2xl:hidden bg-[#f7f6f3] dark:bg-[#202020] border-t border-[#e9e9e7] dark:border-[#2e2e2e] px-4 sm:px-6 py-2 overflow-x-auto scrollbar-none flex items-center gap-2">
+      {/* Secondary Horizontal Nav Row for Screens < xl */}
+      <div className="xl:hidden bg-[#f7f6f3] dark:bg-[#202020] border-t border-[#e9e9e7] dark:border-[#2e2e2e] px-4 sm:px-6 py-2 overflow-x-auto scrollbar-none flex items-center gap-2">
         {navLinks.map((link) => {
           const isActive = pathname === link.href;
           const Icon = link.icon;

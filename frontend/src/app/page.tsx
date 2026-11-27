@@ -180,12 +180,12 @@ export default function DispatchCommandPage() {
       <Navbar />
 
       {/* Main Content Area - Spacious 2-Column Grid */}
-      <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+      <main className="flex-1 max-w-[1850px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
         
         {/* Left Column (5 Cols on LG): Live Distress Triage Stream & Ingestion */}
-        <section className="lg:col-span-5 flex flex-col gap-6 sm:gap-7">
+        <section className="lg:col-span-5 flex flex-col gap-5 sm:gap-6">
           {/* Section Header Card */}
-          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 shadow-xs flex items-center justify-between">
+          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-5 sm:p-6 shadow-xs flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-xl bg-[#fdf2f2] dark:bg-[#341d1d] border border-[#fae1e1] dark:border-[#4d2525] flex items-center justify-center text-[#b91c1c] dark:text-[#f87171]">
                 <ShieldAlert className="w-6 h-6" />
@@ -328,7 +328,7 @@ export default function DispatchCommandPage() {
                   </p>
 
                   {/* Actions: Route Preview & Approve Fleet */}
-                  <div className="flex items-center gap-3 pt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e]">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 pt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e]">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -412,7 +412,7 @@ export default function DispatchCommandPage() {
             </div>
 
             {/* Ingestion Form */}
-            <form onSubmit={handleSendMessage} className="flex gap-2.5">
+            <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-2.5">
               <input
                 type="text"
                 value={inputText}
@@ -420,22 +420,24 @@ export default function DispatchCommandPage() {
                 placeholder="Paste Hindi/English distress message (e.g., 'Solani aqueduct ke paas paani 6ft ho gaya hai...')"
                 className="flex-1 bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-4 py-3 text-sm text-[#2f2e2b] dark:text-[#e6e6e5] placeholder-[#9b9a97] dark:placeholder-[#666666] focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
-              <select
-                value={selectedSource}
-                onChange={(e) => setSelectedSource(e.target.value)}
-                className="bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-3.5 py-3 text-sm text-[#2f2e2b] dark:text-[#e6e6e5] focus:outline-none"
-              >
-                <option value="WhatsApp">WhatsApp</option>
-                <option value="Emergency 112">Emergency 112</option>
-                <option value="SMS Gateway">SMS</option>
-              </select>
-              <button
-                type="submit"
-                disabled={isProcessing || !inputText.trim()}
-                className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-bold px-5 py-3 rounded-xl text-sm flex items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xs shrink-0"
-              >
-                {isProcessing ? <span>Extracting...</span> : <><Zap className="w-4 h-4 fill-current" /><span>Triage</span></>}
-              </button>
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedSource}
+                  onChange={(e) => setSelectedSource(e.target.value)}
+                  className="bg-[#fbfbfa] dark:bg-[#191919] border border-[#deddd9] dark:border-[#383838] rounded-xl px-3.5 py-3 text-sm text-[#2f2e2b] dark:text-[#e6e6e5] focus:outline-none flex-1 sm:flex-initial"
+                >
+                  <option value="WhatsApp">WhatsApp</option>
+                  <option value="Emergency 112">Emergency 112</option>
+                  <option value="SMS Gateway">SMS</option>
+                </select>
+                <button
+                  type="submit"
+                  disabled={isProcessing || !inputText.trim()}
+                  className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-bold px-5 py-3 rounded-xl text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xs shrink-0 flex-1 sm:flex-initial"
+                >
+                  {isProcessing ? <span>Extracting...</span> : <><Zap className="w-4 h-4 fill-current" /><span>Triage</span></>}
+                </button>
+              </div>
             </form>
           </div>
         </section>
@@ -478,7 +480,7 @@ export default function DispatchCommandPage() {
           )}
 
           {/* Map Container */}
-          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl overflow-hidden shadow-xs h-[520px] relative">
+          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl overflow-hidden shadow-xs h-[440px] sm:h-[500px] lg:h-[560px] xl:h-[600px] relative">
             <TacticalMap
               activeModule="flood"
               incidents={incidents}

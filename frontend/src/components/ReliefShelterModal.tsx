@@ -146,13 +146,13 @@ export const ReliefShelterModal: React.FC<ReliefShelterModalProps> = ({
 
               <div className="bg-[#0e1738] p-3 rounded-xl border border-slate-800">
                 <span className="text-slate-400 text-[11px] block">POTABLE WATER:</span>
-                <span className="text-lg font-black text-cyan-300">{totalWater.toLocaleString()} L</span>
+                <span className="text-lg font-black text-cyan-300">{Number(totalWater || 0).toLocaleString()} L</span>
                 <span className="text-[10px] text-cyan-500 block mt-0.5">Jeevan Verified Safe</span>
               </div>
 
               <div className="bg-[#0e1738] p-3 rounded-xl border border-slate-800">
                 <span className="text-slate-400 text-[11px] block">DRY RATION KITS:</span>
-                <span className="text-lg font-black text-amber-300">{totalRations.toLocaleString()}</span>
+                <span className="text-lg font-black text-amber-300">{Number(totalRations || 0).toLocaleString()}</span>
                 <span className="text-[10px] text-amber-500 block mt-0.5">72h Ready Meals</span>
               </div>
 
@@ -268,11 +268,11 @@ export const ReliefShelterModal: React.FC<ReliefShelterModalProps> = ({
                       <div className="flex items-center gap-4 text-[11px] font-mono text-slate-400">
                         <div className="flex items-center gap-1">
                           <Droplets className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>{shelter.potable_water_liters.toLocaleString()}L</span>
+                          <span>{Number(shelter?.potable_water_liters || 0).toLocaleString()}L</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Utensils className="w-3.5 h-3.5 text-amber-400" />
-                          <span>{shelter.dry_ration_kits.toLocaleString()} Kits</span>
+                          <span>{Number(shelter?.dry_ration_kits || 0).toLocaleString()} Kits</span>
                         </div>
                         <div className="flex items-center gap-1 text-slate-300">
                           <Phone className="w-3 h-3 text-emerald-400" />

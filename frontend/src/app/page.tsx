@@ -102,12 +102,18 @@ export default function DispatchCommandPage() {
 
   const handleApproveDispatch = async (incidentId: string) => {
     try {
-      const updated = await approveDispatch(incidentId, 'NDRF-BOAT-04');
+      const res = await approveDispatch(incidentId, 'NDRF-BOAT-04');
+      const updatedRecord = res?.incident || (res?.id && res?.triage ? res : null);
       setIncidents((prev) =>
-        prev.map((inc) => (inc.id === incidentId ? updated : inc))
+        prev.map((inc) => {
+          if (inc.id === incidentId) {
+            return updatedRecord || { ...inc, status: 'DISPATCHED', assigned_unit: 'NDRF-BOAT-04' };
+          }
+          return inc;
+        })
       );
       if (selectedIncident?.id === incidentId) {
-        setSelectedIncident(updated);
+        setSelectedIncident((prev) => prev ? (updatedRecord || { ...prev, status: 'DISPATCHED', assigned_unit: 'NDRF-BOAT-04' }) : null);
       }
     } catch (err) {
       console.error('Dispatch error:', err);
@@ -177,8 +183,9 @@ export default function DispatchCommandPage() {
           <div className="space-y-4 max-h-[720px] overflow-y-auto pr-1.5 scrollbar-thin">
             {incidents.map((inc) => {
               const isSelected = selectedIncident?.id === inc.id;
-              const isP1 = inc.triage.priority_tier.includes('P1');
-              const isP2 = inc.triage.priority_tier.includes('P2');
+              const priorityTier = inc.triage?.priority_tier || 'P3 - MEDIUM';
+              const isP1 = priorityTier.includes('P1');
+              const isP2 = priorityTier.includes('P2');
               const isDispatched = inc.status === 'DISPATCHED';
 
               return (
@@ -207,12 +214,12 @@ export default function DispatchCommandPage() {
                             : 'bg-[#fafaf8] dark:bg-[#282828] text-[#575653] dark:text-[#a8a7a4] border border-[#e3e2e0] dark:border-[#3a3a3a]'
                         }`}
                       >
-                        {inc.triage.priority_tier}
+                        {priorityTier}
                       </span>
                     </div>
 
                     <span className="font-mono text-sm font-bold text-sky-700 dark:text-sky-300 bg-[#f0f7fb] dark:bg-[#1a2634] border border-[#d8eaf6] dark:border-[#25394e] px-3 py-1 rounded-lg">
-                      Score: {inc.triage.final_score.toFixed(2)}
+                      Score: {inc.triage?.final_score != null ? inc.triage.final_score.toFixed(2) : '0.50'}
                     </span>
                   </div>
 
@@ -244,7 +251,7 @@ export default function DispatchCommandPage() {
                   </div>
 
                   {/* Vulnerability Tags */}
-                  {inc.vulnerabilities.length > 0 && (
+                  {(inc.vulnerabilities || []).length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
                       {inc.vulnerabilities.map((v, i) => (
                         <span
@@ -260,7 +267,7 @@ export default function DispatchCommandPage() {
 
                   {/* Reasoning */}
                   <p className="text-xs sm:text-sm text-[#5f5e5b] dark:text-[#a8a7a4] mb-5 font-mono leading-relaxed">
-                    <b className="text-[#2f2e2b] dark:text-white">Triage Rationale:</b> {inc.triage.explanation}
+                    <b className="text-[#2f2e2b] dark:text-white">Triage Rationale:</b> {inc.triage?.explanation || inc.clean_summary}
                   </p>
 
                   {/* Actions: Route Preview & Approve Fleet */}

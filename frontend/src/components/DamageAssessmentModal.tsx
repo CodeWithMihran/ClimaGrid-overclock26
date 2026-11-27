@@ -102,8 +102,8 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
 
           <div className="bg-[#0e1738] p-3 rounded-xl border border-slate-800">
             <span className="text-slate-400 text-[11px] block">AFFECTED CITIZENS:</span>
-            <span className="text-lg font-black text-white">{data.summary_metrics.total_affected_families.toLocaleString()} Families</span>
-            <span className="text-[10px] text-amber-400 block mt-0.5">~{(data.summary_metrics.total_affected_families * 4).toLocaleString()} Displaced</span>
+            <span className="text-lg font-black text-white">{Number(data?.summary_metrics?.total_affected_families || 0).toLocaleString()} Families</span>
+            <span className="text-[10px] text-amber-400 block mt-0.5">~{((data?.summary_metrics?.total_affected_families || 0) * 4).toLocaleString()} Displaced</span>
           </div>
 
           <div className="bg-[#0e1738] p-3 rounded-xl border border-slate-800">

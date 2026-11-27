@@ -38,15 +38,26 @@ export default function ArchitecturePage() {
             </div>
           </div>
 
-          <a
-            href="/CLIMAGRID_TECH_STACK_AND_ARCHITECTURE.pdf"
-            target="_blank"
-            download
-            className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-semibold text-sm px-6 py-3 rounded-xl flex items-center gap-2.5 shadow-xs transition-all font-mono"
-          >
-            <Download className="w-4 h-4" />
-            <span>Download Technical Whitepaper (.pdf)</span>
-          </a>
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="/CLIMAGRID_HACKATHON_PRESENTATION.pptx"
+              download="CLIMAGRID_HACKATHON_PRESENTATION.pptx"
+              className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-semibold text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center gap-2 shadow-xs transition-all font-mono"
+            >
+              <Download className="w-4 h-4" />
+              <span>Pitch Deck (.pptx)</span>
+            </a>
+
+            <a
+              href="/CLIMAGRID_TECH_STACK_AND_ARCHITECTURE.pdf"
+              target="_blank"
+              download="CLIMAGRID_TECH_STACK_AND_ARCHITECTURE.pdf"
+              className="bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white border border-[#deddd9] dark:border-[#3d3d3d] font-semibold text-xs sm:text-sm px-5 py-3 rounded-xl flex items-center gap-2 shadow-2xs transition-all font-mono"
+            >
+              <Download className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+              <span>Whitepaper (.pdf)</span>
+            </a>
+          </div>
         </div>
 
         {/* 1. 5-Stage Event-Driven Pipeline */}

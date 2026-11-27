@@ -74,9 +74,11 @@ export default function CitizenSOSPage() {
 
   const handleSimulatePhotoGauge = async () => {
     const res = await analyzeFloodPhoto('sample_roof');
-    setWaterLevel(`${res.estimated_depth_feet}ft - Roof / Chhat`);
+    const depth = res.estimated_depth_feet;
+    const depthOption = depth >= 8 ? '8ft+ - Submerged Room' : depth >= 5.5 ? '6ft - Roof / Chhat' : depth >= 3.5 ? '4ft - Waist Deep' : '2ft - Knee Deep';
+    setWaterLevel(depthOption);
     setVoiceText(res.suggested_distress_message);
-    alert(`Vision Depth Gauge: Waterline detected at ${res.estimated_depth_feet}ft! Updated form.`);
+    alert(`Vision Depth Gauge: Waterline detected at ${res.estimated_depth_feet}ft! Updated form to ${depthOption}.`);
   };
 
   // WhatsApp Bot States
@@ -436,7 +438,18 @@ export default function CitizenSOSPage() {
                       : 'mr-auto bg-white dark:bg-[#202c33] text-[#2f2e2b] dark:text-[#f4f4f5] rounded-tl-none border border-slate-200 dark:border-zinc-700/50'
                   }`}
                 >
-                  <p className="whitespace-pre-line leading-relaxed">{msg.text}</p>
+                  <p className="whitespace-pre-line leading-relaxed">
+                    {msg.text.split('\n').map((line, lIdx) => (
+                      <span key={lIdx} className="block">
+                        {line.split(/(\*[^*]+\*)/g).map((part, pIdx) => {
+                          if (part.startsWith('*') && part.endsWith('*')) {
+                            return <strong key={pIdx} className="font-bold">{part.slice(1, -1)}</strong>;
+                          }
+                          return part;
+                        })}
+                      </span>
+                    ))}
+                  </p>
                   <span className="text-[10px] text-slate-500 dark:text-zinc-400 text-right mt-1.5 font-mono">
                     {msg.time} {msg.sender === 'user' && '✓✓'}
                   </span>
@@ -462,6 +475,7 @@ export default function CitizenSOSPage() {
               />
               <button
                 type="submit"
+                aria-label="Send WhatsApp emergency distress message"
                 disabled={!waInput.trim()}
                 className="bg-[#008069] dark:bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white p-3 rounded-xl transition-colors shadow-xs"
               >

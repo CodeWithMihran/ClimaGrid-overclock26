@@ -202,7 +202,7 @@ export default function HeatResiliencePage() {
 
           <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
             <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">ADVISORY STATUS</span>
-            <span className="text-3xl font-bold text-rose-600 dark:text-rose-400 block truncate">
+            <span className="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 block leading-snug">
               {alertLevel}
             </span>
             <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1">NDMA Protocol Active</span>
@@ -233,7 +233,7 @@ export default function HeatResiliencePage() {
                     <b>Risk:</b> {ward.vulnerability_reason}
                   </p>
                   <div className="flex items-center justify-between text-[#787774] dark:text-[#9b9a97] pt-2.5 border-t border-[#e9e9e7] dark:border-[#2e2e2e] text-xs">
-                    <span>Target Population: <b>{ward.population.toLocaleString()}</b></span>
+                    <span>Target Population: <b>{Number(ward.population || 0).toLocaleString()}</b></span>
                     <span className="text-sky-600 dark:text-sky-400">Canopy: {ward.tree_canopy_pct}%</span>
                   </div>
                 </div>

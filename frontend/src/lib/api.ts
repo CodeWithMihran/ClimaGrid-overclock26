@@ -253,7 +253,10 @@ export async function approveDispatch(incidentId: string, unitCallsign: string =
     const res = await fetch(`${API_BASE}/distress/${incidentId}/approve?unit_callsign=${unitCallsign}`, {
       method: 'POST'
     });
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      const data = await res.json();
+      return data.incident || data;
+    }
   } catch (e) {}
   return { status: "SUCCESS", message: `Unit ${unitCallsign} dispatched.` };
 }

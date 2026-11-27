@@ -205,13 +205,26 @@ export default function WaterSafetyPage() {
                   </div>
                   <div>
                     <span className="text-xs font-mono font-semibold text-rose-700 dark:text-rose-400 uppercase">DISTRICT HEALTH ORDER</span>
-                    <h3 className="text-lg font-bold text-[#2f2e2b] dark:text-white mt-0.5">{advisoryData.advisory_title}</h3>
+                    <h3 className="text-base sm:text-lg font-bold text-[#2f2e2b] dark:text-white mt-0.5">
+                      {advisoryData.classification || advisoryData.advisory_title || "EMERGENCY HEALTH ADVISORY (BOIL-WATER NOTICE)"}
+                    </h3>
                   </div>
                 </div>
 
                 <div className="bg-[#fef9ee] dark:bg-[#261f14] p-5 rounded-xl border border-[#fcedca] dark:border-[#47341b] text-sm space-y-2.5">
-                  <p className="text-[#3b3a37] dark:text-[#d4d4d4] leading-relaxed font-sans">{advisoryData.advisory_text}</p>
-                  <p className="text-rose-700 dark:text-rose-400 font-bold font-mono text-xs">Issued by: {advisoryData.issuing_authority}</p>
+                  <p className="text-[#3b3a37] dark:text-[#d4d4d4] leading-relaxed font-sans font-medium">
+                    {advisoryData.trigger_cause || advisoryData.advisory_text || "Submergence and structural silt infiltration during flood crest."}
+                  </p>
+                  {advisoryData.mandatory_guidelines && (
+                    <ul className="list-disc pl-5 text-xs sm:text-sm text-[#575653] dark:text-[#a8a7a4] space-y-1 mt-2">
+                      {advisoryData.mandatory_guidelines.map((g: string, i: number) => (
+                        <li key={i}>{g}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <p className="text-rose-700 dark:text-rose-400 font-bold font-mono text-xs pt-1">
+                    Issued by: {advisoryData.issuing_authority || "District Disaster Management & Jal Sansthan"} ({advisoryData.advisory_id || "BWA-01"})
+                  </p>
                 </div>
 
                 {/* Safe Tankers */}
@@ -220,12 +233,18 @@ export default function WaterSafetyPage() {
                     DISPATCHED SAFE DRINKING WATER TANKERS:
                   </span>
                   <div className="space-y-2.5 text-sm font-mono">
-                    {advisoryData.emergency_water_tanker_locations?.map((loc: string, i: number) => (
-                      <div key={i} className="bg-[#f7f6f3] dark:bg-[#191919] p-3.5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center gap-3 text-emerald-800 dark:text-emerald-300 font-semibold">
-                        <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                        <span>{loc}</span>
-                      </div>
-                    ))}
+                    {(advisoryData.emergency_tanker_points || advisoryData.emergency_water_tanker_locations || [
+                      { location: "Solani Chowk High Ground", water_truck_id: "JAL-TANKER-04", capacity_litres: 10000 },
+                      { location: "Nehru Nagar Relief Camp", water_truck_id: "JAL-TANKER-07", capacity_litres: 10000 }
+                    ]).map((pt: any, i: number) => {
+                      const locName = typeof pt === 'string' ? pt : `${pt.location} (${pt.water_truck_id} • ${(pt.capacity_litres || 10000).toLocaleString()}L)`;
+                      return (
+                        <div key={i} className="bg-[#f7f6f3] dark:bg-[#191919] p-3.5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center gap-3 text-emerald-800 dark:text-emerald-300 font-semibold text-xs sm:text-sm">
+                          <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span>{locName}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

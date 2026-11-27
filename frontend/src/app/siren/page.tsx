@@ -30,6 +30,7 @@ export default function CAPSirenPage() {
   const [areaDesc, setAreaDesc] = useState<string>('Roorkee - Solani Basin, Ramnagar Ward 4, Civil Lines');
 
   const [isTransmitting, setIsTransmitting] = useState<boolean>(false);
+  const [isPlayingSiren, setIsPlayingSiren] = useState<boolean>(false);
   const [broadcastSuccess, setBroadcastSuccess] = useState<CAPAlert | null>(null);
   const [copiedXML, setCopiedXML] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'compose' | 'xml' | 'active'>('compose');
@@ -63,6 +64,8 @@ export default function CAPSirenPage() {
 
   // Web Audio API 853Hz + 960Hz dual-frequency warble siren
   const playEmergencySirenSound = () => {
+    setIsPlayingSiren(true);
+    setTimeout(() => setIsPlayingSiren(false), 2600);
     try {
       if (typeof window === 'undefined') return;
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -166,10 +169,14 @@ export default function CAPSirenPage() {
           {/* Test Siren Button */}
           <button
             onClick={playEmergencySirenSound}
-            className="bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#b91c1c] dark:text-[#f87171] border border-[#deddd9] dark:border-[#3d3d3d] px-6 py-3 rounded-xl text-sm sm:text-base font-semibold flex items-center gap-2.5 shadow-2xs transition-all"
+            className={`px-6 py-3 rounded-xl text-sm sm:text-base font-semibold flex items-center gap-2.5 shadow-2xs transition-all ${
+              isPlayingSiren
+                ? 'bg-[#b91c1c] text-white animate-pulse border border-[#991b1b]'
+                : 'bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#b91c1c] dark:text-[#f87171] border border-[#deddd9] dark:border-[#3d3d3d]'
+            }`}
           >
-            <Volume2 className="w-5 h-5 text-rose-600 dark:text-rose-400" />
-            <span>Test 853Hz+960Hz Siren</span>
+            <Volume2 className={`w-5 h-5 ${isPlayingSiren ? 'text-white animate-bounce' : 'text-rose-600 dark:text-rose-400'}`} />
+            <span>{isPlayingSiren ? 'Warble Siren Active (2.5s)...' : 'Test 853Hz+960Hz Siren'}</span>
           </button>
         </div>
 

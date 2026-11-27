@@ -119,7 +119,7 @@ export const HeatShieldPanel: React.FC<HeatShieldPanelProps> = ({ onSimulationUp
               <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
                 <span className="text-[10px] text-slate-400 block">COOLING SHELTERS NEEDED</span>
                 <span className="text-lg font-black text-rose-400">
-                  {simData.cooling_shelters_required} Operational
+                  {simData?.cooling_shelters_required ?? 0} Operational
                 </span>
                 <span className="text-[9px] text-slate-500 block mt-0.5">Misting stations active</span>
               </div>
@@ -127,7 +127,7 @@ export const HeatShieldPanel: React.FC<HeatShieldPanelProps> = ({ onSimulationUp
               <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
                 <span className="text-[10px] text-slate-400 block">VULNERABLE POPULATION</span>
                 <span className="text-lg font-black text-amber-400">
-                  {simData.vulnerable_population_at_risk.toLocaleString()} At Risk
+                  {Number(simData?.vulnerable_population_at_risk || 0).toLocaleString()} At Risk
                 </span>
                 <span className="text-[9px] text-slate-500 block mt-0.5">Concrete trap density</span>
               </div>

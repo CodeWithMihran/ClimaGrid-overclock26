@@ -35,20 +35,20 @@ export const LiveTelemetryTicker: React.FC = () => {
   const gangaGauge = telemetry.gauges.find(g => g.id === "GAUGE-GANGA-02") || telemetry.gauges[1];
 
   return (
-    <div className="bg-[#f7f6f3] dark:bg-[#1f1f1f] border-t border-b border-[#e9e9e7] dark:border-[#2e2e2e] px-5 sm:px-8 py-2.5 flex items-center justify-between text-xs sm:text-[13px] font-mono text-[#5f5e5b] dark:text-[#a8a7a4] overflow-x-auto gap-6 select-none scrollbar-none transition-colors">
+    <div className="bg-[#f7f6f3] dark:bg-[#1f1f1f] border-t border-b border-[#e9e9e7] dark:border-[#2e2e2e] px-4 sm:px-8 py-2 flex items-center justify-between text-xs font-mono text-[#5f5e5b] dark:text-[#a8a7a4] overflow-x-auto gap-4 select-none scrollbar-none transition-colors">
       {/* Live Feed Status Tag */}
-      <div className="flex items-center gap-2.5 shrink-0">
-        <span className="relative flex h-2.5 w-2.5">
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600 dark:bg-emerald-500"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600 dark:bg-emerald-500"></span>
         </span>
-        <span className="text-[#207a43] dark:text-[#4ade80] font-bold uppercase tracking-wider text-xs">
+        <span className="text-[#207a43] dark:text-[#4ade80] font-bold uppercase tracking-wider text-[11px]">
           Live Basin Telemetry
         </span>
       </div>
 
       {/* Sensor Tickers */}
-      <div className="flex items-center gap-7 shrink-0">
+      <div className="flex items-center gap-4 xl:gap-6 shrink-0">
         {/* Solani River Gauge */}
         {solaniGauge && (
           <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export const LiveTelemetryTicker: React.FC = () => {
             <Activity className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             <span className="text-[#787774] dark:text-[#9b9a97]">{gangaGauge.name}:</span>
             <span className="text-[#2f2e2b] dark:text-white font-bold">{gangaGauge.water_level_m}m</span>
-            <span className="text-[#8c8a85] dark:text-[#888888]">({gangaGauge.discharge_cusecs.toLocaleString()} cusecs)</span>
+            <span className="text-[#8c8a85] dark:text-[#888888]">({Number(gangaGauge?.discharge_cusecs || 0).toLocaleString()} cusecs)</span>
           </div>
         )}
 

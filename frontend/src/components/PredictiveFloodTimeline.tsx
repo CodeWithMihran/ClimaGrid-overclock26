@@ -84,7 +84,7 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
               </span>
             </div>
             <p className="text-[10.5px] text-slate-400 font-mono">
-              Upstream Discharge: {data.meteorological_baseline.upstream_discharge_cusecs.toLocaleString()} cusecs | Rain Rate: {data.meteorological_baseline.rain_rate_mm_hr}mm/hr
+              Upstream Discharge: {Number(data?.meteorological_baseline?.upstream_discharge_cusecs || 0).toLocaleString()} cusecs | Rain Rate: {data?.meteorological_baseline?.rain_rate_mm_hr ?? 0}mm/hr
             </p>
           </div>
         </div>
@@ -142,7 +142,7 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
               </div>
               <div className="flex items-center justify-between text-[11px] font-bold">
                 <span className="text-white">{s.flooded_area_hectares} Ha</span>
-                <span className="text-slate-400 text-[10px] font-mono">{s.citizens_in_hazard_zone.toLocaleString()} At Risk</span>
+                <span className="text-slate-400 text-[10px] font-mono">{Number(s?.citizens_in_hazard_zone || 0).toLocaleString()} At Risk</span>
               </div>
             </button>
           );
@@ -162,7 +162,7 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
           <div className="flex items-center gap-1.5 font-mono text-[11px]">
             <Users className="w-3.5 h-3.5 text-yellow-400" />
             <span className="text-slate-400">Citizens In Danger:</span>
-            <span className="text-yellow-400 font-bold">{currentStep.citizens_in_hazard_zone.toLocaleString()}</span>
+            <span className="text-yellow-400 font-bold">{Number(currentStep?.citizens_in_hazard_zone || 0).toLocaleString()}</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-1.5 text-[11px]">

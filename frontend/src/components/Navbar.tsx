@@ -15,14 +15,17 @@ import {
   Cpu, 
   Smartphone,
   Sun,
-  Moon
+  Moon,
+  Play
 } from 'lucide-react';
 import { LiveTelemetryTicker } from './LiveTelemetryTicker';
 import { useTheme } from '../context/ThemeContext';
+import { useDemoTour } from '../context/DemoTourContext';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+  const { isTourActive, startTour, stopTour } = useDemoTour();
 
   const navLinks = [
     { href: '/', label: 'Live Dispatch', icon: Map },
@@ -102,6 +105,21 @@ export const Navbar: React.FC = () => {
                 <span className="hidden md:inline">Dark</span>
               </>
             )}
+          </button>
+
+          {/* Interactive Guided Crisis Tour Trigger */}
+          <button
+            onClick={() => isTourActive ? stopTour() : startTour(0)}
+            type="button"
+            className={`font-semibold text-xs sm:text-sm px-3.5 sm:px-4 py-2 rounded-xl flex items-center gap-2 shadow-xs transition-all shrink-0 border ${
+              isTourActive
+                ? 'bg-sky-600 hover:bg-sky-700 text-white border-sky-500 ring-2 ring-sky-400/40 animate-pulse'
+                : 'bg-amber-50 hover:bg-amber-100/80 dark:bg-amber-950/40 dark:hover:bg-amber-900/40 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700/60'
+            }`}
+            title="Launch 2-Minute Guided Crisis Tour for Evaluators"
+          >
+            <Play className={`w-3.5 h-3.5 ${isTourActive ? 'fill-white' : 'fill-amber-600 text-amber-600 dark:text-amber-400 dark:fill-amber-400'}`} />
+            <span>{isTourActive ? 'Tour Active (6 Steps)' : 'Interactive Demo Tour'}</span>
           </button>
 
           {/* Citizen App Link */}

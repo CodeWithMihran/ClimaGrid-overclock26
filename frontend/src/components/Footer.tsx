@@ -2,9 +2,11 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Compass, ShieldCheck, HeartHandshake, FileText, Download, ExternalLink } from 'lucide-react';
+import { Compass, ShieldCheck, HeartHandshake, FileText, Download, ExternalLink, Play } from 'lucide-react';
+import { useDemoTour } from '../context/DemoTourContext';
 
 export const Footer: React.FC = () => {
+  const { isTourActive, startTour, stopTour } = useDemoTour();
   return (
     <footer className="bg-white dark:bg-[#1c1c1c] border-t border-[#e9e9e7] dark:border-[#2e2e2e] text-[#575653] dark:text-[#a8a7a4] text-xs font-sans transition-colors duration-200 mt-12">
       <div className="max-w-[1850px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 space-y-8">
@@ -99,6 +101,16 @@ export const Footer: React.FC = () => {
               Hackathon Artifacts
             </h4>
             <ul className="space-y-1.5 text-sm">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => isTourActive ? stopTour() : startTour(0)}
+                  className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors flex items-center gap-1.5 font-semibold text-amber-700 dark:text-amber-400"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>{isTourActive ? 'Stop Crisis Tour' : '▶ 2-Min Guided Tour'}</span>
+                </button>
+              </li>
               <li>
                 <Link href="/architecture" className="hover:text-sky-600 dark:hover:text-sky-400 transition-colors">
                   Cloud Architecture & SLAs

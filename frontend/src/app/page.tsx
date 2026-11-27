@@ -20,10 +20,12 @@ import {
   Zap,
   Sparkles,
   Compass,
-  Megaphone
+  Megaphone,
+  Play
 } from 'lucide-react';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
+import { useDemoTour } from '../context/DemoTourContext';
 import { 
   fetchIncidentQueue, 
   parseDistressMessage, 
@@ -44,6 +46,7 @@ const TacticalMap = dynamic(
 );
 
 export default function DispatchCommandPage() {
+  const { isTourActive, startTour, stopTour } = useDemoTour();
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<IncidentRecord | null>(null);
   const [activeRoute, setActiveRoute] = useState<RouteSegment | null>(null);
@@ -208,6 +211,18 @@ export default function DispatchCommandPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => isTourActive ? stopTour() : startTour(0)}
+              className={`font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 shadow-xs transition-all font-mono border ${
+                isTourActive
+                  ? 'bg-sky-600 hover:bg-sky-700 text-white border-sky-500 ring-2 ring-sky-400/40 animate-pulse'
+                  : 'bg-amber-500 hover:bg-amber-600 text-white border-amber-600 shadow-amber-500/20'
+              }`}
+            >
+              <Play className="w-4 h-4 fill-white" />
+              <span>{isTourActive ? 'Crisis Tour Active' : '▶ Launch 2-Min Guided Tour'}</span>
+            </button>
+
             <Link
               href="/siren"
               className="bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white border border-[#deddd9] dark:border-[#3d3d3d] font-semibold text-xs sm:text-sm px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 shadow-2xs transition-all font-mono"

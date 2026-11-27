@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "../context/ThemeContext";
+import { DemoTourProvider } from "../context/DemoTourContext";
+import { CrisisTourHUD } from "../components/CrisisTourHUD";
 
 export const metadata: Metadata = {
   title: "ClimaGrid // Disaster Command Operations",
@@ -34,7 +36,10 @@ export default function RootLayout({
       </head>
       <body className="bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] antialiased min-h-screen transition-colors duration-200">
         <ThemeProvider>
-          {children}
+          <DemoTourProvider>
+            {children}
+            <CrisisTourHUD />
+          </DemoTourProvider>
         </ThemeProvider>
       </body>
     </html>

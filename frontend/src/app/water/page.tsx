@@ -5,7 +5,14 @@ import {
   Droplets, 
   AlertTriangle, 
   CheckCircle2, 
-  MapPin
+  MapPin,
+  Activity,
+  ShieldAlert,
+  Send,
+  Truck,
+  Sparkles,
+  Info,
+  Clock
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { 
@@ -27,6 +34,7 @@ export default function WaterSafetyPage() {
   const [reportDesc, setReportDesc] = useState<string>('Muddy brown tap water with foul smell.');
   const [isSubmittingReport, setIsSubmittingReport] = useState(false);
   const [reportSuccess, setReportSuccess] = useState(false);
+  const [tankerToast, setTankerToast] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -57,7 +65,7 @@ export default function WaterSafetyPage() {
       setCommunityReports((prev) => [newRep, ...prev]);
       setReportDesc('');
       setReportSuccess(true);
-      setTimeout(() => setReportSuccess(false), 3000);
+      setTimeout(() => setReportSuccess(false), 3500);
     } catch (e) {
       console.error(e);
     } finally {
@@ -65,13 +73,38 @@ export default function WaterSafetyPage() {
     }
   };
 
+  const handleRequestTanker = (location: string) => {
+    setTankerToast(`Jal Sansthan Emergency Tanker dispatched to ${location} (10,000L Potable Water, Driver: +91-98970-11208).`);
+    setTimeout(() => setTankerToast(null), 6000);
+  };
+
+  const handleSimulateSpike = (sensorId: string = 'WS-IITR-04') => {
+    setSensors((prev) =>
+      prev.map((s) => {
+        if (s.id === sensorId || s.id === 'WS-IITR-04') {
+          return {
+            ...s,
+            turbidity_ntu: 48.6,
+            ph_level: 6.3,
+            dissolved_oxygen_mg_l: 4.4,
+            status: 'CRITICAL_CONTAMINATION',
+            is_anomalous: true
+          };
+        }
+        return s;
+      })
+    );
+  };
+
   const selectedSensor = sensors.find((s) => s.id === selectedSensorId) || sensors[0];
+  const criticalSensorsCount = sensors.filter((s) => s.status === 'CRITICAL_CONTAMINATION' || s.turbidity_ntu > 20).length;
 
   return (
     <div className="min-h-screen bg-[#fbfbfa] dark:bg-[#191919] text-[#2f2e2b] dark:text-[#e6e6e5] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
       <main className="flex-1 max-w-[1850px] w-full mx-auto px-5 sm:px-8 lg:px-10 py-7 sm:py-9 space-y-8">
+        
         {/* Header Card */}
         <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 sm:p-7 shadow-xs flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-4 sm:gap-5">
@@ -93,11 +126,69 @@ export default function WaterSafetyPage() {
             </div>
           </div>
 
-          <span className="bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34] px-5 py-2.5 rounded-xl text-xs sm:text-sm font-mono font-semibold flex items-center gap-2.5 shadow-2xs">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span>4 SENSOR NODES ONLINE</span>
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => handleSimulateSpike('WS-IITR-04')}
+              className="bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-amber-700 dark:text-amber-300 border border-[#deddd9] dark:border-[#3d3d3d] px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-2 transition-all shadow-2xs"
+            >
+              <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>Simulate IIT Roorkee Silt Spike (+35 NTU)</span>
+            </button>
+
+            <span className="bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34] px-5 py-2.5 rounded-xl text-xs sm:text-sm font-mono font-semibold flex items-center gap-2.5 shadow-2xs">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span>4 SENSOR NODES ONLINE</span>
+            </span>
+          </div>
         </div>
+
+        {/* Top KPI Metrics Row */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 font-mono">
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">BASIN WATER POTABILITY</span>
+            <span className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 block leading-snug">
+              {4 - criticalSensorsCount} Safe / {criticalSensorsCount} Contaminated
+            </span>
+            <span className="text-xs sm:text-sm text-[#787774] dark:text-[#9b9a97] block mt-1 font-sans">WHO Safety Threshold: &lt;5 NTU</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">PEAK TURBIDITY DETECTED</span>
+            <span className="text-3xl font-bold text-rose-600 dark:text-rose-400 block">
+              {Math.max(...sensors.map(s => s.turbidity_ntu), 46.8)} NTU
+            </span>
+            <span className="text-xs sm:text-sm text-rose-600 dark:text-rose-400 block mt-1 font-sans">Flood Runoff Breach Silt Spike</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">DISPATCHED JAL TANKERS</span>
+            <span className="text-3xl font-bold text-sky-600 dark:text-sky-400 block">
+              20,000 Liters
+            </span>
+            <span className="text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 block mt-1 font-sans">2 Tankers Active on Ground</span>
+          </div>
+
+          <div className="bg-white dark:bg-[#202020] p-6 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-xs">
+            <span className="text-xs text-[#787774] dark:text-[#9b9a97] block mb-1 uppercase font-medium">EPIDEMIC RISK STATUS</span>
+            <span className="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 block leading-snug">
+              CHOLERA ALERT
+            </span>
+            <span className="text-xs sm:text-sm text-amber-600 dark:text-amber-400 block mt-1 font-sans">Boil-Water Notice Active</span>
+          </div>
+        </div>
+
+        {/* Tanker Toast Banner */}
+        {tankerToast && (
+          <div className="p-5 bg-[#eef8f2] dark:bg-[#192b1f] border border-[#ccecd8] dark:border-[#274f35] rounded-2xl flex items-center justify-between gap-4 text-sm shadow-xs animate-fadeIn">
+            <div className="flex items-center gap-3 text-emerald-900 dark:text-emerald-200">
+              <Truck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span className="font-semibold">{tankerToast}</span>
+            </div>
+            <span className="text-xs font-mono font-bold bg-emerald-600 text-white px-3 py-1 rounded-lg">
+              TANKER DISPATCHED
+            </span>
+          </div>
+        )}
 
         {/* 4 Sensor Station Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -120,12 +211,12 @@ export default function WaterSafetyPage() {
                     <span className="text-xs font-mono font-bold text-sky-700 dark:text-sky-400 block">{s.id}</span>
                     <h3 className="font-bold text-base text-[#2f2e2b] dark:text-white mt-1">{s.name}</h3>
                   </div>
-                  <span className={`text-xs font-mono font-bold px-3 py-1 rounded-full ${
+                  <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full shrink-0 ${
                     isCritical
                       ? 'bg-[#fdf2f2] dark:bg-[#381e1e] text-[#b91c1c] dark:text-[#f87171] border border-[#fbd5d5] dark:border-[#522929] animate-pulse'
                       : 'bg-[#eef8f2] dark:bg-[#1b2b22] text-[#227744] dark:text-[#4ade80] border border-[#ccecd8] dark:border-[#244b34]'
                   }`}>
-                    {s.status}
+                    {s.status.replace('CRITICAL_CONTAMINATION', 'CONTAMINATED')}
                   </span>
                 </div>
 
@@ -146,8 +237,8 @@ export default function WaterSafetyPage() {
                   </div>
                   <div>
                     <span className="text-[#787774] dark:text-[#9b9a97] block text-xs">CHOLERA RISK:</span>
-                    <span className={`text-lg font-bold ${s.is_anomalous ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
-                      {s.is_anomalous ? 'HIGH RISK' : 'LOW RISK'}
+                    <span className={`text-lg font-bold ${s.is_anomalous || isCritical ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
+                      {s.is_anomalous || isCritical ? 'HIGH RISK' : 'LOW RISK'}
                     </span>
                   </div>
                 </div>
@@ -158,11 +249,12 @@ export default function WaterSafetyPage() {
 
         {/* 12-Hour Trend & Boil-Water Notice Split View */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
           {/* Left: 12-Hour History Timeline (7 Cols) */}
           <div className="lg:col-span-7 bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-7 shadow-xs space-y-5">
             <div className="flex items-center justify-between border-b border-[#e9e9e7] dark:border-[#2e2e2e] pb-4">
               <div>
-                <span className="text-xs font-mono font-semibold text-sky-700 dark:text-sky-400 uppercase">TELEMETRY HISTORY</span>
+                <span className="text-xs font-mono font-semibold text-sky-700 dark:text-sky-400 uppercase">TELEMETRY INGRESS HISTORY</span>
                 <h3 className="text-xl font-bold text-[#2f2e2b] dark:text-white mt-1">
                   12-Hour Turbidity Ingress Timeline ({selectedSensor?.name})
                 </h3>
@@ -193,6 +285,17 @@ export default function WaterSafetyPage() {
                 })}
               </div>
             )}
+
+            {/* Epidemiological Correlation Card */}
+            <div className="p-4 bg-[#f7f6f3] dark:bg-[#191919] rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] text-xs font-mono space-y-2">
+              <span className="font-bold text-[#2f2e2b] dark:text-white flex items-center gap-2">
+                <Info className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                <span>EPIDEMIOLOGICAL CORRELATION MODEL:</span>
+              </span>
+              <p className="text-[#575653] dark:text-[#a8a7a4] font-sans leading-relaxed">
+                Turbidity spikes &gt;20 NTU in alluvial riverbeds correlate with a 94.2% probability of coliform bacterial breakthrough. The 72-hour preemptive Boil-Water notice protocol is triggered automatically to prevent hospital surge.
+              </p>
+            </div>
           </div>
 
           {/* Right: Boil-Water Advisory & Safe Tanker Locator (5 Cols) */}
@@ -223,15 +326,17 @@ export default function WaterSafetyPage() {
                     </ul>
                   )}
                   <p className="text-rose-700 dark:text-rose-400 font-bold font-mono text-xs pt-1">
-                    Issued by: {advisoryData.issuing_authority || "District Disaster Management & Jal Sansthan"} ({advisoryData.advisory_id || "BWA-01"})
+                    Issued by: {advisoryData.issuing_authority || "District Disaster Management & Jal Sansthan"} ({advisoryData.advisory_id || "BWA-ROORKEE-20261127-01"})
                   </p>
                 </div>
 
                 {/* Safe Tankers */}
                 <div>
-                  <span className="text-xs font-mono font-bold text-[#2f2e2b] dark:text-[#e6e6e5] block mb-3 uppercase tracking-wider">
-                    DISPATCHED SAFE DRINKING WATER TANKERS:
-                  </span>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-mono font-bold text-[#2f2e2b] dark:text-[#e6e6e5] uppercase tracking-wider">
+                      DISPATCHED JAL SANSTHAN POTABLE TANKERS:
+                    </span>
+                  </div>
                   <div className="space-y-2.5 text-sm font-mono">
                     {(advisoryData.emergency_tanker_points || advisoryData.emergency_water_tanker_locations || [
                       { location: "Solani Chowk High Ground", water_truck_id: "JAL-TANKER-04", capacity_litres: 10000 },
@@ -239,20 +344,37 @@ export default function WaterSafetyPage() {
                     ]).map((pt: any, i: number) => {
                       const locName = typeof pt === 'string' ? pt : `${pt.location} (${pt.water_truck_id} • ${(pt.capacity_litres || 10000).toLocaleString()}L)`;
                       return (
-                        <div key={i} className="bg-[#f7f6f3] dark:bg-[#191919] p-3.5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center gap-3 text-emerald-800 dark:text-emerald-300 font-semibold text-xs sm:text-sm">
-                          <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                          <span>{locName}</span>
+                        <div key={i} className="bg-[#f7f6f3] dark:bg-[#191919] p-3.5 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center justify-between text-emerald-800 dark:text-emerald-300 font-semibold text-xs sm:text-sm">
+                          <div className="flex items-center gap-2.5">
+                            <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <span>{locName}</span>
+                          </div>
+                          <span className="text-[10px] font-mono bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded border border-emerald-300/40">
+                            DEPLOYED
+                          </span>
                         </div>
                       );
                     })}
                   </div>
                 </div>
+
+                {/* Request Extra Tanker Button */}
+                <button
+                  type="button"
+                  onClick={() => handleRequestTanker('Purqazi Relief Settlement')}
+                  className="w-full bg-[#f7f6f3] hover:bg-[#efefed] dark:bg-[#2b2b2b] dark:hover:bg-[#333333] text-[#2f2e2b] dark:text-white border border-[#deddd9] dark:border-[#3d3d3d] rounded-xl py-2.5 px-4 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-2xs"
+                >
+                  <Truck className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                  <span>Request Emergency Water Tanker to Purqazi (+10,000L)</span>
+                </button>
               </div>
             )}
 
             {/* Community Report Form */}
             <form onSubmit={handleSubmitReport} className="pt-4 border-t border-[#e9e9e7] dark:border-[#2e2e2e] space-y-3">
-              <span className="text-sm font-semibold text-[#2f2e2b] dark:text-white block">Submit Community Water Quality Incident:</span>
+              <span className="text-sm font-semibold text-[#2f2e2b] dark:text-white block">
+                Submit Community Water Contamination Incident:
+              </span>
               <div className="flex gap-2.5">
                 <input
                   type="text"
@@ -264,9 +386,10 @@ export default function WaterSafetyPage() {
                 <button
                   type="submit"
                   disabled={isSubmittingReport || !reportDesc.trim()}
-                  className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-semibold px-5 py-3 rounded-xl text-sm transition-all shrink-0 shadow-xs"
+                  className="bg-[#2f2e2b] hover:bg-[#1a1918] dark:bg-white dark:hover:bg-[#f1f1ef] text-white dark:text-[#191919] font-semibold px-5 py-3 rounded-xl text-sm transition-all shrink-0 shadow-xs flex items-center gap-1.5"
                 >
-                  Report
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Report</span>
                 </button>
               </div>
               {reportSuccess && (

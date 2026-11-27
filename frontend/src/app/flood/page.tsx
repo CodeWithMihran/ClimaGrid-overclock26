@@ -7,14 +7,9 @@ import {
   Clock, 
   AlertTriangle, 
   ShieldAlert, 
-  Users, 
   Megaphone,
   Play,
-  Pause,
-  ArrowRight,
-  MapPin,
-  CheckCircle2,
-  Activity
+  Pause
 } from 'lucide-react';
 import { Navbar } from '../../components/Navbar';
 import { fetchPredictiveFloodTimeline, fetchFloodGeoJSON } from '../../lib/api';
@@ -81,26 +76,26 @@ export default function PredictiveFloodPage() {
   const currentStep: PredictiveFloodStep | undefined = data?.steps[selectedIdx];
 
   return (
-    <div className="min-h-screen bg-[#070d1e] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#09090b] text-slate-900 dark:text-zinc-100 flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
-      <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 space-y-6">
+      <main className="flex-1 max-w-[1920px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
         {/* Top Header Card */}
-        <div className="bg-[#0b132b] border border-slate-800 rounded-3xl p-6 shadow-2xl flex flex-wrap items-center justify-between gap-4">
+        <div className="bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/40 flex items-center justify-center text-blue-400 shadow-lg shadow-blue-950">
+            <div className="h-12 w-12 rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800 flex items-center justify-center text-sky-600 dark:text-sky-400 shadow-xs">
               <Waves className="w-6 h-6 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl sm:text-2xl font-black text-white tracking-wide">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                   6-HOUR PREDICTIVE FLOOD INUNDATION TIMELINE
                 </h1>
-                <span className="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-xs font-mono font-bold px-3 py-0.5 rounded-full">
+                <span className="bg-sky-50 dark:bg-zinc-800 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-zinc-700 text-xs font-mono font-semibold px-3 py-0.5 rounded-full">
                   MISSION MAUSAM / HYDRA-AI
                 </span>
               </div>
-              <p className="text-sm text-slate-400 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
                 Dynamic hydrodynamic model forecasting water spread from Solani River & Upper Ganga canal breaches
               </p>
             </div>
@@ -109,10 +104,10 @@ export default function PredictiveFloodPage() {
           {/* Play / Pause Simulator */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 shadow-xl transition-all ${
+            className={`px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-xs transition-colors ${
               isPlaying
-                ? 'bg-amber-500 text-slate-950 font-black animate-pulse shadow-amber-950'
-                : 'bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black shadow-cyan-950'
+                ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold'
+                : 'bg-slate-900 hover:bg-slate-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900'
             }`}
           >
             {isPlaying ? (
@@ -132,36 +127,36 @@ export default function PredictiveFloodPage() {
         {/* Meteorological Baseline Stats Bar */}
         {data && (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-[#0b132b] p-4 rounded-2xl border border-slate-800 shadow-xl">
-              <span className="text-xs text-slate-400 font-mono block">RIVER STAGE LEVEL</span>
-              <span className="text-2xl font-black text-white mt-1 block">
+            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
+              <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono block mb-1">RIVER STAGE LEVEL</span>
+              <span className="text-2xl font-bold text-slate-900 dark:text-zinc-100 block">
                 {currentStep?.solani_stage_meters || 5.42} m
               </span>
-              <span className="text-xs text-rose-400 font-medium block mt-1">Danger Mark: 6.20m</span>
+              <span className="text-xs text-rose-600 dark:text-rose-400 font-medium block mt-1">Danger Mark: 6.20m</span>
             </div>
 
-            <div className="bg-[#0b132b] p-4 rounded-2xl border border-slate-800 shadow-xl">
-              <span className="text-xs text-slate-400 font-mono block">UPSTREAM DISCHARGE</span>
-              <span className="text-2xl font-black text-cyan-400 mt-1 block">
+            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
+              <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono block mb-1">UPSTREAM DISCHARGE</span>
+              <span className="text-2xl font-bold text-sky-700 dark:text-sky-400 block">
                 {data.meteorological_baseline.upstream_discharge_cusecs.toLocaleString()} cusecs
               </span>
-              <span className="text-xs text-slate-400 block mt-1">Haridwar Ganga Barrage</span>
+              <span className="text-xs text-slate-500 dark:text-zinc-400 block mt-1">Haridwar Ganga Barrage</span>
             </div>
 
-            <div className="bg-[#0b132b] p-4 rounded-2xl border border-slate-800 shadow-xl">
-              <span className="text-xs text-slate-400 font-mono block">RAINFALL INTENSITY</span>
-              <span className="text-2xl font-black text-blue-400 mt-1 block">
+            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
+              <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono block mb-1">RAINFALL INTENSITY</span>
+              <span className="text-2xl font-bold text-blue-700 dark:text-blue-400 block">
                 {data.meteorological_baseline.rain_rate_mm_hr} mm/hr
               </span>
-              <span className="text-xs text-amber-400 block mt-1">Extreme Cloudburst Band</span>
+              <span className="text-xs text-amber-600 dark:text-amber-400 block mt-1">Extreme Cloudburst Band</span>
             </div>
 
-            <div className="bg-[#0b132b] p-4 rounded-2xl border border-slate-800 shadow-xl">
-              <span className="text-xs text-slate-400 font-mono block">CITIZENS AT RISK</span>
-              <span className="text-2xl font-black text-yellow-400 mt-1 block">
+            <div className="bg-white dark:bg-[#121214] p-5 rounded-2xl border border-slate-200 dark:border-zinc-800 shadow-xs">
+              <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono block mb-1">CITIZENS AT RISK</span>
+              <span className="text-2xl font-bold text-amber-700 dark:text-amber-400 block">
                 {currentStep?.citizens_in_hazard_zone.toLocaleString() || '14,000'}
               </span>
-              <span className="text-xs text-emerald-400 block mt-1">In Projected Inundation Mesh</span>
+              <span className="text-xs text-emerald-700 dark:text-emerald-400 block mt-1">In Projected Inundation Mesh</span>
             </div>
           </div>
         )}
@@ -175,31 +170,31 @@ export default function PredictiveFloodPage() {
                 <button
                   key={s.step_id}
                   onClick={() => handleSelectStep(idx)}
-                  className={`p-4 rounded-2xl text-left transition-all border shadow-lg ${
+                  className={`p-5 rounded-2xl text-left transition-all border shadow-xs ${
                     isSelected
-                      ? 'bg-cyan-950/70 border-cyan-400 ring-2 ring-cyan-400/40 shadow-cyan-950'
-                      : 'bg-[#0b132b] border-slate-800 hover:border-slate-700 hover:bg-[#0e1738]'
+                      ? 'bg-sky-50 dark:bg-zinc-800/90 border-sky-500 dark:border-sky-400 ring-2 ring-sky-500/20'
+                      : 'bg-white dark:bg-[#121214] border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs font-mono mb-2">
-                    <span className={`font-bold ${isSelected ? 'text-cyan-300' : 'text-slate-300'}`}>
+                    <span className={`font-bold ${isSelected ? 'text-sky-700 dark:text-sky-300' : 'text-slate-800 dark:text-zinc-200'}`}>
                       {s.label}
                     </span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                      idx === 0 ? 'bg-slate-800 text-slate-300' :
-                      idx === 1 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
-                      idx === 2 ? 'bg-red-500/20 text-red-400 border border-red-500/40 animate-pulse' :
-                      'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                      idx === 0 ? 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300' :
+                      idx === 1 ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800' :
+                      idx === 2 ? 'bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-400 border border-red-300 dark:border-red-800 animate-pulse' :
+                      'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-800'
                     }`}>
                       {s.status_badge}
                     </span>
                   </div>
 
-                  <div className="text-lg font-black text-white mb-1">
+                  <div className="text-xl font-bold text-slate-900 dark:text-white mb-1">
                     {s.flooded_area_hectares} Hectares Flooded
                   </div>
 
-                  <p className="text-xs text-slate-400 font-medium">
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">
                     {s.citizens_in_hazard_zone.toLocaleString()} residents in risk zone
                   </p>
                 </button>
@@ -210,14 +205,14 @@ export default function PredictiveFloodPage() {
 
         {/* Evacuation Alert Notification Banner */}
         {alertTriggered && (
-          <div className="p-4 bg-red-950/90 border-2 border-red-500 rounded-2xl flex items-center justify-between gap-4 text-sm animate-fade-in shadow-2xl">
-            <div className="flex items-center gap-3 text-red-200">
-              <Megaphone className="w-6 h-6 text-red-400 animate-pulse shrink-0" />
+          <div className="p-4 bg-red-50 dark:bg-red-950/80 border border-red-300 dark:border-red-800 rounded-2xl flex items-center justify-between gap-4 text-sm shadow-xs">
+            <div className="flex items-center gap-3 text-red-800 dark:text-red-200">
+              <Megaphone className="w-5 h-5 text-red-600 dark:text-red-400 animate-pulse shrink-0" />
               <span>
                 <b>NDMA SACHET BROADCAST TRANSMITTED:</b> {alertTriggered}
               </span>
             </div>
-            <span className="text-xs font-mono font-bold bg-red-800 text-white px-3 py-1 rounded-lg">
+            <span className="text-xs font-mono font-bold bg-red-700 text-white px-3 py-1 rounded-lg">
               CELL TOWERS NOTIFIED
             </span>
           </div>
@@ -226,7 +221,7 @@ export default function PredictiveFloodPage() {
         {/* Map & Step Detail Split Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left: Tactical Map (7 Cols) */}
-          <div className="lg:col-span-7 bg-[#0b132b] border border-slate-800 rounded-3xl overflow-hidden shadow-2xl h-[520px] relative">
+          <div className="lg:col-span-7 bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xs h-[520px] relative">
             <TacticalMap
               activeModule="flood"
               incidents={[]}
@@ -241,35 +236,35 @@ export default function PredictiveFloodPage() {
 
           {/* Right: Selected Forecast Step Detail (5 Cols) */}
           {currentStep && (
-            <div className="lg:col-span-5 bg-[#0b132b] border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-5 flex flex-col justify-between">
+            <div className="lg:col-span-5 bg-white dark:bg-[#121214] border border-slate-200 dark:border-zinc-800 rounded-2xl p-6 shadow-xs space-y-5 flex flex-col justify-between">
               <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 pb-3">
                   <div>
-                    <span className="text-xs font-mono text-cyan-400 uppercase font-bold block">
+                    <span className="text-xs font-mono text-sky-700 dark:text-sky-400 uppercase font-semibold block">
                       HYDRO-SIMULATION TIMESTEP
                     </span>
-                    <h3 className="text-xl font-bold text-white mt-0.5">{currentStep.label}</h3>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-0.5">{currentStep.label}</h3>
                   </div>
-                  <span className="text-xs font-mono font-bold bg-cyan-950 text-cyan-300 border border-cyan-800 px-3 py-1 rounded-full">
+                  <span className="text-xs font-mono font-semibold bg-sky-50 dark:bg-zinc-800 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-zinc-700 px-3 py-1 rounded-full">
                     {currentStep.flooded_area_hectares} Ha Flooded
                   </span>
                 </div>
 
                 {/* Submerged Infrastructure */}
                 <div>
-                  <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-rose-400" />
+                  <h4 className="text-xs font-bold text-slate-700 dark:text-zinc-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-rose-500" />
                     <span>Impassable Infrastructure & Critical Points:</span>
                   </h4>
                   <div className="space-y-2">
                     {currentStep.impassable_infrastructure.map((inf, i) => (
                       <div
                         key={i}
-                        className="bg-[#070d1e] p-3 rounded-xl border border-slate-800/80 flex items-center justify-between text-xs font-mono"
+                        className="bg-slate-50 dark:bg-[#18181b] p-3 rounded-xl border border-slate-200 dark:border-zinc-800 flex items-center justify-between text-xs font-mono"
                       >
-                        <span className="font-bold text-slate-200">{inf.name}</span>
-                        <span className="text-rose-400 font-bold bg-rose-950/60 border border-rose-900/60 px-2 py-0.5 rounded">
-                          Water Depth: {inf.depth_feet} ft
+                        <span className="font-semibold text-slate-800 dark:text-zinc-200">{inf.name}</span>
+                        <span className="text-rose-700 dark:text-rose-400 font-semibold bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-900/60 px-2 py-0.5 rounded">
+                          Depth: {inf.depth_feet} ft
                         </span>
                       </div>
                     ))}
@@ -277,12 +272,12 @@ export default function PredictiveFloodPage() {
                 </div>
 
                 {/* Recommended Evacuation Action */}
-                <div className="bg-[#070d1e] p-4 rounded-xl border border-amber-500/30 space-y-2 text-xs">
-                  <span className="font-bold text-amber-300 block flex items-center gap-1.5 text-sm">
-                    <ShieldAlert className="w-4 h-4 text-amber-400" />
+                <div className="bg-amber-50/70 dark:bg-amber-950/30 p-4 rounded-xl border border-amber-200 dark:border-amber-900/50 space-y-2 text-xs">
+                  <span className="font-semibold text-amber-800 dark:text-amber-300 block flex items-center gap-1.5 text-sm">
+                    <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     <span>Early Warning & Preemptive Advisory:</span>
                   </span>
-                  <p className="text-slate-300 leading-relaxed font-sans text-xs">
+                  <p className="text-slate-700 dark:text-zinc-300 leading-relaxed font-sans text-xs">
                     {currentStep.recommended_action}
                   </p>
                 </div>
@@ -291,10 +286,10 @@ export default function PredictiveFloodPage() {
               {/* Action Button */}
               <button
                 onClick={() => handleTriggerAlert(currentStep.recommended_action)}
-                className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-black text-sm py-3 px-4 rounded-xl shadow-xl shadow-red-950 flex items-center justify-center gap-2 transition-all active:scale-95"
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-3 px-4 rounded-xl shadow-xs flex items-center justify-center gap-2 transition-colors"
               >
                 <Megaphone className="w-4 h-4" />
-                <span>Broadcast Geofenced Siren Evacuation Alert for this Hour</span>
+                <span>Broadcast Geofenced Siren Evacuation Alert</span>
               </button>
             </div>
           )}

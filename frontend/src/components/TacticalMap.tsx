@@ -31,9 +31,9 @@ const createCustomIcon = (color: string, label: string) => {
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 700;
         font-size: 11px;
-        box-shadow: 0 0 12px ${color};
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
       ">
         ${label}
       </div>
@@ -47,23 +47,23 @@ const boatIcon = L.divIcon({
   className: 'custom-boat-marker',
   html: `
     <div style="
-      background: #06b6d4;
-      color: #0b132b;
-      border: 2px solid #67e8f9;
+      background: #0284c7;
+      color: #ffffff;
+      border: 2px solid #ffffff;
       border-radius: 6px;
-      padding: 3px 6px;
-      font-size: 10px;
-      font-weight: 800;
-      box-shadow: 0 0 10px #06b6d4;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     ">
       🚤 NDRF-04
     </div>
   `,
-  iconSize: [80, 26],
-  iconAnchor: [40, 13]
+  iconSize: [86, 28],
+  iconAnchor: [43, 14]
 });
 
 export const TacticalMap: React.FC<TacticalMapProps> = ({
@@ -85,7 +85,7 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
 
   if (!mounted) {
     return (
-      <div className="w-full h-full bg-[#070d1e] flex items-center justify-center text-slate-500 font-mono text-xs">
+      <div className="w-full h-full bg-slate-100 dark:bg-[#09090b] flex items-center justify-center text-slate-500 dark:text-zinc-500 font-mono text-sm">
         Initializing Tactical Map Canvas...
       </div>
     );
@@ -126,8 +126,8 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
                   }}
                 >
                   <Popup>
-                    <div className="text-slate-900 text-xs">
-                      <p className="font-bold text-red-600">{feature.properties.name}</p>
+                    <div className="text-slate-900 dark:text-zinc-100 text-xs">
+                      <p className="font-bold text-red-600 dark:text-red-400">{feature.properties.name}</p>
                       <p>Water Depth: <b>{feature.properties.depth_feet} ft</b></p>
                       <p>Severity: <b>{feature.properties.severity}</b></p>
                     </div>
@@ -145,10 +145,10 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
           icon={createCustomIcon('#DC2626', '⛔')}
         >
           <Popup>
-            <div className="text-slate-900 text-xs">
-              <p className="font-bold text-red-700">Brij Bridge (SUBMERGED)</p>
-              <p className="text-slate-600">Water depth 5.5ft. Impassable for standard vehicles.</p>
-              <span className="text-[10px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-mono">
+            <div className="text-slate-900 dark:text-zinc-100 text-xs">
+              <p className="font-bold text-red-700 dark:text-red-400">Brij Bridge (SUBMERGED)</p>
+              <p className="text-slate-600 dark:text-zinc-300">Water depth 5.5ft. Impassable for standard vehicles.</p>
+              <span className="text-[10px] bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300 px-1.5 py-0.5 rounded font-mono font-semibold">
                 BYPASS MANDATORY
               </span>
             </div>
@@ -158,8 +158,8 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
         {/* 3. RESCUE FLEET BOAT POSITION */}
         <Marker position={[29.8550, 77.8860]} icon={boatIcon}>
           <Popup>
-            <div className="text-slate-900 text-xs">
-              <p className="font-bold text-cyan-700">NDRF Motorboat Unit 04</p>
+            <div className="text-slate-900 dark:text-zinc-100 text-xs">
+              <p className="font-bold text-sky-700 dark:text-sky-400">NDRF Motorboat Unit 04</p>
               <p>Status: Ready for high-priority extraction</p>
               <p>Battery: 88% | Capacity: 8 rescued</p>
             </div>
@@ -171,9 +171,9 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
           <Polyline
             positions={activeRoute.coordinates}
             pathOptions={{
-              color: activeRoute.is_safe ? '#00e5ff' : '#ef4444',
+              color: activeRoute.is_safe ? '#0284c7' : '#ef4444',
               weight: 5,
-              opacity: 0.9,
+              opacity: 0.95,
               dashArray: activeRoute.is_safe ? undefined : '6, 6'
             }}
           />
@@ -196,18 +196,18 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
                 }}
               >
                 <Popup>
-                  <div className="text-slate-900 text-xs font-sans min-w-[200px]">
+                  <div className="text-slate-900 dark:text-zinc-100 text-xs font-sans min-w-[220px]">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="font-bold text-slate-800">{incident.id}</span>
+                      <span className="font-bold text-slate-800 dark:text-zinc-100">{incident.id}</span>
                       <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
-                        isP1 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'
+                        isP1 ? 'bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-300' : 'bg-amber-100 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300'
                       }`}>
                         {incident.triage.priority_tier}
                       </span>
                     </div>
-                    <p className="font-semibold text-slate-700">{incident.landmark}</p>
-                    <p className="text-slate-600 mt-1 italic">"{incident.raw_message}"</p>
-                    <div className="mt-2 pt-1 border-t border-slate-200 text-[11px]">
+                    <p className="font-semibold text-slate-700 dark:text-zinc-200">{incident.landmark}</p>
+                    <p className="text-slate-600 dark:text-zinc-400 mt-1 italic leading-relaxed">"{incident.raw_message}"</p>
+                    <div className="mt-2 pt-1 border-t border-slate-200 dark:border-zinc-800 text-[11px]">
                       <p>Trapped: <b>{incident.trapped_count} citizens</b></p>
                       <p>Triage Score: <b>{incident.triage.final_score}</b></p>
                     </div>
@@ -238,17 +238,17 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
               icon={createCustomIcon(nodeColor, '💧')}
             >
               <Popup>
-                <div className="text-slate-900 text-xs min-w-[220px]">
-                  <p className="font-bold text-slate-800">{node.name}</p>
-                  <p className="text-[11px] text-slate-500">{node.landmark}</p>
-                  <div className="mt-2 bg-slate-50 p-2 rounded border border-slate-200 space-y-1">
+                <div className="text-slate-900 dark:text-zinc-100 text-xs min-w-[220px]">
+                  <p className="font-bold text-slate-800 dark:text-zinc-100">{node.name}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">{node.landmark}</p>
+                  <div className="mt-2 bg-slate-50 dark:bg-zinc-800/60 p-2 rounded border border-slate-200 dark:border-zinc-700 space-y-1">
                     <p>Turbidity: <b>{node.turbidity_ntu} NTU</b> (Safe &lt; 5)</p>
                     <p>pH Level: <b>{node.ph_level}</b> (Std 6.5 - 8.5)</p>
                     <p>TDS: <b>{node.tds_ppm} ppm</b></p>
                     <p>Dissolved O2: <b>{node.dissolved_oxygen_mg_l} mg/L</b></p>
                   </div>
                   {node.alert_message && (
-                    <p className="mt-2 text-red-600 text-[11px] font-semibold">{node.alert_message}</p>
+                    <p className="mt-2 text-red-600 dark:text-red-400 text-[11px] font-semibold">{node.alert_message}</p>
                   )}
                 </div>
               </Popup>
@@ -273,13 +273,13 @@ export const TacticalMap: React.FC<TacticalMapProps> = ({
               }}
             >
               <Popup>
-                <div className="text-slate-900 text-xs min-w-[240px]">
-                  <p className="font-bold text-rose-700">{feat.properties.zone_name}</p>
+                <div className="text-slate-900 dark:text-zinc-100 text-xs min-w-[240px]">
+                  <p className="font-bold text-rose-700 dark:text-rose-400">{feat.properties.zone_name}</p>
                   <p>Surface Temperature: <b>{feat.properties.surface_temp_celsius}°C</b></p>
                   <p>NDVI Vegetation: <b>{feat.properties.ndvi_vegetation_index}</b></p>
                   <p>Heat Stress: <b>{feat.properties.heat_stress_level}</b></p>
-                  <div className="mt-2 text-[11px] text-slate-600">
-                    <p className="font-semibold text-slate-800">Action Plan:</p>
+                  <div className="mt-2 text-[11px] text-slate-600 dark:text-zinc-300">
+                    <p className="font-semibold text-slate-800 dark:text-zinc-100">Action Plan:</p>
                     <ul className="list-disc pl-4 space-y-0.5">
                       {feat.properties.recommended_interventions?.map((rec: string, rIdx: number) => (
                         <li key={rIdx}>{rec}</li>

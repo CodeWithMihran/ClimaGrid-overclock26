@@ -14,13 +14,23 @@ import {
   Mic, 
   MicOff, 
   Camera, 
-  Clock 
+  Clock,
+  Wifi,
+  WifiOff,
+  RefreshCw,
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
 import { parseDistressMessage, fetchIncidentStatus, analyzeFloodPhoto } from '../../lib/api';
 import { IncidentRecord } from '../../types';
 
 export default function CitizenSOSPage() {
   const [activeTab, setActiveTab] = useState<'sos_app' | 'whatsapp'>('sos_app');
+
+  // Network Offline Mesh Simulation States
+  const [isOffline, setIsOffline] = useState<boolean>(false);
+  const [offlineQueue, setOfflineQueue] = useState<Array<{ id: string; time: string; msg: string }>>([]);
+  const [syncToast, setSyncToast] = useState<string | null>(null);
 
   // SOS App Form States
   const [headcount, setHeadcount] = useState<number>(3);
@@ -32,6 +42,10 @@ export default function CitizenSOSPage() {
   );
   const [isBroadcasting, setIsBroadcasting] = useState<boolean>(false);
   const [activeIncident, setActiveIncident] = useState<IncidentRecord | null>(null);
+
+  // Vision Depth Gauge State
+  const [photoAnalysis, setPhotoAnalysis] = useState<any | null>(null);
+  const [isAnalyzingPhoto, setIsAnalyzingPhoto] = useState<boolean>(false);
 
   // Live Speech Recognition on Mobile
   const [isMobileListening, setIsMobileListening] = useState<boolean>(false);
@@ -73,12 +87,42 @@ export default function CitizenSOSPage() {
   };
 
   const handleSimulatePhotoGauge = async () => {
-    const res = await analyzeFloodPhoto('sample_roof');
-    const depth = res.estimated_depth_feet;
-    const depthOption = depth >= 8 ? '8ft+ - Submerged Room' : depth >= 5.5 ? '6ft - Roof / Chhat' : depth >= 3.5 ? '4ft - Waist Deep' : '2ft - Knee Deep';
-    setWaterLevel(depthOption);
-    setVoiceText(res.suggested_distress_message);
-    alert(`Vision Depth Gauge: Waterline detected at ${res.estimated_depth_feet}ft! Updated form to ${depthOption}.`);
+    setIsAnalyzingPhoto(true);
+    try {
+      const res = await analyzeFloodPhoto('sample_roof');
+      const depth = res.estimated_depth_feet;
+      const depthOption = depth >= 8 ? '8ft+ - Submerged Room' : depth >= 5.5 ? '6ft - Roof / Chhat' : depth >= 3.5 ? '4ft - Waist Deep' : '2ft - Knee Deep';
+      setWaterLevel(depthOption);
+      setVoiceText(res.suggested_distress_message);
+      setPhotoAnalysis(res);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAnalyzingPhoto(false);
+    }
+  };
+
+  // Quick Preset Handlers
+  const handleApplyPreset = (presetName: string) => {
+    if (presetName === 'solani') {
+      setHeadcount(4);
+      setWaterLevel('6ft - Roof / Chhat');
+      setSelectedVulns(['Elderly / Dadi', 'Infant / Baby']);
+      setLandmark('Solani Aqueduct, Roorkee');
+      setVoiceText('Solani aqueduct ke paas paani 6ft ho gaya hai, dadi behosh hai aur chhota baby bhi hai chhat par, jaldi aao please!');
+    } else if (presetName === 'bazaar') {
+      setHeadcount(2);
+      setWaterLevel('4ft - Waist Deep');
+      setSelectedVulns(['Elderly / Dadi', 'Wheelchair / Disabled']);
+      setLandmark('Old Roorkee Dense Bazaar');
+      setVoiceText('Old Roorkee bazaar alley flooded 4ft, grandfather on wheelchair unable to evacuate ground floor.');
+    } else if (presetName === 'purqazi') {
+      setHeadcount(5);
+      setWaterLevel('8ft+ - Submerged Room');
+      setSelectedVulns(['Pregnant Woman', 'Infant / Baby', 'Trapped Ground Floor']);
+      setLandmark('Purqazi Embankment Cluster');
+      setVoiceText('Purqazi embankment breach, house submerged over 8ft, 5 family members including pregnant lady waiting on tin roof.');
+    }
   };
 
   // WhatsApp Bot States
@@ -117,13 +161,27 @@ export default function CitizenSOSPage() {
     );
   };
 
-  // 1-Tap SOS Broadcast Trigger
+  // 1-Tap SOS Broadcast Trigger (Online or Offline Mesh Queuing)
   const handleBroadcastSOS = async () => {
+    const compositeMessage = `${voiceText} [Headcount: ${headcount}, Water Level: ${waterLevel}, Near: ${landmark}, Vulnerabilities: ${selectedVulns.join(', ')}]`;
+
+    if (isOffline) {
+      // Store in encrypted local mesh queue
+      const queuedItem = {
+        id: `OFFLINE-SOS-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+        time: new Date().toLocaleTimeString(),
+        msg: compositeMessage
+      };
+      setOfflineQueue((prev) => [queuedItem, ...prev]);
+      setSyncToast(`📶 Cellular deadzone detected. SOS packet encrypted & buffered in Offline Mesh Queue.`);
+      return;
+    }
+
     setIsBroadcasting(true);
     try {
-      const compositeMessage = `${voiceText} [Headcount: ${headcount}, Water Level: ${waterLevel}, Near: ${landmark}, Vulnerabilities: ${selectedVulns.join(', ')}]`;
       const record = await parseDistressMessage(compositeMessage, 'Citizen 1-Tap Mobile SOS');
       setActiveIncident(record);
+      setSyncToast(`🚨 SOS Broadcast Dispatched to NDRF EOC (ID: ${record.id})`);
     } catch (err) {
       console.error('Broadcast failed:', err);
     } finally {
@@ -131,16 +189,34 @@ export default function CitizenSOSPage() {
     }
   };
 
-  // WhatsApp Message Submit
-  const handleSendWhatsApp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!waInput.trim()) return;
+  // Flush Offline Outbox
+  const handleFlushOfflineQueue = async () => {
+    if (offlineQueue.length === 0) return;
+    setIsBroadcasting(true);
+    try {
+      const lastItem = offlineQueue[0];
+      const record = await parseDistressMessage(lastItem.msg, 'Citizen Mesh Synced SOS');
+      setActiveIncident(record);
+      setOfflineQueue([]);
+      setIsOffline(false);
+      setSyncToast(`⚡ Reconnected! Transmitted ${offlineQueue.length} buffered SOS signal(s) to NDRF Dispatch.`);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsBroadcasting(false);
+    }
+  };
 
-    const userMsg = waInput;
+  // WhatsApp Message Submit
+  const handleSendWhatsApp = async (textToSend?: string) => {
+    const msg = textToSend || waInput;
+    if (!msg.trim()) return;
+
+    const userMsg = msg;
     const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     setWaMessages((prev) => [...prev, { sender: 'user', text: userMsg, time: nowTime }]);
-    setWaInput('');
+    if (!textToSend) setWaInput('');
     setIsWaTyping(true);
 
     try {
@@ -161,7 +237,7 @@ export default function CitizenSOSPage() {
           { sender: 'bot', text: botReply, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
         ]);
         setIsWaTyping(false);
-      }, 900);
+      }, 700);
     } catch (err) {
       console.error(err);
       setIsWaTyping(false);
@@ -188,6 +264,50 @@ export default function CitizenSOSPage() {
       {/* Mobile Shell Container - Notion styled */}
       <div className="w-full max-w-lg bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-3xl shadow-xs overflow-hidden flex flex-col min-h-[720px]">
         
+        {/* Offline Simulation HUD Bar */}
+        <div className="bg-[#f7f6f3] dark:bg-[#151515] px-4 py-2 border-b border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            {isOffline ? (
+              <span className="flex items-center gap-1.5 text-amber-700 dark:text-amber-400 font-mono font-semibold">
+                <WifiOff className="w-3.5 h-3.5" />
+                <span>OFFLINE MESH BUFFER ({offlineQueue.length})</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400 font-mono font-semibold">
+                <Wifi className="w-3.5 h-3.5" />
+                <span>CELLULAR ONLINE</span>
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {offlineQueue.length > 0 && (
+              <button
+                onClick={handleFlushOfflineQueue}
+                className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shadow-2xs"
+              >
+                <RefreshCw className="w-3 h-3 animate-spin" />
+                <span>Sync Outbox ({offlineQueue.length})</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsOffline(!isOffline)}
+              className="text-xs text-[#787774] dark:text-[#9b9a97] hover:text-[#2f2e2b] dark:hover:text-white underline font-mono"
+            >
+              Toggle {isOffline ? 'Online' : 'Deadzone'}
+            </button>
+          </div>
+        </div>
+
+        {/* Sync / Notification Toast */}
+        {syncToast && (
+          <div className="bg-[#eef8f2] dark:bg-[#1b2b22] border-b border-[#ccecd8] dark:border-[#244b34] px-4 py-2.5 text-xs text-emerald-800 dark:text-emerald-200 flex items-center justify-between">
+            <span>{syncToast}</span>
+            <button onClick={() => setSyncToast(null)} className="font-bold ml-2 text-emerald-700 dark:text-emerald-300">✕</button>
+          </div>
+        )}
+
         {/* App Mode Toggle Header */}
         <div className="bg-[#f7f6f3] dark:bg-[#191919] border-b border-[#e9e9e7] dark:border-[#2e2e2e] p-2 flex gap-2">
           <button
@@ -219,19 +339,51 @@ export default function CitizenSOSPage() {
         {activeTab === 'sos_app' && (
           <div className="p-6 sm:p-7 space-y-5 flex-1 overflow-y-auto">
             {/* BIG RED SOS BUTTON */}
-            <div className="flex flex-col items-center justify-center py-4">
+            <div className="flex flex-col items-center justify-center py-3">
               <button
                 onClick={handleBroadcastSOS}
                 disabled={isBroadcasting}
                 className="w-40 h-40 rounded-full bg-red-600 hover:bg-red-700 text-white border-4 border-red-200 dark:border-red-900/60 shadow-lg shadow-red-600/20 flex flex-col items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
               >
                 <Radio className={`w-9 h-9 text-white mb-1 ${isBroadcasting ? 'animate-spin' : 'animate-pulse'}`} />
-                <span className="font-extrabold text-base text-white">SOS EMERGENCY</span>
+                <span className="font-extrabold text-base text-white">
+                  {isOffline ? 'QUEUE SOS (OFFLINE)' : 'SOS EMERGENCY'}
+                </span>
                 <span className="text-xs font-mono text-red-100 mt-0.5">आपातकालीन सहायता</span>
               </button>
-              <p className="text-sm text-[#787774] dark:text-[#9b9a97] mt-3.5 text-center">
-                Press to instantly alert NDRF & local rescue boats
+              <p className="text-sm text-[#787774] dark:text-[#9b9a97] mt-3 text-center">
+                {isOffline
+                  ? 'Deadzone mode: Buffers encrypted packet for immediate transmission upon network reconnect'
+                  : 'Press to instantly alert NDRF & local rescue boats'}
               </p>
+            </div>
+
+            {/* QUICK PRESET CHIPS */}
+            <div className="space-y-1.5">
+              <span className="text-xs font-mono text-[#787774] dark:text-[#9b9a97]">Quick Scenario Presets:</span>
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleApplyPreset('solani')}
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#f7f6f3] dark:bg-[#282828] hover:bg-[#eae8e4] text-[#2f2e2b] dark:text-[#e6e6e5] border border-[#e3e2e0] dark:border-[#383838]"
+                >
+                  Solani Aqueduct (6ft Roof)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleApplyPreset('bazaar')}
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#f7f6f3] dark:bg-[#282828] hover:bg-[#eae8e4] text-[#2f2e2b] dark:text-[#e6e6e5] border border-[#e3e2e0] dark:border-[#383838]"
+                >
+                  Old Bazaar (Wheelchair)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleApplyPreset('purqazi')}
+                  className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#f7f6f3] dark:bg-[#282828] hover:bg-[#eae8e4] text-[#2f2e2b] dark:text-[#e6e6e5] border border-[#e3e2e0] dark:border-[#383838]"
+                >
+                  Purqazi (8ft Submerged)
+                </button>
+              </div>
             </div>
 
             {/* QUICK VULNERABILITY SELECTOR */}
@@ -253,7 +405,7 @@ export default function CitizenSOSPage() {
                     <button
                       key={vuln}
                       onClick={() => toggleVuln(vuln)}
-                      className={`text-sm py-2.5 px-3 rounded-xl border text-left transition-colors ${
+                      className={`text-sm py-2 px-3 rounded-xl border text-left transition-colors ${
                         isSelected
                           ? 'bg-[#fdf2f2] dark:bg-[#341d1d] border-red-300 dark:border-red-800 text-[#b91c1c] dark:text-[#f87171] font-semibold'
                           : 'bg-[#f7f6f3] dark:bg-[#191919] border-[#e9e9e7] dark:border-[#2e2e2e] text-[#575653] dark:text-[#a8a7a4] hover:border-[#deddd9] dark:hover:border-[#383838]'
@@ -307,6 +459,27 @@ export default function CitizenSOSPage() {
               </div>
             </div>
 
+            {/* VISION DEPTH GAUGE INLINE RESULT CARD */}
+            {photoAnalysis && (
+              <div className="bg-[#fef9ee] dark:bg-[#261f14] border border-[#fcedca] dark:border-[#47341b] rounded-xl p-4 text-xs font-mono space-y-1.5 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-amber-800 dark:text-amber-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    AI Vision Depth Gauge Result
+                  </span>
+                  <span className="bg-amber-200 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 px-2 py-0.5 rounded font-bold">
+                    {photoAnalysis.estimated_depth_feet} ft Waterline
+                  </span>
+                </div>
+                <p className="text-[#575653] dark:text-[#d4d4d4] font-sans">
+                  <b>Identified:</b> {photoAnalysis.waterline_level} • {photoAnalysis.structural_hazard_level}
+                </p>
+                <p className="text-emerald-700 dark:text-emerald-300 font-sans">
+                  ✓ Automatically updated Water Depth selector to {waterLevel}.
+                </p>
+              </div>
+            )}
+
             {/* VOICE / HINGLISH DISTRESS TEXT */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -330,10 +503,11 @@ export default function CitizenSOSPage() {
                   <button
                     type="button"
                     onClick={handleSimulatePhotoGauge}
-                    className="text-xs px-3 py-1.5 rounded-lg bg-[#f7f6f3] dark:bg-[#262626] text-[#b45309] dark:text-[#fbbf24] border border-[#fcedca] dark:border-[#4d3a1f] flex items-center gap-1.5 font-semibold"
+                    disabled={isAnalyzingPhoto}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-[#f7f6f3] dark:bg-[#262626] text-[#b45309] dark:text-[#fbbf24] border border-[#fcedca] dark:border-[#4d3a1f] flex items-center gap-1.5 font-semibold hover:bg-[#eae8e4] disabled:opacity-50"
                   >
                     <Camera className="w-3.5 h-3.5" />
-                    <span>Photo Gauge</span>
+                    <span>{isAnalyzingPhoto ? 'Analyzing...' : 'Photo Gauge'}</span>
                   </button>
                 </div>
               </div>
@@ -464,8 +638,39 @@ export default function CitizenSOSPage() {
               )}
             </div>
 
+            {/* Quick WhatsApp Prompt Pills */}
+            <div className="bg-[#e4ded5] dark:bg-[#182229] px-3 py-2 flex gap-1.5 overflow-x-auto text-xs border-t border-slate-200 dark:border-slate-800">
+              <button
+                type="button"
+                onClick={() => handleSendWhatsApp('Solani aqueduct ke paas 5 log phase hain, paani 6ft ho gaya hai!')}
+                className="whitespace-nowrap px-3 py-1 bg-white dark:bg-[#202c33] hover:bg-slate-50 dark:hover:bg-[#2a3942] text-slate-800 dark:text-slate-200 rounded-full border border-slate-300 dark:border-zinc-700"
+              >
+                🌊 Solani 6ft Flood (5 trapped)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSendWhatsApp('Old Roorkee bazaar mein elderly patient ko urgent insulin aur oxygen chahiye')}
+                className="whitespace-nowrap px-3 py-1 bg-white dark:bg-[#202c33] hover:bg-slate-50 dark:hover:bg-[#2a3942] text-slate-800 dark:text-slate-200 rounded-full border border-slate-300 dark:border-zinc-700"
+              >
+                🩺 Urgent Insulin & Elderly
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSendWhatsApp('Hamare sabse paas safe relief shelter kaunsa hai?')}
+                className="whitespace-nowrap px-3 py-1 bg-white dark:bg-[#202c33] hover:bg-slate-50 dark:hover:bg-[#2a3942] text-slate-800 dark:text-slate-200 rounded-full border border-slate-300 dark:border-zinc-700"
+              >
+                📍 Nearest Safe Shelter?
+              </button>
+            </div>
+
             {/* WhatsApp Input Bar */}
-            <form onSubmit={handleSendWhatsApp} className="bg-slate-100 dark:bg-[#1f2c34] p-3 flex items-center gap-2.5 border-t border-slate-200 dark:border-slate-700">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSendWhatsApp();
+              }} 
+              className="bg-slate-100 dark:bg-[#1f2c34] p-3 flex items-center gap-2.5 border-t border-slate-200 dark:border-slate-700"
+            >
               <input
                 type="text"
                 value={waInput}

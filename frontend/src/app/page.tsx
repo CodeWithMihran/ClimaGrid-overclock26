@@ -56,6 +56,10 @@ export default function DispatchCommandPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [lastLatencyMs, setLastLatencyMs] = useState<number | null>(null);
 
+  // Operator Controls: Filter & Unit Selection
+  const [priorityFilter, setPriorityFilter] = useState<'ALL' | 'P1' | 'P2' | 'P3' | 'DISPATCHED'>('ALL');
+  const [selectedUnit, setSelectedUnit] = useState<string>('NDRF-BOAT-04');
+
   useEffect(() => {
     async function init() {
       try {
@@ -100,20 +104,20 @@ export default function DispatchCommandPage() {
     }
   };
 
-  const handleApproveDispatch = async (incidentId: string) => {
+  const handleApproveDispatch = async (incidentId: string, unitCallsign: string = selectedUnit) => {
     try {
-      const res = await approveDispatch(incidentId, 'NDRF-BOAT-04');
+      const res = await approveDispatch(incidentId, unitCallsign);
       const updatedRecord = res?.incident || (res?.id && res?.triage ? res : null);
       setIncidents((prev) =>
         prev.map((inc) => {
           if (inc.id === incidentId) {
-            return updatedRecord || { ...inc, status: 'DISPATCHED', assigned_unit: 'NDRF-BOAT-04' };
+            return updatedRecord || { ...inc, status: 'DISPATCHED', assigned_unit: unitCallsign };
           }
           return inc;
         })
       );
       if (selectedIncident?.id === incidentId) {
-        setSelectedIncident((prev) => prev ? (updatedRecord || { ...prev, status: 'DISPATCHED', assigned_unit: 'NDRF-BOAT-04' }) : null);
+        setSelectedIncident((prev) => prev ? (updatedRecord || { ...prev, status: 'DISPATCHED', assigned_unit: unitCallsign }) : null);
       }
     } catch (err) {
       console.error('Dispatch error:', err);
@@ -127,6 +131,20 @@ export default function DispatchCommandPage() {
       handleCalculateRoute(selectedIncident, nextAvoid);
     }
   };
+
+  const filteredIncidents = incidents.filter((inc) => {
+    if (priorityFilter === 'ALL') return true;
+    if (priorityFilter === 'DISPATCHED') return inc.status === 'DISPATCHED';
+    if (priorityFilter === 'P1') return inc.triage?.priority_tier?.includes('P1');
+    if (priorityFilter === 'P2') return inc.triage?.priority_tier?.includes('P2');
+    if (priorityFilter === 'P3') return inc.triage?.priority_tier?.includes('P3');
+    return true;
+  });
+
+  const countP1 = incidents.filter((i) => i.triage?.priority_tier?.includes('P1')).length;
+  const countP2 = incidents.filter((i) => i.triage?.priority_tier?.includes('P2')).length;
+  const countP3 = incidents.filter((i) => i.triage?.priority_tier?.includes('P3')).length;
+  const countDispatched = incidents.filter((i) => i.status === 'DISPATCHED').length;
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,14 +197,46 @@ export default function DispatchCommandPage() {
             </span>
           </div>
 
+          {/* Operator Triage Filter Pills */}
+          <div className="flex flex-wrap gap-2 items-center bg-white dark:bg-[#202020] p-2 rounded-2xl border border-[#e9e9e7] dark:border-[#2e2e2e] shadow-2xs">
+            {[
+              { id: 'ALL', label: 'All Incidents', count: incidents.length },
+              { id: 'P1', label: 'P1 Critical', count: countP1, color: 'text-rose-600 dark:text-rose-400' },
+              { id: 'P2', label: 'P2 High', count: countP2, color: 'text-amber-600 dark:text-amber-400' },
+              { id: 'P3', label: 'P3 Medium', count: countP3, color: 'text-slate-600 dark:text-slate-400' },
+              { id: 'DISPATCHED', label: 'Dispatched', count: countDispatched, color: 'text-emerald-600 dark:text-emerald-400' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setPriorityFilter(tab.id as any)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                  priorityFilter === tab.id
+                    ? 'bg-[#2f2e2b] text-white dark:bg-white dark:text-[#191919] shadow-xs'
+                    : 'bg-[#f7f6f3] dark:bg-[#282828] text-[#6b6966] dark:text-[#a8a7a4] hover:bg-[#efefed] dark:hover:bg-[#333333]'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`font-mono text-[11px] ${priorityFilter === tab.id ? 'opacity-90' : tab.color || 'opacity-70'}`}>
+                  ({tab.count})
+                </span>
+              </button>
+            ))}
+          </div>
+
           {/* Incident Cards List */}
           <div className="space-y-4 max-h-[720px] overflow-y-auto pr-1.5 scrollbar-thin">
-            {incidents.map((inc) => {
-              const isSelected = selectedIncident?.id === inc.id;
-              const priorityTier = inc.triage?.priority_tier || 'P3 - MEDIUM';
-              const isP1 = priorityTier.includes('P1');
-              const isP2 = priorityTier.includes('P2');
-              const isDispatched = inc.status === 'DISPATCHED';
+            {filteredIncidents.length === 0 ? (
+              <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-8 text-center text-sm text-[#787774] dark:text-[#9b9a97]">
+                No incidents matching the <b className="text-[#2f2e2b] dark:text-white">{priorityFilter}</b> filter.
+              </div>
+            ) : (
+              filteredIncidents.map((inc) => {
+                const isSelected = selectedIncident?.id === inc.id;
+                const priorityTier = inc.triage?.priority_tier || 'P3 - MEDIUM';
+                const isP1 = priorityTier.includes('P1');
+                const isP2 = priorityTier.includes('P2');
+                const isDispatched = inc.status === 'DISPATCHED';
 
               return (
                 <div
@@ -299,19 +349,19 @@ export default function DispatchCommandPage() {
                       {isDispatched ? (
                         <>
                           <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                          <span>Dispatched</span>
+                          <span>Dispatched ({inc.assigned_unit || selectedUnit})</span>
                         </>
                       ) : (
                         <>
                           <Send className="w-4 h-4" />
-                          <span>Approve Fleet</span>
+                          <span>Approve Fleet ({selectedUnit.split('-')[0]}-{selectedUnit.split('-')[1]})</span>
                         </>
                       )}
                     </button>
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
 
           {/* Quick Distress Message Ingestion Box */}
@@ -474,6 +524,49 @@ export default function DispatchCommandPage() {
             </div>
           )}
 
+          {/* Explainable AI Triage Model Breakdown */}
+          <div className="bg-white dark:bg-[#202020] border border-[#e9e9e7] dark:border-[#2e2e2e] rounded-2xl p-6 shadow-xs space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-5 h-5 text-sky-600 dark:text-sky-400" />
+                <h3 className="text-base font-bold text-[#2f2e2b] dark:text-[#f4f4f5]">
+                  EXPLAINABLE TRIAGE ALGORITHM (AAPDA360)
+                </h3>
+              </div>
+              <span className="text-xs font-mono font-bold text-sky-700 dark:text-sky-300 bg-[#f0f7fb] dark:bg-[#1a2634] px-2.5 py-1 rounded-md border border-[#d8eaf6] dark:border-[#25394e]">
+                AUDITABLE MATHEMATICAL WEIGHTS
+              </span>
+            </div>
+
+            <div className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] font-mono text-xs sm:text-sm text-[#2f2e2b] dark:text-[#e6e6e5]">
+              <div className="font-bold text-sky-700 dark:text-sky-400 mb-2">
+                Priority Score = (0.35 × Hazard) + (0.35 × Medical) + (0.20 × Vulnerability) + (0.10 × Exposure Time)
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs mt-3">
+                <div className="bg-white dark:bg-[#222222] p-2.5 rounded-lg border border-[#e9e9e7] dark:border-[#303030]">
+                  <span className="text-[#787774] dark:text-[#9b9a97] block font-medium">Hazard (35%)</span>
+                  <span className="font-bold text-rose-600 dark:text-rose-400">Water Depth & Rise</span>
+                </div>
+                <div className="bg-white dark:bg-[#222222] p-2.5 rounded-lg border border-[#e9e9e7] dark:border-[#303030]">
+                  <span className="text-[#787774] dark:text-[#9b9a97] block font-medium">Medical (35%)</span>
+                  <span className="font-bold text-amber-600 dark:text-amber-400">Pregnancy / Trauma</span>
+                </div>
+                <div className="bg-white dark:bg-[#222222] p-2.5 rounded-lg border border-[#e9e9e7] dark:border-[#303030]">
+                  <span className="text-[#787774] dark:text-[#9b9a97] block font-medium">Vulnerability (20%)</span>
+                  <span className="font-bold text-sky-600 dark:text-sky-400">Infants & Elderly</span>
+                </div>
+                <div className="bg-white dark:bg-[#222222] p-2.5 rounded-lg border border-[#e9e9e7] dark:border-[#303030]">
+                  <span className="text-[#787774] dark:text-[#9b9a97] block font-medium">Time (10%)</span>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">Elapsed Wait</span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#787774] dark:text-[#9b9a97] leading-relaxed">
+              <b>Human-in-the-Loop Safeguard:</b> Algorithmic prioritization surfaces acute medical fragility and rising floodwaters over raw headcounts, while the final dispatch command requires human incident commander authorization.
+            </p>
+          </div>
+
           {/* Staging Hubs & Fleet Assets (SW-01 Multi-Tier Dispatch) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Optimal Drop Zones */}
@@ -521,21 +614,36 @@ export default function DispatchCommandPage() {
                 </span>
               </h3>
               <div className="space-y-3 text-sm">
-                {fleetAssets.slice(0, 3).map((asset) => (
-                  <div
-                    key={asset.id}
-                    className="bg-[#f7f6f3] dark:bg-[#191919] p-4 rounded-xl border border-[#e9e9e7] dark:border-[#2e2e2e] flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="font-bold text-[#2f2e2b] dark:text-white">{asset.callsign}</p>
-                      <p className="text-xs text-[#787774] dark:text-[#9b9a97] mt-0.5">{asset.type} • {asset.status}</p>
+                {fleetAssets.slice(0, 3).map((asset) => {
+                  const isUnitSelected = selectedUnit === asset.callsign;
+                  return (
+                    <div
+                      key={asset.id}
+                      onClick={() => setSelectedUnit(asset.callsign)}
+                      className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${
+                        isUnitSelected
+                          ? 'bg-sky-50/80 dark:bg-[#1a2634] border-sky-400 dark:border-sky-600 ring-1 ring-sky-400/30'
+                          : 'bg-[#f7f6f3] dark:bg-[#191919] border-[#e9e9e7] dark:border-[#2e2e2e] hover:border-[#deddd9] dark:hover:border-[#383838]'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-[#2f2e2b] dark:text-white">{asset.callsign}</p>
+                          {isUnitSelected && (
+                            <span className="text-[10px] bg-sky-100 dark:bg-sky-900/60 text-sky-700 dark:text-sky-300 font-mono font-bold px-1.5 py-0.5 rounded">
+                              ASSIGNED
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-[#787774] dark:text-[#9b9a97] mt-0.5">{asset.type} • {asset.status}</p>
+                      </div>
+                      <div className="flex items-center gap-2 font-mono text-sm text-[#2f2e2b] dark:text-white">
+                        <BatteryCharging className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                        <span>{asset.battery_or_fuel_pct}%</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 font-mono text-sm text-[#2f2e2b] dark:text-white">
-                      <BatteryCharging className="w-4 h-4 text-sky-600 dark:text-sky-400" />
-                      <span>{asset.battery_or_fuel_pct}%</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

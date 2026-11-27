@@ -1,4 +1,4 @@
-import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset, TelemetryData, PredictiveFloodStep, PredictiveTimelineResponse, ReliefShelter, ShelterAllocationResponse, CAPAlert, CAPTemplate } from '../types';
+import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset, TelemetryData, PredictiveFloodStep, PredictiveTimelineResponse, ReliefShelter, ShelterAllocationResponse, CAPAlert, CAPTemplate, DamageSector, DamageAssessmentResponse } from '../types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
@@ -929,5 +929,103 @@ export async function broadcastCAPAlert(payload: {
     cap_xml: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<alert xmlns=\"urn:oasis:names:tc:emergency:cap:1.2\">\n  <identifier>IN-NDMA-ROORKEE-LIVE</identifier>\n  <info>\n    <headline>" + payload.headline_en + "</headline>\n  </info>\n</alert>",
     cell_towers_targeted: 52,
     estimated_recipients: 62500
+  };
+}
+
+export async function fetchDamageAssessment(): Promise<DamageAssessmentResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/damage/assessment`, { cache: 'no-store' });
+    if (res.ok) return await res.json();
+  } catch (e) {}
+
+  return {
+    assessment_id: "SDRF-UK-ROORKEE-20261127-001",
+    survey_timestamp: new Date().toISOString(),
+    district: "Haridwar / Roorkee Basin",
+    state: "Uttarakhand",
+    governing_standard: "MHA SDRF / NDRF Operational Guidelines (2025-2026)",
+    summary_metrics: {
+      total_flooded_hectares: 470.0,
+      total_affected_families: 1480,
+      road_network_washout_km: 7.8,
+      total_economic_loss_inr: 64200000,
+      total_economic_loss_cr: 6.42,
+      total_sdrf_grant_claim_inr: 61500000,
+      total_sdrf_grant_claim_cr: 6.15,
+      average_drone_severity_score: 8.5
+    },
+    sdrf_grant_breakdown: {
+      ex_gratia_family_relief_inr: 18500000,
+      infrastructure_reconstruction_inr: 35200000,
+      agricultural_input_subsidy_inr: 4500000,
+      water_sanitation_rehabilitation_inr: 3300000
+    },
+    sectors: [
+      {
+        sector_id: "SEC-01-SOLANI",
+        name: "Solani River Embankment & Aqueduct Corridor",
+        inundated_hectares: 178.6,
+        affected_dwellings: 414,
+        damage_category: "Embankment Scouring & Riparian Erosion",
+        severity_grade: "SEVERE",
+        drone_survey_score: 8.4,
+        structural_loss_inr: 14500000,
+        crop_loss_inr: 4800000,
+        key_failures: [
+          "Solani Aqueduct northern revetment compromised (240m)",
+          "Drainage sluice gates #2 and #4 silt-jammed",
+          "34 rural pakka houses partially washed out"
+        ]
+      },
+      {
+        sector_id: "SEC-02-RAMNAGAR",
+        name: "Brij Bridge & Ramnagar Lowlands",
+        inundated_hectares: 150.4,
+        affected_dwellings: 651,
+        damage_category: "Bridge Deck & Residential Submergence",
+        severity_grade: "CRITICAL_COLLAPSE_RISK",
+        drone_survey_score: 9.2,
+        structural_loss_inr: 21000000,
+        crop_loss_inr: 1200000,
+        key_failures: [
+          "Brij Bridge pier footing scouring (5.5ft rushing current)",
+          "Ramnagar arterial link road washed out (3.2 km)",
+          "680 residential ground floors submerged past ceiling level"
+        ]
+      },
+      {
+        sector_id: "SEC-03-CIVIL-LINES",
+        name: "Civil Lines Municipal & Electrical Substation Grid",
+        inundated_hectares: 65.8,
+        affected_dwellings: 236,
+        damage_category: "Power Grid & Drainage Pump Failures",
+        severity_grade: "HIGH_UTILITY_LOSS",
+        drone_survey_score: 7.6,
+        structural_loss_inr: 9500000,
+        crop_loss_inr: 0,
+        key_failures: [
+          "33kV Civil Lines substation transformers inundated",
+          "Municipal stormwater lift pumps #1-#3 burned out",
+          "Commercial market basement silt ingress"
+        ]
+      },
+      {
+        sector_id: "SEC-04-PURQAZI",
+        name: "Purqazi Water Intake & Pipeline Network",
+        inundated_hectares: 75.2,
+        affected_dwellings: 177,
+        damage_category: "Municipal Drinking Water Contamination",
+        severity_grade: "CRITICAL_HEALTH_HAZARD",
+        drone_survey_score: 8.8,
+        structural_loss_inr: 6200000,
+        crop_loss_inr: 3500000,
+        key_failures: [
+          "Drinking water intake choked with 46.8 NTU turbidity silt",
+          "Primary distribution feeder pipe fractured by hydrostatic pressure",
+          "14,000 households cut off from safe municipal water"
+        ]
+      }
+    ],
+    dossier_text: "GOVERNMENT OF UTTARAKHAND — STATE DISASTER MANAGEMENT AUTHORITY (USDMA)\nPRELIMINARY POST-FLOOD DAMAGE & SDRF RELIEF GRANT MEMORANDUM\nBasin: Roorkee - Solani River - Upper Ganga Canal (Haridwar District)\nTotal SDRF Claim: ₹6.15 Crores"
   };
 }

@@ -10,6 +10,7 @@ import { QuickDistressSimulator } from '../components/QuickDistressSimulator';
 import { ArchitectureModal } from '../components/ArchitectureModal';
 import { ReliefShelterModal } from '../components/ReliefShelterModal';
 import { CAPBroadcastModal } from '../components/CAPBroadcastModal';
+import { DamageAssessmentModal } from '../components/DamageAssessmentModal';
 import { PredictiveFloodTimeline } from '../components/PredictiveFloodTimeline';
 import {
   fetchIncidentQueue,
@@ -79,6 +80,7 @@ export default function CommandOperationsPage() {
   const [isArchModalOpen, setIsArchModalOpen] = useState<boolean>(false);
   const [isShelterModalOpen, setIsShelterModalOpen] = useState<boolean>(false);
   const [isCAPModalOpen, setIsCAPModalOpen] = useState<boolean>(false);
+  const [isDamageModalOpen, setIsDamageModalOpen] = useState<boolean>(false);
   const [tourStep, setTourStep] = useState<number>(0); // 0 = off, 1-5 active
 
   // Execute Tour Stage Effects
@@ -265,6 +267,7 @@ export default function CommandOperationsPage() {
         onOpenArchitecture={() => setIsArchModalOpen(true)}
         onOpenShelters={() => setIsShelterModalOpen(true)}
         onOpenCAPAlert={() => setIsCAPModalOpen(true)}
+        onOpenDamageAssessment={() => setIsDamageModalOpen(true)}
         isTourRunning={tourStep > 0}
         onToggleGuidedTour={handleToggleGuidedTour}
       />
@@ -403,6 +406,12 @@ export default function CommandOperationsPage() {
       <CAPBroadcastModal
         isOpen={isCAPModalOpen}
         onClose={() => setIsCAPModalOpen(false)}
+      />
+
+      {/* Autonomous Drone Damage & SDRF Relief Loss Modal */}
+      <DamageAssessmentModal
+        isOpen={isDamageModalOpen}
+        onClose={() => setIsDamageModalOpen(false)}
       />
     </div>
   );

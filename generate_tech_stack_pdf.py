@@ -407,6 +407,11 @@ def generate_pdf(output_path: str):
             Paragraph("Models upstream Haridwar discharge & rain rates to project 6-hour advance flood polygons (T=0, +2h, +4h, +6h), warning which bridges will submerge next.", table_cell)
         ],
         [
+            Paragraph("<b>Damage & SDRF Claims</b>", table_cell_bold),
+            Paragraph("<b>Autonomous Drone Damage Engine</b> (MHA SDRF/NDRF Norms)", table_cell),
+            Paragraph("Quantifies post-flood infrastructure loss (₹6.42 Cr) across 4 Roorkee sectors, computing immediate family ex-gratia relief and generating official grant memoranda.", table_cell)
+        ],
+        [
             Paragraph("<b>Relief Logistics & Camps</b>", table_cell_bold),
             Paragraph("<b>Smart Shelter Allocation Engine</b> (Medical Matching / Triage)", table_cell),
             Paragraph("Roster of 4 Roorkee mega-camps (2,750 beds); matches rescued victims with closest camp offering needed pediatric/maternity care and available cots.", table_cell)
@@ -464,9 +469,9 @@ def generate_pdf(output_path: str):
     
     cert_data = [[
         Paragraph(
-            "<b>STAGE READINESS AUDIT: 100% PASS (68/68 Tests Verified)</b><br/>"
-            "• <b>Automated Platform Test Suite:</b> 68 / 68 tests passing (100% success rate) covering all 9 API modules.<br/>"
-            "• <b>Predictive Inundation, Shelters & CAP Sirens:</b> 6h timeline + medical shelter logistics + NDMA cell-broadcasts.<br/>"
+            "<b>STAGE READINESS AUDIT: 100% PASS (75/75 Tests Verified)</b><br/>"
+            "• <b>Automated Platform Test Suite:</b> 75 / 75 tests passing (100% success rate) covering all 10 API modules.<br/>"
+            "• <b>Predictive Inundation, Shelters, CAP Sirens & SDRF Grants:</b> Full disaster lifecycle (Mitigate, Evacuate, Alert, Recover).<br/>"
             "• <b>Offline Resilience:</b> Integrated fallback cache ensures zero blank screens during venue Wi-Fi outages.<br/>"
             "• <b>GitHub Repository:</b> <u>https://github.com/CodeWithMihran/ClimaGrid-overclock26</u> (Branch: <i>main</i>, Clean Tree)",
             body_style

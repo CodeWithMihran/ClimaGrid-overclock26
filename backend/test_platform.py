@@ -246,6 +246,23 @@ def run_suite():
     res_xml = client.get(f"/api/v1/alerts/{bc_data['identifier']}/xml")
     assert_test("OASIS CAP XML Document Endpoint", res_xml.status_code == 200 and "application/xml" in res_xml.headers.get("content-type", ""))
 
+    # TEST 15: Post-Disaster Drone Damage & SDRF Relief Loss Calculator
+    res_dmg = client.get("/api/v1/damage/assessment")
+    assert_test("Damage Assessment API Endpoint", res_dmg.status_code == 200)
+    dmg_data = res_dmg.json()
+    assert_test("Sectors Surveyed Count == 4", len(dmg_data.get("sectors", [])) == 4)
+    assert_test("Total Economic Loss >= 5.0 Crores", dmg_data.get("summary_metrics", {}).get("total_economic_loss_cr", 0) >= 5.0)
+    assert_test("SDRF Grant Claim Generated", dmg_data.get("summary_metrics", {}).get("total_sdrf_grant_claim_inr", 0) > 0)
+    assert_test("Ex-Gratia Relief Computed", dmg_data.get("sdrf_grant_breakdown", {}).get("ex_gratia_family_relief_inr", 0) > 0)
+
+    # Test Recalculate API
+    res_recalc = client.post("/api/v1/damage/recalculate", json={"flooded_hectares": 520.0, "affected_families": 1800})
+    assert_test("Recalculate Damage API", res_recalc.status_code == 200 and res_recalc.json()["summary_metrics"]["total_affected_families"] == 1800)
+
+    # Test Export Dossier Text Memorandum
+    res_dos = client.get("/api/v1/damage/export-dossier")
+    assert_test("Export SDRF Grant Memorandum Dossier", res_dos.status_code == 200 and "GOVERNMENT OF UTTARAKHAND" in res_dos.text)
+
     # SUMMARY
     print("=" * 70)
     print(f"  TOTAL TESTS RUN : {total_tests}")

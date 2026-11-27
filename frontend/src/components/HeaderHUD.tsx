@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square, Home, Megaphone } from 'lucide-react';
+import { ShieldAlert, Droplets, Flame, Waves, Radio, Activity, Compass, Bell, Smartphone, Cpu, Play, Square, Home, Megaphone, Camera } from 'lucide-react';
 
 interface HeaderHUDProps {
   activeModule: 'flood' | 'water' | 'heat';
@@ -12,6 +12,7 @@ interface HeaderHUDProps {
   onOpenArchitecture?: () => void;
   onOpenShelters?: () => void;
   onOpenCAPAlert?: () => void;
+  onOpenDamageAssessment?: () => void;
   isTourRunning?: boolean;
   onToggleGuidedTour?: () => void;
 }
@@ -24,6 +25,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   onOpenArchitecture,
   onOpenShelters,
   onOpenCAPAlert,
+  onOpenDamageAssessment,
   isTourRunning = false,
   onToggleGuidedTour
 }) => {
@@ -148,6 +150,14 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
         >
           <Megaphone className="w-3.5 h-3.5 text-red-400 animate-pulse" />
           <span>CAP Siren</span>
+        </button>
+
+        <button
+          onClick={onOpenDamageAssessment}
+          className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-sm font-sans font-bold"
+        >
+          <Camera className="w-3.5 h-3.5 text-amber-400" />
+          <span>SDRF Damage</span>
         </button>
 
         <button

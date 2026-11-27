@@ -10,6 +10,7 @@ from app.api.telemetry import router as telemetry_router
 from app.api.predictive_flood import router as flood_router
 from app.api.shelters import router as shelter_router
 from app.api.cap_broadcast import router as cap_router
+from app.api.damage_assessment import router as damage_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -36,6 +37,7 @@ app.include_router(telemetry_router, prefix=settings.API_V1_PREFIX)
 app.include_router(flood_router, prefix=settings.API_V1_PREFIX)
 app.include_router(shelter_router, prefix=settings.API_V1_PREFIX)
 app.include_router(cap_router, prefix=settings.API_V1_PREFIX)
+app.include_router(damage_router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
 async def root():

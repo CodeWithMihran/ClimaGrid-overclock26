@@ -227,3 +227,42 @@ export interface CAPTemplate {
   area_description: string;
 }
 
+export interface DamageSector {
+  sector_id: string;
+  name: string;
+  inundated_hectares: number;
+  affected_dwellings: number;
+  damage_category: string;
+  severity_grade: string;
+  drone_survey_score: number;
+  structural_loss_inr: number;
+  crop_loss_inr: number;
+  key_failures: string[];
+}
+
+export interface DamageAssessmentResponse {
+  assessment_id: string;
+  survey_timestamp: string;
+  district: string;
+  state: string;
+  governing_standard: string;
+  summary_metrics: {
+    total_flooded_hectares: number;
+    total_affected_families: number;
+    road_network_washout_km: number;
+    total_economic_loss_inr: number;
+    total_economic_loss_cr: number;
+    total_sdrf_grant_claim_inr: number;
+    total_sdrf_grant_claim_cr: number;
+    average_drone_severity_score: number;
+  };
+  sdrf_grant_breakdown: {
+    ex_gratia_family_relief_inr: number;
+    infrastructure_reconstruction_inr: number;
+    agricultural_input_subsidy_inr: number;
+    water_sanitation_rehabilitation_inr: number;
+  };
+  sectors: DamageSector[];
+  dossier_text: string;
+}
+

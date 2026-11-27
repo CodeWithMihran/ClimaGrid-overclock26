@@ -21,6 +21,8 @@ class DamageAssessmentService:
         Computes damage assessment across 4 Roorkee sectors and generates
         official SDRF (State Disaster Response Fund) compensation claim values.
         """
+        scale_factor = max(0.5, flooded_hectares / 470.0)
+
         # 4 Discrete Geographical Survey Sectors
         sectors = [
             {
@@ -31,8 +33,8 @@ class DamageAssessmentService:
                 "damage_category": "Embankment Scouring & Riparian Erosion",
                 "severity_grade": "SEVERE",
                 "drone_survey_score": 8.4,  # /10
-                "structural_loss_inr": 14500000,  # 1.45 Cr
-                "crop_loss_inr": 4800000,         # 48 Lakhs
+                "structural_loss_inr": round(14500000 * scale_factor),
+                "crop_loss_inr": round(4800000 * scale_factor),
                 "key_failures": [
                     "Solani Aqueduct northern revetment compromised (240m)",
                     "Drainage sluice gates #2 and #4 silt-jammed",
@@ -47,8 +49,8 @@ class DamageAssessmentService:
                 "damage_category": "Bridge Deck & Residential Submergence",
                 "severity_grade": "CRITICAL_COLLAPSE_RISK",
                 "drone_survey_score": 9.2,  # /10
-                "structural_loss_inr": 21000000,  # 2.10 Cr
-                "crop_loss_inr": 1200000,         # 12 Lakhs
+                "structural_loss_inr": round(21000000 * scale_factor),
+                "crop_loss_inr": round(1200000 * scale_factor),
                 "key_failures": [
                     "Brij Bridge pier footing scouring (5.5ft rushing current)",
                     "Ramnagar arterial link road washed out (3.2 km)",
@@ -63,7 +65,7 @@ class DamageAssessmentService:
                 "damage_category": "Power Grid & Drainage Pump Failures",
                 "severity_grade": "HIGH_UTILITY_LOSS",
                 "drone_survey_score": 7.6,  # /10
-                "structural_loss_inr": 9500000,   # 95 Lakhs
+                "structural_loss_inr": round(9500000 * scale_factor),
                 "crop_loss_inr": 0,
                 "key_failures": [
                     "33kV Civil Lines substation transformers inundated",
@@ -79,8 +81,8 @@ class DamageAssessmentService:
                 "damage_category": "Municipal Drinking Water Contamination",
                 "severity_grade": "CRITICAL_HEALTH_HAZARD",
                 "drone_survey_score": 8.8,  # /10
-                "structural_loss_inr": 6200000,   # 62 Lakhs
-                "crop_loss_inr": 3500000,         # 35 Lakhs
+                "structural_loss_inr": round(6200000 * scale_factor),
+                "crop_loss_inr": round(3500000 * scale_factor),
                 "key_failures": [
                     "Drinking water intake choked with 46.8 NTU turbidity silt",
                     "Primary distribution feeder pipe fractured by hydrostatic pressure",

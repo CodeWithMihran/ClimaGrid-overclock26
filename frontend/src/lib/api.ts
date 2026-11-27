@@ -1075,3 +1075,25 @@ export async function fetchDamageAssessment(): Promise<DamageAssessmentResponse>
     dossier_text: "GOVERNMENT OF UTTARAKHAND — STATE DISASTER MANAGEMENT AUTHORITY (USDMA)\nPRELIMINARY POST-FLOOD DAMAGE & SDRF RELIEF GRANT MEMORANDUM\nBasin: Roorkee - Solani River - Upper Ganga Canal (Haridwar District)\nTotal SDRF Claim: ₹6.15 Crores"
   };
 }
+
+export async function recalculateDamage(
+  floodedHectares: number = 470.0,
+  affectedFamilies: number = 1480,
+  roadWashoutKm: number = 7.8
+): Promise<DamageAssessmentResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/damage/recalculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        flooded_hectares: floodedHectares,
+        affected_families: affectedFamilies,
+        road_washout_km: roadWashoutKm
+      })
+    });
+    if (res.ok) return await res.json();
+  } catch (e) {
+    console.warn('Damage recalculation API error:', e);
+  }
+  return fetchDamageAssessment();
+}

@@ -1,7 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Camera, AlertTriangle, Building2, Truck, IndianRupee, FileText, CheckCircle2, X, Download, ShieldCheck, MapPin } from 'lucide-react';
+import { 
+  Camera, 
+  AlertTriangle, 
+  Building2, 
+  Truck, 
+  IndianRupee, 
+  FileText, 
+  CheckCircle2, 
+  X, 
+  Download, 
+  ShieldCheck, 
+  MapPin,
+  Check
+} from 'lucide-react';
 import { fetchDamageAssessment } from '../lib/api';
 import { DamageAssessmentResponse } from '../types';
 
@@ -56,8 +69,8 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
             <div>
               <h2 className="text-base font-bold text-white flex items-center gap-2">
                 DRONE DAMAGE ASSESSMENT & SDRF RELIEF LOSS CALCULATOR
-                <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-mono px-2 py-0.5 rounded-full">
-                  MHA GOVT OF INDIA SDRF NORMS
+                <span className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">
+                  MHA SDRF NORMS
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
@@ -73,10 +86,10 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
           </button>
         </div>
 
-        {/* Aggregate KPI Strip */}
+        {/* Aggregate Metrics Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-[#091026] border-b border-slate-800/80 font-mono text-xs">
           <div className="bg-[#0e1738] p-3 rounded-xl border border-slate-800">
-            <span className="text-slate-400 text-[11px] block">TOTAL ECONOMIC LOSS:</span>
+            <span className="text-slate-400 text-[11px] block">TOTAL DAMAGE LOSS:</span>
             <span className="text-xl font-black text-rose-400">₹{data.summary_metrics.total_economic_loss_cr} Cr</span>
             <span className="text-[10px] text-slate-500 block mt-0.5">Direct Physical Damage</span>
           </div>
@@ -101,13 +114,13 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
         </div>
 
         {/* View Switcher Tabs & Download Button */}
-        <div className="px-6 py-2.5 bg-[#070d1e] border-b border-slate-800 flex items-center justify-between gap-3 text-xs">
+        <div className="px-6 py-2.5 bg-[#070d1e] border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 font-mono">
             <button
               onClick={() => setActiveTab('sectors')}
               className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
                 activeTab === 'sectors'
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -117,7 +130,7 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
               onClick={() => setActiveTab('sdrf_grant')}
               className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
                 activeTab === 'sdrf_grant'
-                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -127,7 +140,7 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
               onClick={() => setActiveTab('dossier')}
               className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
                 activeTab === 'dossier'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -137,9 +150,9 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
 
           <button
             onClick={handleDownloadDossier}
-            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition-all font-mono"
+            className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-slate-950 font-black text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-md shadow-amber-950 transition-all font-mono"
           >
-            <Download className="w-3.5 h-3.5" />
+            {downloaded ? <Check className="w-3.5 h-3.5 text-slate-950" /> : <Download className="w-3.5 h-3.5" />}
             <span>{downloaded ? 'Downloaded Dossier!' : 'Download SDRF Dossier (.txt)'}</span>
           </button>
         </div>
@@ -170,7 +183,7 @@ export const DamageAssessmentModal: React.FC<DamageAssessmentModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 bg-[#091026] p-2 rounded-lg text-xs font-mono">
+                  <div className="grid grid-cols-2 gap-2 bg-[#091026] p-2.5 rounded-lg text-xs font-mono">
                     <div>
                       <span className="text-slate-500 block text-[10px]">SUBMERGED:</span>
                       <span className="font-bold text-cyan-300">{s.inundated_hectares} Hectares</span>

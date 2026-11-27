@@ -14,7 +14,6 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
   return (
     <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
       <div className="bg-[#0b132b] border-2 border-cyan-500/70 rounded-3xl max-w-4xl w-full p-6 shadow-2xl space-y-5 text-slate-200 animate-fadeIn max-h-[92vh] overflow-y-auto">
-        
         {/* Header */}
         <div className="flex justify-between items-center border-b border-slate-800 pb-3">
           <div className="flex items-center gap-3">
@@ -26,7 +25,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
                 AWS AI HACKATHON BLUEPRINT & SYSTEM ARCHITECTURE
               </span>
               <h2 className="text-lg font-black text-white">
-                Lifeline360 Decoupled Serverless Cloud Infrastructure
+                ClimaGrid Decoupled Serverless Cloud Infrastructure
               </h2>
             </div>
           </div>
@@ -46,7 +45,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
             <span>5-Stage Disaster Response Event Pipeline:</span>
           </h4>
 
-          <div className="grid grid-cols-5 gap-2 text-xs font-mono">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-mono">
             <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-center">
               <span className="text-[10px] text-cyan-400 font-bold block mb-1">STAGE 1</span>
               <p className="font-bold text-slate-200">Ingestion</p>
@@ -71,7 +70,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
               <p className="text-[10px] text-slate-400 mt-1">Location Service & OSRM Submerged Bridge Bypass</p>
             </div>
 
-            <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-center">
+            <div className="bg-slate-900 p-2.5 rounded-xl border border-slate-800 text-center col-span-2 sm:col-span-1">
               <span className="text-[10px] text-cyan-400 font-bold block mb-1">STAGE 5</span>
               <p className="font-bold text-slate-200">Fleet Dispatch</p>
               <p className="text-[10px] text-slate-400 mt-1">Human-in-the-Loop Approved NDRF Manifests</p>
@@ -86,7 +85,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
             <span>AWS Cloud Services & Component Mapping:</span>
           </h4>
 
-          <div className="grid grid-cols-3 gap-2.5 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 text-xs">
             <div className="bg-slate-950 p-3 rounded-xl border border-slate-800">
               <span className="font-bold text-amber-400 block mb-0.5">Amazon Bedrock (Claude 3.5)</span>
               <p className="text-[11px] text-slate-400">Zero-shot multimodal entity extraction from Hindi/English voice and text in &lt;1.2s.</p>
@@ -120,9 +119,12 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
         </div>
 
         {/* 3. Performance Benchmarks & UN SDG Impact */}
-        <div className="grid grid-cols-2 gap-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           <div className="bg-slate-900 p-3 rounded-xl border border-cyan-500/30 space-y-1.5 font-mono">
-            <span className="font-bold text-cyan-300 text-xs block">⚡ Real-Time SLA Benchmarks:</span>
+            <span className="font-bold text-cyan-300 text-xs block flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Real-Time SLA Benchmarks:</span>
+            </span>
             <div className="flex justify-between text-[11px]">
               <span className="text-slate-400">Multimodal Entity Extraction:</span>
               <b className="text-emerald-400">&lt; 1.2 seconds</b>
@@ -143,8 +145,8 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
 
           <div className="bg-slate-900 p-3 rounded-xl border border-emerald-500/30 space-y-1.5">
             <span className="font-bold text-emerald-300 text-xs block flex items-center gap-1">
-              <Globe className="w-3.5 h-3.5" />
-              United Nations SDG Alignment:
+              <Globe className="w-3.5 h-3.5 text-emerald-400" />
+              <span>United Nations SDG Alignment:</span>
             </span>
             <p className="text-[11px] text-slate-300">
               <b>SDG 11 (Sustainable Cities & Communities):</b> Protecting high-risk informal settlements and vulnerable groups during flash floods and heat stress.
@@ -162,7 +164,7 @@ export const ArchitectureModal: React.FC<ArchitectureModalProps> = ({ isOpen, on
           </span>
           <button
             onClick={onClose}
-            className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2 rounded-xl transition-all"
+            className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-2 rounded-xl transition-all shadow-md shadow-cyan-950"
           >
             Close Architecture Console
           </button>

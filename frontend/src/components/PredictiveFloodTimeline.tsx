@@ -1,7 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Waves, Clock, AlertTriangle, ShieldAlert, ArrowRight, Activity, Users, Compass, Megaphone } from 'lucide-react';
+import { 
+  Waves, 
+  Clock, 
+  AlertTriangle, 
+  ShieldAlert, 
+  Users, 
+  Megaphone,
+  Play,
+  Pause,
+  ArrowRight
+} from 'lucide-react';
 import { fetchPredictiveFloodTimeline } from '../lib/api';
 import { PredictiveTimelineResponse, PredictiveFloodStep } from '../types';
 
@@ -57,24 +67,24 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
   };
 
   return (
-    <div className="bg-[#0b132b]/95 border-b border-slate-800 p-3 shadow-xl backdrop-blur-md">
+    <div className="bg-[#0b132b]/95 border-b border-slate-800 p-3 shadow-lg backdrop-blur-md">
       {/* Top Header Row */}
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-        <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400">
-            <Clock className="w-3.5 h-3.5 animate-pulse" />
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+        <div className="flex items-center gap-2.5">
+          <div className="h-7 w-7 rounded-lg bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+            <Clock className="w-4 h-4 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black tracking-wider text-white uppercase">
+              <span className="text-xs font-bold tracking-wider text-white uppercase">
                 6-Hour Predictive Flood Inundation Timeline
               </span>
-              <span className="bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-[9px] font-mono px-1.5 py-0.2 rounded">
+              <span className="bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 text-[9px] font-mono px-1.5 py-0.5 rounded font-bold">
                 MISSION MAUSAM / HYDRA-AI
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 font-mono">
-              Upstream Haridwar Discharge: {data.meteorological_baseline.upstream_discharge_cusecs.toLocaleString()} cusecs | Rain Rate: {data.meteorological_baseline.rain_rate_mm_hr}mm/hr
+            <p className="text-[10.5px] text-slate-400 font-mono">
+              Upstream Discharge: {data.meteorological_baseline.upstream_discharge_cusecs.toLocaleString()} cusecs | Rain Rate: {data.meteorological_baseline.rain_rate_mm_hr}mm/hr
             </p>
           </div>
         </div>
@@ -82,36 +92,46 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`px-2.5 py-1 rounded text-[10px] font-mono font-bold flex items-center gap-1 transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm ${
               isPlaying
                 ? 'bg-amber-500 text-slate-950 font-black animate-pulse'
-                : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700'
             }`}
           >
-            <span>{isPlaying ? '⏸ Pause Simulation' : '▶ Play 6h Forecast'}</span>
+            {isPlaying ? (
+              <>
+                <Pause className="w-3.5 h-3.5 fill-current" />
+                <span>Pause Forecast</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Play 6h Forecast</span>
+              </>
+            )}
           </button>
         </div>
       </div>
 
-      {/* 4 Discrete Step Selector Buttons */}
-      <div className="grid grid-cols-4 gap-2 mb-2.5">
+      {/* 4 Discrete Step Selector Buttons (Responsive 2x2 on mobile, 4 on desktop) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-2.5">
         {data.steps.map((s, idx) => {
           const isSelected = selectedIdx === idx;
           return (
             <button
               key={s.step_id}
               onClick={() => handleSelectStep(idx)}
-              className={`p-2 rounded-lg text-left transition-all border ${
+              className={`p-2.5 rounded-xl text-left transition-all border ${
                 isSelected
                   ? 'bg-cyan-950/70 border-cyan-400 shadow-md ring-1 ring-cyan-400'
-                  : 'bg-[#070d1e]/80 border-slate-800/80 hover:border-slate-700'
+                  : 'bg-[#070d1e]/80 border-slate-800/80 hover:border-slate-700 hover:bg-[#070d1e]'
               }`}
             >
               <div className="flex items-center justify-between text-[10px] font-mono mb-1">
                 <span className={`font-bold ${isSelected ? 'text-cyan-300' : 'text-slate-400'}`}>
                   {s.label}
                 </span>
-                <span className={`px-1 rounded text-[8px] font-black ${
+                <span className={`px-1.5 py-0.5 rounded text-[8.5px] font-bold ${
                   idx === 0 ? 'bg-slate-800 text-slate-300' :
                   idx === 1 ? 'bg-amber-500/20 text-amber-400' :
                   idx === 2 ? 'bg-red-500/20 text-red-400 animate-pulse' :
@@ -130,8 +150,8 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
       </div>
 
       {/* Dynamic Forecast Metrics & Early Warning Advisory */}
-      <div className="bg-[#070d1e] rounded-lg p-2.5 border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-4">
+      <div className="bg-[#070d1e] rounded-xl p-2.5 border border-slate-800 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+        <div className="flex flex-wrap items-center gap-3.5">
           <div className="flex items-center gap-1.5 font-mono text-[11px]">
             <Waves className="w-3.5 h-3.5 text-cyan-400" />
             <span className="text-slate-400">River Stage:</span>
@@ -148,7 +168,7 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
           <div className="hidden sm:flex items-center gap-1.5 text-[11px]">
             <ShieldAlert className="w-3.5 h-3.5 text-red-400" />
             <span className="text-slate-400">Submerged:</span>
-            <span className="text-red-300 font-semibold truncate max-w-xs">
+            <span className="text-red-300 font-medium truncate max-w-xs">
               {currentStep.impassable_infrastructure.map(i => i.name).join(', ')}
             </span>
           </div>
@@ -156,13 +176,14 @@ export const PredictiveFloodTimeline: React.FC<PredictiveFloodTimelineProps> = (
 
         {/* Action Callout */}
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-amber-300 font-mono bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded">
-            ⚡ {currentStep.recommended_action.split('.')[0]}.
+          <span className="text-[10px] text-amber-300 font-mono bg-amber-500/10 border border-amber-500/30 px-2 py-0.5 rounded-md flex items-center gap-1">
+            <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" />
+            <span>{currentStep.recommended_action.split('.')[0]}.</span>
           </span>
           {onTriggerEvacAlert && (
             <button
               onClick={() => onTriggerEvacAlert(currentStep.recommended_action)}
-              className="bg-red-600/90 hover:bg-red-500 text-white font-mono text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1 shadow transition-all shrink-0"
+              className="bg-red-600 hover:bg-red-500 text-white font-mono text-[10px] font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 shadow-sm transition-all shrink-0"
             >
               <Megaphone className="w-3 h-3" />
               <span>Broadcast Evac Alert</span>

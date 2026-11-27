@@ -2,6 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { 
+  Map as MapIcon, 
+  AlertTriangle, 
+  Activity, 
+  Zap, 
+  Layers,
+  ChevronRight,
+  Square,
+  Play
+} from 'lucide-react';
 import { HeaderHUD } from '../components/HeaderHUD';
 import { LiveTelemetryTicker } from '../components/LiveTelemetryTicker';
 import { DistressStream } from '../components/DistressStream';
@@ -47,7 +57,7 @@ const TOUR_STAGES = [
   {
     step: 3,
     title: "STAGE 3/5: HAZARD-AWARE SUBMERGED ROUTE BYPASS",
-    narration: "Direct path crosses submerged bridge. Lifeline360 dynamically plots a high-ground detour corridor. Operator approves fleet dispatch.",
+    narration: "Direct path crosses submerged bridge. ClimaGrid dynamically plots a high-ground detour corridor. Operator approves fleet dispatch.",
     module: 'flood' as const
   },
   {
@@ -66,6 +76,7 @@ const TOUR_STAGES = [
 
 export default function CommandOperationsPage() {
   const [activeModule, setActiveModule] = useState<'flood' | 'water' | 'heat'>('flood');
+  const [mobileTab, setMobileTab] = useState<'map' | 'sos' | 'intel' | 'simulator'>('map');
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [selectedIncident, setSelectedIncident] = useState<IncidentRecord | null>(null);
   const [waterSensors, setWaterSensors] = useState<WaterSensorNode[]>([]);
@@ -95,18 +106,23 @@ export default function CommandOperationsPage() {
 
     if (stepNumber === 1) {
       setAvoidHazards(true);
+      setMobileTab('map');
     } else if (stepNumber === 2) {
       playTacticalAlertSound();
+      setMobileTab('sos');
       if (incidents.length > 0) {
         setSelectedIncident(incidents[0]);
       }
     } else if (stepNumber === 3) {
+      setMobileTab('map');
       if (incidents.length > 0) {
         handleCalculateRoute(incidents[0], true);
         handleApproveDispatch(incidents[0].id);
       }
+    } else if (stepNumber === 4) {
+      setMobileTab('intel');
     } else if (stepNumber === 5) {
-      // open architecture modal on final step close or trigger
+      setMobileTab('intel');
     }
   };
 
@@ -169,7 +185,6 @@ export default function CommandOperationsPage() {
   // Calculate dynamic route for an incident
   const handleCalculateRoute = async (incident: IncidentRecord, avoid: boolean = avoidHazards) => {
     try {
-      // Boat origin in Roorkee
       const boatOrigin: [number, number] = [29.8550, 77.8860];
       const targetDest: [number, number] = [incident.latitude, incident.longitude];
       const route = await calculateRoute(boatOrigin, targetDest, avoid);
@@ -197,7 +212,7 @@ export default function CommandOperationsPage() {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime); // A5 high alert tone
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.3);
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
@@ -275,36 +290,89 @@ export default function CommandOperationsPage() {
       {/* 1.1 Live IoT Telemetry & River Gauge Stream Bar */}
       <LiveTelemetryTicker />
 
-      {/* 2. Main 3-Column Tactical Console */}
-      <div className="flex-1 grid grid-cols-12 overflow-hidden">
+      {/* 1.2 Mobile / Tablet View Switcher Tab Bar (Visible on < lg) */}
+      <div className="lg:hidden bg-[#0b132b] border-b border-slate-800 px-3 py-1.5 flex items-center justify-between text-xs font-semibold gap-1 shrink-0">
+        <button
+          onClick={() => setMobileTab('map')}
+          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            mobileTab === 'map'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <MapIcon className="w-3.5 h-3.5" />
+          <span>Map View</span>
+        </button>
+
+        <button
+          onClick={() => setMobileTab('sos')}
+          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            mobileTab === 'sos'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" />
+          <span>SOS Queue ({incidents.length})</span>
+        </button>
+
+        <button
+          onClick={() => setMobileTab('intel')}
+          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            mobileTab === 'intel'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Activity className="w-3.5 h-3.5 text-emerald-400" />
+          <span>Fleet & Intel</span>
+        </button>
+
+        <button
+          onClick={() => setMobileTab('simulator')}
+          className={`flex-1 py-1.5 px-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${
+            mobileTab === 'simulator'
+              ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
+              : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <Zap className="w-3.5 h-3.5 text-purple-400" />
+          <span>Simulator</span>
+        </button>
+      </div>
+
+      {/* 2. Main Tactical Console: Responsive 3-Column on Desktop (lg+), Tabbed on Mobile (< lg) */}
+      <div className="flex-1 lg:grid lg:grid-cols-12 overflow-hidden relative">
         {/* Left Column (Zone 2): Distress Triage Stream */}
-        <div className="col-span-3 h-full overflow-hidden">
+        <div className={`h-full overflow-hidden ${mobileTab === 'sos' ? 'block' : 'hidden'} lg:block lg:col-span-3 border-r border-slate-800`}>
           <DistressStream
             incidents={incidents}
             selectedIncident={selectedIncident}
             onSelectIncident={(inc) => {
               setSelectedIncident(inc);
               handleCalculateRoute(inc, avoidHazards);
+              if (window.innerWidth < 1024) setMobileTab('map');
             }}
             onApproveDispatch={handleApproveDispatch}
             onCalculateRoute={(inc) => {
               setSelectedIncident(inc);
               handleCalculateRoute(inc, avoidHazards);
+              if (window.innerWidth < 1024) setMobileTab('map');
             }}
           />
         </div>
 
         {/* Center Column (Zone 1): Tactical Geospatial Map Canvas + Quick Simulator */}
-        <div className="col-span-6 flex flex-col h-full overflow-hidden border-r border-slate-800">
+        <div className={`h-full flex-col overflow-hidden ${mobileTab === 'map' ? 'flex' : 'hidden'} lg:flex lg:col-span-6 border-r border-slate-800`}>
           {/* Top 6-Hour Predictive Inundation Timeline Slider (When in Flood Mode) */}
           {activeModule === 'flood' && (
             <PredictiveFloodTimeline
               onSelectStepGeoJSON={(geo) => setFloodGeoJSON(geo)}
-              onTriggerEvacAlert={(action) => alert(`📢 NDMA SACHET PREEMPTIVE ALERT BROADCAST:\n\n${action}`)}
+              onTriggerEvacAlert={(action) => alert(`NDMA SACHET PREEMPTIVE ALERT BROADCAST:\n\n${action}`)}
             />
           )}
 
-          <div className="flex-1 relative">
+          <div className="flex-1 relative min-h-[300px]">
             <TacticalMap
               activeModule={activeModule}
               incidents={incidents}
@@ -320,9 +388,24 @@ export default function CommandOperationsPage() {
             />
           </div>
 
-          {/* Bottom Live Bedrock Distress Simulator */}
+          {/* Bottom Live Bedrock Distress Simulator (Visible on Desktop) */}
+          <div className="hidden lg:block">
+            <QuickDistressSimulator
+              onSendMessage={handleSendMessage}
+              sampleMessages={sampleMessages}
+              isProcessing={isProcessing}
+              lastLatencyMs={lastLatencyMs}
+            />
+          </div>
+        </div>
+
+        {/* Mobile Dedicated Simulator Tab (< lg) */}
+        <div className={`h-full overflow-y-auto ${mobileTab === 'simulator' ? 'block' : 'hidden'} lg:hidden p-3`}>
           <QuickDistressSimulator
-            onSendMessage={handleSendMessage}
+            onSendMessage={async (msg, src) => {
+              await handleSendMessage(msg, src);
+              setMobileTab('map');
+            }}
             sampleMessages={sampleMessages}
             isProcessing={isProcessing}
             lastLatencyMs={lastLatencyMs}
@@ -330,7 +413,7 @@ export default function CommandOperationsPage() {
         </div>
 
         {/* Right Column (Zone 3): Fleet Telemetry, Water & Heat Intel, Route Stats */}
-        <div className="col-span-3 h-full overflow-hidden">
+        <div className={`h-full overflow-hidden ${mobileTab === 'intel' ? 'block' : 'hidden'} lg:block lg:col-span-3`}>
           <TacticalSideHUD
             activeModule={activeModule}
             fleetAssets={fleetAssets}
@@ -345,9 +428,9 @@ export default function CommandOperationsPage() {
 
       {/* Floating Guided Tour Walkthrough Controller */}
       {tourStep > 0 && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#0b132b]/95 border-2 border-cyan-400 rounded-2xl shadow-2xl p-4 max-w-2xl w-full flex items-center justify-between gap-4 animate-bounce-subtle backdrop-blur-md">
-          <div className="space-y-1 flex-1">
-            <div className="flex items-center gap-2">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#0b132b]/95 border-2 border-cyan-400 rounded-2xl shadow-2xl p-4 max-w-2xl w-[92%] sm:w-full flex flex-col sm:flex-row items-center justify-between gap-3 backdrop-blur-md">
+          <div className="space-y-1 flex-1 text-center sm:text-left">
+            <div className="flex items-center justify-center sm:justify-start gap-2">
               <span className="text-xs font-black font-mono bg-cyan-500 text-slate-950 px-2 py-0.5 rounded">
                 {TOUR_STAGES[tourStep - 1].title}
               </span>
@@ -358,11 +441,11 @@ export default function CommandOperationsPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => goToTourStep(tourStep - 1)}
               disabled={tourStep <= 1}
-              className="bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold"
+              className="bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
             >
               Prev
             </button>
@@ -375,13 +458,14 @@ export default function CommandOperationsPage() {
                   goToTourStep(tourStep + 1);
                 }
               }}
-              className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-1.5 rounded-lg text-xs font-black"
+              className="bg-cyan-500 hover:bg-cyan-400 text-slate-950 px-4 py-1.5 rounded-lg text-xs font-black shadow-md shadow-cyan-950 transition-all flex items-center gap-1"
             >
-              {tourStep === 5 ? 'Finish & Open Architecture' : 'Next Step →'}
+              <span>{tourStep === 5 ? 'Open Architecture' : 'Next Step'}</span>
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setTourStep(0)}
-              className="text-slate-500 hover:text-slate-300 text-xs px-2 py-1"
+              className="text-slate-400 hover:text-slate-200 text-xs px-2 py-1 transition-colors"
             >
               Exit
             </button>
@@ -389,26 +473,26 @@ export default function CommandOperationsPage() {
         </div>
       )}
 
-      {/* Judges Architecture & System Cloud Depth Modal */}
+      {/* Cloud Architecture & Technical Depth Modal */}
       <ArchitectureModal
         isOpen={isArchModalOpen}
         onClose={() => setIsArchModalOpen(false)}
       />
 
-      {/* Smart Relief Shelters & Logistics Modal */}
+      {/* Smart Relief Shelters & Multi-Warehouse Logistics Modal */}
       <ReliefShelterModal
         isOpen={isShelterModalOpen}
         onClose={() => setIsShelterModalOpen(false)}
         selectedIncident={selectedIncident}
       />
 
-      {/* NDMA SACHET / CAP Emergency Broadcast Siren Modal */}
+      {/* NDMA SACHET / CAP Geofenced Emergency Siren Generator Modal */}
       <CAPBroadcastModal
         isOpen={isCAPModalOpen}
         onClose={() => setIsCAPModalOpen(false)}
       />
 
-      {/* Autonomous Drone Damage & SDRF Relief Loss Modal */}
+      {/* Autonomous Drone Damage & MHA SDRF Relief Loss Calculator Modal */}
       <DamageAssessmentModal
         isOpen={isDamageModalOpen}
         onClose={() => setIsDamageModalOpen(false)}

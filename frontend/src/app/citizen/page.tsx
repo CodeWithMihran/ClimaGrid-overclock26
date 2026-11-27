@@ -13,13 +13,15 @@ import {
   MessageSquare, 
   ArrowLeft, 
   Navigation, 
-  Compass,
-  Mic,
-  MicOff,
-  Camera,
-  Upload,
-  Clock,
-  Waves
+  Mic, 
+  MicOff, 
+  Camera, 
+  Clock, 
+  Waves,
+  Check,
+  Flame,
+  User,
+  Users
 } from 'lucide-react';
 import { parseDistressMessage, fetchIncidentStatus, analyzeFloodPhoto } from '../../lib/api';
 import { IncidentRecord } from '../../types';
@@ -65,7 +67,7 @@ export default function CitizenSOSPage() {
 
   const toggleMobileMic = () => {
     if (!mobileRecoRef.current) {
-      alert('Speech recognition not available on this browser. Try Chrome/Edge.');
+      alert('Speech recognition not available on this browser. Try Chrome or Edge.');
       return;
     }
     if (isMobileListening) {
@@ -81,14 +83,14 @@ export default function CitizenSOSPage() {
     const res = await analyzeFloodPhoto('sample_roof');
     setWaterLevel(`${res.estimated_depth_feet}ft - Roof / Chhat`);
     setVoiceText(res.suggested_distress_message);
-    alert(`📸 Vision Depth Gauge: Waterline detected at ${res.estimated_depth_feet}ft! Updated form.`);
+    alert(`Vision Depth Gauge: Waterline detected at ${res.estimated_depth_feet}ft! Updated form.`);
   };
 
   // WhatsApp Bot States
   const [waMessages, setWaMessages] = useState<Array<{ sender: 'user' | 'bot'; text: string; time: string }>>([
     {
       sender: 'bot',
-      text: '🙏 Namaste. This is AAPDA360 / Lifeline360 Emergency Response Bot (NDRF / SDRF). If you are stranded or need rescue, reply with your location, number of trapped people, and urgent medical needs.',
+      text: 'Namaste. This is ClimaGrid AAPDA360 Emergency Response Bot (NDRF / SDRF). If you are stranded or need rescue, reply with your location, number of trapped people, and urgent medical needs.',
       time: '16:30'
     }
   ]);
@@ -172,7 +174,7 @@ export default function CitizenSOSPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-start p-2 sm:p-4">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-start p-2 sm:p-4 font-sans">
       {/* Top Navigation & Return to EOC Bar */}
       <div className="w-full max-w-md flex items-center justify-between py-2 px-1 mb-2">
         <Link
@@ -182,14 +184,14 @@ export default function CitizenSOSPage() {
           <ArrowLeft className="w-4 h-4" />
           <span>Return to EOC Command Center</span>
         </Link>
-        <span className="text-[10px] font-mono bg-red-950 text-red-400 border border-red-900 px-2 py-0.5 rounded-full flex items-center gap-1">
+        <span className="text-[10px] font-mono bg-red-950 text-red-400 border border-red-900 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
           <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
           CITIZEN FIELD CLIENT
         </span>
       </div>
 
       {/* Mobile Shell Container */}
-      <div className="w-full max-w-md bg-[#070d1e] border-2 border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[680px]">
+      <div className="w-full max-w-md bg-[#070d1e] border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col min-h-[680px]">
         
         {/* App Mode Toggle Header */}
         <div className="bg-[#0b132b] border-b border-slate-800 p-2 flex gap-1">
@@ -214,42 +216,23 @@ export default function CitizenSOSPage() {
             }`}
           >
             <MessageSquare className="w-4 h-4" />
-            <span>WhatsApp Bot (+91 112)</span>
+            <span>WhatsApp Bot Simulator</span>
           </button>
         </div>
 
-        {/* ----------------- TAB 1: 1-TAP SOS EMERGENCY APP ----------------- */}
+        {/* ----------------- TAB 1: 1-TAP SOS CLIENT ----------------- */}
         {activeTab === 'sos_app' && (
-          <div className="flex-1 p-4 space-y-4 overflow-y-auto">
-            
-            {/* GPS Coordinate Lock Indicator */}
-            <div className="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-2.5 flex items-center justify-between text-xs font-mono">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <div>
-                  <p className="text-emerald-300 font-bold">GPS SIGNAL LOCKED (±4m)</p>
-                  <p className="text-[10px] text-slate-400">29.8650° N, 77.8990° E • Roorkee Basin</p>
-                </div>
-              </div>
-              <span className="text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded">
-                LIVE
-              </span>
-            </div>
-
-            {/* MASSIVE 1-TAP SOS BUTTON (Operable with wet/shaking hands) */}
-            <div className="flex flex-col items-center py-2">
+          <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+            {/* BIG RED SOS BUTTON */}
+            <div className="flex flex-col items-center justify-center py-2">
               <button
                 onClick={handleBroadcastSOS}
                 disabled={isBroadcasting}
-                className="relative group w-44 h-44 rounded-full bg-gradient-to-tr from-red-700 via-red-600 to-rose-500 text-white shadow-2xl shadow-red-600/50 flex flex-col items-center justify-center border-4 border-red-300 hover:scale-105 active:scale-95 transition-all"
+                className="w-36 h-36 rounded-full bg-gradient-to-br from-red-500 to-rose-700 hover:from-red-600 hover:to-rose-800 border-4 border-red-400/50 shadow-2xl shadow-red-600/50 flex flex-col items-center justify-center transition-transform active:scale-95 disabled:opacity-50"
               >
-                {/* Pulsing ring animation */}
-                <span className="absolute -inset-2 rounded-full border-2 border-red-500/50 animate-ping opacity-75 pointer-events-none" />
-                
-                <Radio className="w-10 h-10 mb-1 text-white animate-pulse" />
-                <span className="font-black text-xl tracking-wider">BROADCAST</span>
+                <Radio className={`w-8 h-8 text-white mb-1 ${isBroadcasting ? 'animate-spin' : 'animate-pulse'}`} />
                 <span className="font-extrabold text-sm text-red-100">SOS EMERGENCY</span>
-                <span className="text-[9px] font-mono text-red-200 mt-1">आपातकालीन सहायता</span>
+                <span className="text-[10px] font-mono text-red-200 mt-0.5">आपातकालीन सहायता</span>
               </button>
               <p className="text-[11px] text-slate-400 mt-2 text-center">
                 Press to instantly alert NDRF & local rescue boats
@@ -298,7 +281,7 @@ export default function CitizenSOSPage() {
                 <select
                   value={waterLevel}
                   onChange={(e) => setWaterLevel(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-xl p-2 focus:border-red-500"
+                  className="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-xl p-2.5 focus:border-red-500 focus:outline-none"
                 >
                   <option value="2ft - Knee Deep">2ft - Knee Deep</option>
                   <option value="4ft - Waist Deep">4ft - Waist Deep</option>
@@ -314,14 +297,14 @@ export default function CitizenSOSPage() {
                 <div className="flex items-center bg-slate-900 border border-slate-700 rounded-xl p-1 justify-between">
                   <button
                     onClick={() => setHeadcount((prev) => Math.max(1, prev - 1))}
-                    className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 font-bold flex items-center justify-center hover:bg-slate-700"
+                    className="w-8 h-8 rounded-lg bg-slate-800 text-slate-200 font-bold flex items-center justify-center hover:bg-slate-700 transition-colors"
                   >
                     -
                   </button>
                   <span className="font-mono font-bold text-sm text-cyan-400">{headcount}</span>
                   <button
                     onClick={() => setHeadcount((prev) => prev + 1)}
-                    className="w-7 h-7 rounded-lg bg-slate-800 text-slate-200 font-bold flex items-center justify-center hover:bg-slate-700"
+                    className="w-8 h-8 rounded-lg bg-slate-800 text-slate-200 font-bold flex items-center justify-center hover:bg-slate-700 transition-colors"
                   >
                     +
                   </button>
@@ -339,7 +322,7 @@ export default function CitizenSOSPage() {
                   <button
                     type="button"
                     onClick={toggleMobileMic}
-                    className={`text-[11px] px-2 py-0.5 rounded-lg flex items-center gap-1 font-bold ${
+                    className={`text-[11px] px-2.5 py-1 rounded-lg flex items-center gap-1 font-bold ${
                       isMobileListening
                         ? 'bg-red-600 text-white animate-pulse'
                         : 'bg-slate-800 text-red-400 border border-red-500/30'
@@ -352,7 +335,7 @@ export default function CitizenSOSPage() {
                   <button
                     type="button"
                     onClick={handleSimulatePhotoGauge}
-                    className="text-[11px] px-2 py-0.5 rounded-lg bg-slate-800 text-amber-300 border border-amber-500/30 flex items-center gap-1 font-bold"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 text-amber-300 border border-amber-500/30 flex items-center gap-1 font-bold"
                   >
                     <Camera className="w-3 h-3" />
                     <span>Photo Gauge</span>
@@ -368,9 +351,9 @@ export default function CitizenSOSPage() {
               />
             </div>
 
-            {/* LIVE ACTIVE DISPATCH STATUS CARD (Renders when an SOS has been sent) */}
+            {/* LIVE ACTIVE DISPATCH STATUS CARD */}
             {activeIncident && (
-              <div className="bg-slate-900/95 border-2 border-red-500/60 rounded-2xl p-3 space-y-2.5 animate-fadeIn">
+              <div className="bg-slate-900/95 border-2 border-red-500/60 rounded-2xl p-3.5 space-y-2.5 animate-fadeIn">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1.5">
                     <Radio className="w-4 h-4 text-red-400 animate-pulse" />
@@ -468,7 +451,7 @@ export default function CitizenSOSPage() {
               ))}
 
               {isWaTyping && (
-                <div className="mr-auto bg-[#202c33] text-slate-400 text-xs rounded-xl px-3 py-1.5 flex items-center gap-1">
+                <div className="mr-auto bg-[#202c33] text-slate-400 text-xs rounded-xl px-3 py-1.5 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-ping" />
                   <span>Bedrock NLP analyzing distress signal...</span>
                 </div>

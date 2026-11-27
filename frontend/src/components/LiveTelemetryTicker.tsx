@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Waves, Droplets, Flame, Radio, Activity, AlertTriangle, ShieldCheck, Zap } from 'lucide-react';
+import { Waves, Droplets, Flame, Activity, Zap, CheckCircle2 } from 'lucide-react';
 import { fetchTelemetrySnapshot } from '../lib/api';
 import { TelemetryData } from '../types';
 
@@ -35,7 +35,7 @@ export const LiveTelemetryTicker: React.FC = () => {
   const gangaGauge = telemetry.gauges.find(g => g.id === "GAUGE-GANGA-02") || telemetry.gauges[1];
 
   return (
-    <div className="bg-[#070d1e] border-b border-slate-800/80 px-4 py-1.5 flex items-center justify-between text-[11px] font-mono text-slate-300 overflow-x-auto gap-4 select-none">
+    <div className="bg-[#070d1e] border-b border-slate-800/80 px-4 py-1.5 flex items-center justify-between text-xs font-mono text-slate-300 overflow-x-auto gap-4 select-none scrollbar-none">
       {/* Live Feed Status Tag */}
       <div className="flex items-center gap-2 shrink-0">
         <span className="relative flex h-2 w-2">
@@ -48,14 +48,14 @@ export const LiveTelemetryTicker: React.FC = () => {
       </div>
 
       {/* Sensor Tickers */}
-      <div className="flex items-center gap-5 shrink-0">
+      <div className="flex items-center gap-5 shrink-0 text-[11px]">
         {/* Solani River Gauge */}
         {solaniGauge && (
           <div className="flex items-center gap-1.5">
             <Waves className="w-3.5 h-3.5 text-cyan-400" />
             <span className="text-slate-400">{solaniGauge.name}:</span>
             <span className="text-white font-bold">{solaniGauge.water_level_m}m</span>
-            <span className={`px-1.5 py-0.2 rounded text-[9px] font-black ${
+            <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
               solaniGauge.status === 'CRITICAL'
                 ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse'
                 : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
@@ -80,7 +80,7 @@ export const LiveTelemetryTicker: React.FC = () => {
           <Droplets className="w-3.5 h-3.5 text-amber-400" />
           <span className="text-slate-400">Purqazi Turbidity:</span>
           <span className="text-rose-400 font-bold">{telemetry.water_quality.turbidity_ntu} NTU</span>
-          <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.2 rounded text-[9px] font-black">
+          <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded text-[9px] font-bold">
             CONTAMINATION SPIKE
           </span>
         </div>
@@ -99,7 +99,9 @@ export const LiveTelemetryTicker: React.FC = () => {
           <Zap className="w-3 h-3 text-cyan-400" />
           <span>Bedrock NLP:</span>
           <span className="text-cyan-300 font-bold">{telemetry.system_health.bedrock_nlp_latency_ms}ms</span>
-          <span className="text-emerald-400 text-[10px]">(&lt;1.2s SLA ✓)</span>
+          <span className="text-emerald-400 text-[10px] flex items-center gap-0.5">
+            <CheckCircle2 className="w-2.5 h-2.5 inline" /> &lt;1.2s SLA
+          </span>
         </div>
       </div>
     </div>

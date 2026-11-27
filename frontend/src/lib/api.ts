@@ -593,7 +593,7 @@ export async function fetchPredictiveFloodTimeline(): Promise<PredictiveTimeline
   } catch (e) {}
 
   return {
-    model_version: "LIFELINE360-HYDRO-HYDRA-v2.4",
+    model_version: "CLIMAGRID-HYDRO-HYDRA-v2.4",
     meteorological_baseline: {
       rain_rate_mm_hr: 35.0,
       upstream_source: "Haridwar Bhimgoda Barrage Release",

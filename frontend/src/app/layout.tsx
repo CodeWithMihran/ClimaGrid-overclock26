@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lifeline360 // Disaster Command Operations",
+  title: "ClimaGrid // Disaster Command Operations",
   description: "AI-Powered Multi-Hazard Command Operations Platform (AAPDA360 + JEEVAN + HEATSHIELD)",
 };
 
@@ -13,7 +13,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#070d1e] antialiased select-none">{children}</body>
+      <body className="bg-[#070d1e] text-slate-100 antialiased font-sans min-h-screen">
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,6 +1,6 @@
 """
 =============================================================================
-  LIFELINE360 // IoT TELEMETRY & LIVE ANOMALY INJECTION TOOL
+  CLIMAGRID // IoT TELEMETRY & LIVE ANOMALY INJECTION TOOL
   Overclock '26 Hackathon (RIT Roorkee)
 =============================================================================
 Use this script during live jury evaluation to inject sudden real-time
@@ -16,7 +16,7 @@ BACKEND_URL = "http://localhost:8000/api/v1"
 
 def print_banner():
     print("=" * 72)
-    print("   LIFELINE360 // LIVE IOT SENSOR & ANOMALY INJECTOR")
+    print("   CLIMAGRID // LIVE IOT SENSOR & ANOMALY INJECTOR")
     print("   Roorkee - Solani - Haridwar Ganga Multi-Hazard Operations")
     print("=" * 72)
 
@@ -65,7 +65,7 @@ def main():
     print_banner()
     snap = fetch_snapshot()
     if snap:
-        print(f"[✓] Connected to Lifeline360 EOC at {BACKEND_URL}")
+        print(f"[✓] Connected to CLIMAGRID EOC at {BACKEND_URL}")
         print(f"    Basin: {snap.get('basin')}")
     else:
         print("[!] Backend is currently offline. Start it with: .\\run_backend.bat")

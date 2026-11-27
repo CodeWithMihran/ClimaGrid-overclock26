@@ -150,7 +150,7 @@ async def whatsapp_webhook(payload: WhatsAppWebhookPayload):
     INCIDENT_STORE[record.id] = record
     
     bot_reply = (
-        f"🚨 *NDMA & UTTARAKHAND SDRF LIFELINE360 HELPLINE*\n\n"
+        f"🚨 *NDMA & UTTARAKHAND SDRF CLIMAGRID HELPLINE*\n\n"
         f"Namaste {user_name}, your distress report has been registered.\n\n"
         f"📋 *Incident ID:* `{record.id}`\n"
         f"⚠️ *Priority:* *{record.triage.priority_tier}* (Score: {record.triage.final_score:.2f})\n"
@@ -177,7 +177,7 @@ async def sms_webhook(From: str = "+919876543210", Body: str = ""):
     return {
         "status": "REGISTERED",
         "incident_id": record.id,
-        "reply": f"LIFELINE360: SOS registered {record.id}. Priority {record.triage.priority_tier}. NDRF alert dispatched to {record.landmark}."
+        "reply": f"CLIMAGRID: SOS registered {record.id}. Priority {record.triage.priority_tier}. NDRF alert dispatched to {record.landmark}."
     }
 
 

@@ -659,5 +659,5 @@ def build_pdf(filename):
 
 if __name__ == "__main__":
     # Generate both updated existing file and clean named file
-    build_pdf("LIFELINE360_PROJECT_OVERVIEW_AND_USER_GUIDE.pdf")
+    build_pdf("CLIMAGRID_PROJECT_OVERVIEW_AND_USER_GUIDE.pdf")
     build_pdf("CLIMAGRID_PROJECT_OVERVIEW_AND_USER_GUIDE.pdf")

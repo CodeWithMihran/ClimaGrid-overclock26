@@ -1,4 +1,4 @@
-# LIFELINE360 // HACKATHON PORTAL SUBMISSION & TEAM PRESENTATION ROLES
+# CLIMAGRID // HACKATHON PORTAL SUBMISSION & TEAM PRESENTATION ROLES
 ### For Overclock '26 (RIT Roorkee) — Track: AI for Disaster Resilience & Cloud Command
 
 ---
@@ -6,10 +6,10 @@
 ## 📝 1. Ready-to-Copy Portal Submission Form (Devpost / Unstop / Google Form)
 
 ### Project Title
-**Lifeline360 // ClimaGrid**
+**CLIMAGRID // ClimaGrid**
 
 ### One-Line Tagline
-> *"Floods, unsafe drinking water, and extreme heat hit the exact same vulnerable people. Lifeline360 gives cities one map to see compound risk, respond in under 1.2s, and protect the most vulnerable."*
+> *"Floods, unsafe drinking water, and extreme heat hit the exact same vulnerable people. CLIMAGRID gives cities one map to see compound risk, respond in under 1.2s, and protect the most vulnerable."*
 
 ### Track
 **AI for Disaster Resilience & Cloud Command**
@@ -21,12 +21,12 @@ Climate catastrophes rarely arrive in isolation. When intense monsoons hit, flas
 
 Today, disaster responders (NDRF/SDRF), municipal health officers, and city planners operate in complete data silos. Citizen distress calls arrive in unformatted Hindi or English voice notes and WhatsApp texts. Triage takes 4–7 minutes per call, rescue motorboats navigate blindly into submerged bridges, and post-flood contamination goes unnoticed until clinics overflow. Nobody sees the compound disaster cycle.
 
-We built **Lifeline360** to break these silos: **One city, three climate threats, one unified command operations center.**
+We built **CLIMAGRID** to break these silos: **One city, three climate threats, one unified command operations center.**
 
 ---
 
 ### What It Does
-Lifeline360 integrates the entire climate catastrophe lifecycle across **Before, During, and After**:
+CLIMAGRID integrates the entire climate catastrophe lifecycle across **Before, During, and After**:
 
 1. **DURING (Acute Flood Crisis — AAPDA360):**
    * **Sub-Second Multimodal AI Extraction:** Amazon Bedrock (Claude 3.5 Sonnet) transcribes messy Hindi/English voice audio, vernacular WhatsApp texts, and emergency 112 calls into structured records in **<1.2 seconds** with 98.4% schema accuracy.

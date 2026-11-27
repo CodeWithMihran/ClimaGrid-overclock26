@@ -40,6 +40,8 @@ app.include_router(cap_router, prefix=settings.API_V1_PREFIX)
 app.include_router(damage_router, prefix=settings.API_V1_PREFIX)
 
 @app.get("/")
+@app.get("/health")
+@app.get("/api/v1/health")
 async def root():
     return {
         "platform": settings.PROJECT_NAME,

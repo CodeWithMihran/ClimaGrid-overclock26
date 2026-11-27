@@ -1,1 +1,1 @@
-# Project Lifeline360 / ClimaGrid Backend
+# Project ClimaGrid Backend

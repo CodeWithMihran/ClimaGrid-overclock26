@@ -1,5 +1,5 @@
 """
-LIFELINE360 - OASIS CAP v1.2 & ITU-T X.1303 Emergency Broadcast Siren Service
+CLIMAGRID - OASIS CAP v1.2 & ITU-T X.1303 Emergency Broadcast Siren Service
 Implements India NDMA SACHET / C-DoT compliant Common Alerting Protocol (CAP)
 for geofenced cell-broadcast emergency alerts in Hindi & English.
 """

@@ -1,5 +1,5 @@
 """
-LIFELINE360 - Smart Relief Shelter Logistics & Bed Allocation Engine
+CLIMAGRID - Smart Relief Shelter Logistics & Bed Allocation Engine
 Manages emergency evacuation camps, live bed occupancy, food rations,
 potable water liters, and intelligent medical-matching shelter allocation.
 """

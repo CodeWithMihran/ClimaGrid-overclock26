@@ -1,5 +1,5 @@
 """
-LIFELINE360 - Autonomous Post-Disaster Damage & SDRF Relief Loss Calculator
+CLIMAGRID - Autonomous Post-Disaster Damage & SDRF Relief Loss Calculator
 Quantifies structural, utility, agricultural, and humanitarian losses across
 the Roorkee / Solani Basin following MHA (Ministry of Home Affairs) SDRF norms.
 """

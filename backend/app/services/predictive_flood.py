@@ -1,5 +1,5 @@
 """
-LIFELINE360 - 6-Hour Predictive Inundation & Early Warning Service
+CLIMAGRID - 6-Hour Predictive Inundation & Early Warning Service
 Models upstream Haridwar Barrage discharge + rainfall rate to forecast
 hydrological flood polygon expansion across the Roorkee / Solani Basin.
 """
@@ -100,7 +100,7 @@ class PredictiveFloodService:
         })
 
         return {
-            "model_version": "LIFELINE360-HYDRO-HYDRA-v2.4",
+            "model_version": "CLIMAGRID-HYDRO-HYDRA-v2.4",
             "meteorological_baseline": {
                 "rain_rate_mm_hr": rain_rate_mm_hr,
                 "upstream_source": "Haridwar Bhimgoda Barrage Release",

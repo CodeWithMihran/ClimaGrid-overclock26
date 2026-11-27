@@ -1,5 +1,5 @@
 """
-LIFELINE360 - IoT Telemetry & River Gauge Stream Service
+CLIMAGRID - IoT Telemetry & River Gauge Stream Service
 Provides live real-time hydrologic, water-quality, and thermal sensor streams
 for the Roorkee / Haridwar Ganga & Solani Basin.
 """

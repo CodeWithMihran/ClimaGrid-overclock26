@@ -1,8 +1,8 @@
-# Lifeline360 // ClimaGrid Command Center
+# CLIMAGRID // ClimaGrid Command Center
 ### One City, Three Climate Threats: Floods, Unsafe Water & Dangerous Heat
 **Overclock '26 Hackathon (36-Hour Sprint) — RIT Roorkee**
 
-Lifeline360 is an emergency operations and geospatial climate-risk command center that unifies three previously fragmented disaster domains into a single tactical picture:
+CLIMAGRID is an emergency operations and geospatial climate-risk command center that unifies three previously fragmented disaster domains into a single tactical picture:
 1. **DURING (60% Effort - AAPDA360):** AI-powered flood distress ingestion, sub-second multimodal NLP entity extraction, transparent mathematical triage scoring ($P_1$ to $P_4$), and dynamic hazard-aware routing avoiding submerged bridges.
 2. **AFTER (20% Effort - JEEVAN):** IoT water intelligence detecting post-flood sewage/silt contamination anomalies (Turbidity, pH, TDS, DO) and automated boil-water advisories.
 3. **BEFORE (10% Effort - HEATSHIELD):** Urban heat island vulnerability mapping using satellite Land Surface Temperature (LST) and vegetation canopy deficits to locate cooling centers and priority tree plantation zones.
@@ -12,7 +12,7 @@ Lifeline360 is an emergency operations and geospatial climate-risk command cente
 ## Architecture Overview
 
 ```
-                                 LIFELINE360
+                                 CLIMAGRID
                         Unified Command Center (EOC)
                                      │
            ┌─────────────────────────┼─────────────────────────┐

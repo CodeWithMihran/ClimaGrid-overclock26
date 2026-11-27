@@ -12,7 +12,7 @@ client = TestClient(app)
 
 def run_suite():
     print("=" * 70)
-    print("  LIFELINE360 // CLIMAGRID END-TO-END AUTOMATED VERIFICATION SUITE")
+    print("  CLIMAGRID END-TO-END AUTOMATED VERIFICATION SUITE")
     print("  Testing AAPDA360 (Floods), JEEVAN (Water), HEATSHIELD (Heat)")
     print("=" * 70)
 

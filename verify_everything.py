@@ -1,6 +1,6 @@
 """
 =============================================================================
-  LIFELINE360 // CLIMAGRID COMPREHENSIVE STAGE READINESS AUDIT
+  CLIMAGRID // CLIMAGRID COMPREHENSIVE STAGE READINESS AUDIT
   Overclock '26 Hackathon (RIT Roorkee, Nov 27-28, 2026)
 =============================================================================
 Runs an exhaustive end-to-end audit of all backend services, frontend builds,
@@ -70,7 +70,7 @@ def check_frontend_build():
 
 def check_essential_files():
     required_files = [
-        ROOT_DIR / "start_lifeline360.bat",
+        ROOT_DIR / "start_CLIMAGRID.bat",
         ROOT_DIR / "run_backend.bat",
         ROOT_DIR / "run_frontend.bat",
         ROOT_DIR / "simulate_iot_stream.py",
@@ -101,7 +101,7 @@ def check_git_status():
 
 def main():
     start_time = time.time()
-    print_header("LIFELINE360 // OVERCLOCK '26 FINAL STAGE READINESS AUDIT")
+    print_header("CLIMAGRID // OVERCLOCK '26 FINAL STAGE READINESS AUDIT")
     print(f"  Target Region: Roorkee / Haridwar Ganga Basin & Solani Aqueduct")
     print(f"  Host: RIT Roorkee (Nov 27-28, 2026)")
 

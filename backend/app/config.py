@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseModel):
-    PROJECT_NAME: str = "Lifeline360 / ClimaGrid Command Center"
+    PROJECT_NAME: str = "ClimaGrid Command Operations Platform"
     VERSION: str = "1.0.0"
     API_V1_PREFIX: str = "/api/v1"
     

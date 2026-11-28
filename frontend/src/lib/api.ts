@@ -1,6 +1,9 @@
 import { IncidentRecord, WaterSensorNode, RouteSegment, FleetAsset, SampleMessage, ImageAnalysisResponse, ImagePreset, TelemetryData, PredictiveFloodStep, PredictiveTimelineResponse, ReliefShelter, ShelterAllocationResponse, CAPAlert, CAPTemplate, DamageSector, DamageAssessmentResponse } from '../types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = rawApiUrl.endsWith('/api/v1') 
+  ? rawApiUrl 
+  : `${rawApiUrl.replace(/\/$/, '')}/api/v1`;
 
 // ============================================================================
 // BULLETPROOF FALLBACK CACHE (Guarantees zero blank screens on stage)

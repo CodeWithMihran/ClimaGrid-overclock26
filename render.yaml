@@ -1,0 +1,19 @@
+services:
+  # ============================================================================
+  # ClimaGrid FastAPI Backend Service on Render
+  # ============================================================================
+  - type: web
+    name: climagrid-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: AWS_REGION
+        value: us-east-1
+      - key: BEDROCK_MODEL_ID
+        value: anthropic.claude-3-5-sonnet-20240620-v1:0
+    healthCheckPath: /health
+    autoDeploy: true
